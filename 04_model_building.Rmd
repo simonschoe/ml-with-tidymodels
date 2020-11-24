@@ -1,0 +1,230 @@
+---
+title: "04_model_building"
+output: html_document
+---
+
+layout: false
+class: middle, center, inverse
+
+# 4.3 `parsnip`:<br><br>A Common API to Modeling and Analysis Functions
+
+---
+
+background-image: url(https://www.tidymodels.org/images/parsnip.png)
+background-position: 95% 5%
+background-size: 7.5%
+layout: true
+
+---
+
+## 4.3 `parsnip`: A Unified Modeling API
+
+.pull-left[
+So far, you have worked a heterogenous set of packages and functions to implement your models:
+
+`stats::lm`, `stats::glm`, `MASS::lda`, `class::knn`, `glmnet::glmnet`, `rpart::rpart`, `gbm::gbm`, `randomForest::randomForest`, `e1071::svm`, ...
+
+Likely, you have repeatedly struggled with the varying naming conventions, interfaces and syntactical intricacies of each package.
+]
+.pull-right[
+```{r, echo=F, out.height='60%', out.width='60%', fig.align='center'}
+knitr::include_graphics("https://tenor.com/view/ballin-juggling-talent-juggle-wow-gif-16262578.gif")
+```
+]
+
+--
+
+The same holds for implementations of one and the same model by different packages:
+```{r, eval=F}
+randomForest::randomForest(y ~ ., data = df, mtry = 10, ntree = 2000, importance = TRUE)
+
+ranger::ranger(y ~ ., data = df, mtry = 10, num.trees = 2000, importance = "impurity")
+
+sparklyr:: ml_random_forest(
+  df, response = "y", features = df %>% select(-y), col.sample.rate = 10, num.trees = 2000
+)
+```
+
+???
+- spark is an alternative programming language
+- often machine learning methods are implemented in C++ due to superior speed and a R frontend is put on top of the C++ implementation
+
+---
+
+## 4.3 `parsnip`: A Unified Modeling API
+
+.pull-left[
+`parsnip` provides a **unified interface** and syntax to modeling which facilitates your overall modeling workflow. The goals of `parsnip` are twofold:
+1. Decoupling model definition from model fitting and model evaluation
+2. Harmonize argument names (e.g., `ntree` and `num.trees` or `mtry` and `col.sample.rate`)
+]
+.pull-right[
+```{r, echo=F, out.height='65%', out.width='65%', fig.align='center'}
+knitr::include_graphics("https://tenor.com/view/balls-rolling-racing-rolling-on-ball-yoga-balls-gif-15365855.gif")
+```
+]
+
+---
+
+## 4.3 `parsnip`: A Unified Modeling API
+
+```{r, echo=F, out.height='60%', out.width='60%', out.extra='style="float:right; padding:10px"'}
+knitr::include_graphics("https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/rstats-artwork/parsnip.png")
+```
+
+In `parsnip` a model is always made up of three individual components:
+- **Type:** The model type that is about to be fitted (e.g., linear/logit regression, random forest or SVM).<br><br>
+- **Mode:** The mode of prediction, i.e. regression or classification.<br><br>
+- **Engine:** The computational engine implemented in `R` which usually corresponds to a certain package (e.g., `rpart`, `glm` or `randomForest`) or computing framework (e.g., `Stan` or `Spark`)
+
+Check all models and engines supported by `parsnip` on the [`tidymodels` website](https://www.tidymodels.org/find/parsnip/).
+
+---
+
+## 4.3 `parsnip`: A Unified Modeling API
+
+**Logistic classifier:**
+```{r}
+log_cls <- logistic_reg() %>% 
+  set_engine("glm") %>% 
+  set_mode("classification")
+
+log_cls
+```
+
+???
+note that some model families support both modes, some only one of the two (e.g., LDA only for classification, ARIMA models only for regressions)
+
+---
+
+## 4.3 `parsnip`: A Unified Modeling API
+
+**Logistic Lasso classifier:**
+```{r}
+lasso_cls <- logistic_reg() %>%
+  set_args(penalty = 0.1, mixture = 1) %>% 
+  set_mode("classification") %>% 
+  set_engine("glmnet", family = "binomial")
+
+lasso_cls
+```
+
+???
+- the function arguments could also be specified directly in the model function, but this way it is more transparent and sequential
+- mixture reflects the amount of the l1 respectively l2 penalty
+
+---
+
+## 4.3 `parsnip`: A Unified Modeling API
+
+**Decision tree classifier:**
+```{r}
+dt_cls <- decision_tree() %>% 
+  set_args(cost_complexity = 0.01, tree_depth = 30, min_n = 20) %>% 
+  set_engine("rpart") %>% 
+  set_mode("classification")
+
+dt_cls
+```
+
+.footnote[
+*Note: If not explicitly specified, `parsnip` adopts the model's default parameters (i.e. function arguments) defined by the underlying engine (here `rpart`).*
+]
+
+---
+
+## 4.3 `parsnip`: A Unified Modeling API
+
+**Tree bagging classifier:**
+```{r}
+rand_forest() %>% 
+  set_args(trees = 1000) %>% 
+  set_engine("randomForest") %>% 
+  set_mode("classification")
+```
+
+---
+
+## 4.3 `parsnip`: A Unified Modeling API
+
+**Random forest classifier:**
+```{r}
+rand_forest() %>%
+  set_args(trees = 1000, mtry = varying()) %>% 
+  set_engine("randomForest") %>% 
+  set_mode("classification")
+```
+
+.footnote[
+*Note: Use `varying()` or `tune()` as model arguments when the parameter is supposed to be specified later on in the workflow (e.g., during hyperparameter tuning).*
+]
+
+---
+
+## 4.3 `parsnip`: A Unified Modeling API
+
+**k-nearest-neighbor classifier:**
+```{r}
+nearest_neighbor() %>% 
+  set_args(neighbors = 5, dist_power = 2) %>% 
+  set_engine("kknn") %>% 
+  set_mode("classification")
+```
+
+???
+- dist_power: 1 (manhattan), 2 (euclidean)
+
+---
+
+## 4.3 `parsnip`: A Unified Modeling API
+
+**SVM classifier:**
+```{r}
+svm_rbf() %>% 
+  set_args(cost = tune(), rbf_sigma = tune()) %>% 
+  set_engine("kernlab") %>% 
+  set_mode("classification") %>% 
+  translate()
+```
+
+.footnote[
+*Note: Apply the `translate()` function to your model specification to investigate how `parsnip` translates the specification back into the underlying computational engine.*
+]
+
+---
+
+## 4.3 `parsnip`: A Unified Modeling API
+
+Finally, the time has come to fit our specified models to the training data. Since some packages require a formula (`~`) as input and others a vector, a matrix or a data frame, `parsnip` offers two alternatives for model fitting: a formula-based interface (`fit()`) and a non-formula-based interface (`fit_xy()`).
+```{r, eval=F}
+dt_cls_fit <- dt_cls %>% 
+  fit(formula = died ~ ., data = train_set)
+```
+```{r, eval=F}
+dt_cls_fit <- dt_cls %>% 
+  fit_xy(x = train_set %>% select(-died), y = train_set$died)
+```
+After having fitted the model, we can proceed to predicting the response in the test data:
+```{r, eval=F}
+dt_cls_fit %>% 
+  predict(new_data = test_set, type = "prob")
+```
+
+--
+
+___
+
+.center[
+`r emo::ji("warning")` **Notice that we did not apply any of our predefined feature engineering steps!** `r emo::ji("warning")`
+
+*The code will throw an error if we try to fit any of our logit models due to the absence of dummies.  
+Besides, the Lasso model would perform poorly due to the differently scaled predictors.  
+Likewise, the tree model will always predict the negative class due to the severe class imbalance.*
+]
+
+???
+- predict: can be easily used with `dplyr::bind_cols()` to attach the predictions to the test set.
+
+---
+
+# Question: When to specify something in model and when in engine?

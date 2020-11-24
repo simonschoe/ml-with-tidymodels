@@ -1,0 +1,281 @@
+---
+title: "01_intro"
+output: html_document
+---
+
+class: middle, center, inverse
+
+# 2 Introduction to `tidymodels`
+
+---
+
+background-image: url(https://www.tidymodels.org/images/tidymodels.png)
+background-position: 95% 5%
+background-size: 7.5%
+layout: true
+
+---
+
+## 2 Introduction to `tidymodels`
+
+> The tidymodels framework is a collection of packages for modeling and machine learning using tidyverse principles. ~ [tidymodels.org](https://www.tidymodels.org/)
+
+.pull-left[.center[
+```{r, echo=F, out.width='45%', out.height='45%'}
+knitr::include_graphics("https://raw.githubusercontent.com/tidymodels/tidymodels/master/tidymodels_hex.png")
+```
+
+Official `tidymodels` [Hex Sticker](https://github.com/rstudio/hex-stickers)
+]]
+
+.pull-right[
+.pull-left[
+```{r, echo=F, out.width='90%', out.height='90%'}
+knitr::include_graphics("https://pbs.twimg.com/profile_images/905186381995147264/7zKAG5sY.jpg")
+```
+
+**Hadley Wickham** - Chief Scientist @ RStudio 
+]
+.pull-right[
+```{r, echo=F, out.width='90%', out.height='90%'}
+knitr::include_graphics("https://avatars3.githubusercontent.com/u/5731043?s=460&u=814e99b02976f8bcb9b15047777742d268648d35&v=4")
+```
+
+**Max Kuhn** - Software Engineer @ RStudio 
+]]
+
+???
+- a framework for modeling (guardrails) using using tidy data principles
+- very similar to the unified `scikit-learn` package in the context of `Python`
+
+---
+
+## 2 Introduction to `tidymodels`
+
+> The tidymodels framework is a **collection of packages** for modeling and machine learning using tidyverse principles. ~ [tidymodels.org](https://www.tidymodels.org/)
+
+.pull-left[
+**`tidymodels` core packages along the typical machine learning workflow:**
+- `rsample`: general methods for resampling
+- `recipes`: unified interface to data preprocessing
+- `parsnip`: unified interface to modeling
+- `workflows`: combine model blueprints and preprocessing recipes
+- `dials`: create tuning parameters
+- `tune`: hyperparameter tuning
+- `broom`: tidy model outputs
+- `yardstick`: model evaluation
+]
+.pull-right[
+```{r, echo=F, out.width='85%', out.height='85%', fig.align='center'}
+knitr::include_graphics("./img/tidymodels-hex.PNG")
+```
+]
+
+???
+- tidymodels can be viewed as another meta-package that shares the design philosophy, grammar and data structures of the tidyverse
+- each package has its own goal which makes tidymodels a modular collection of package
+- A goal of the tidymodels packages is that the interfaces to common tasks are standardized
+- we will discuss each package along the modeling workflow: resampling, preprocessing, model building, hyperparameter tuning, model evaluation
+
+---
+
+## 2 Introduction to `tidymodels`
+
+> The tidymodels framework is a **collection of packages** for modeling and machine learning using tidyverse principles. ~ [tidymodels.org](https://www.tidymodels.org/)
+
+```{r, eval=F}
+install.packages("tidymodels")
+library(tidymodels)
+```
+```
+-- Attaching packages ----------------------------- tidymodels 0.1.1 --
+v broom     0.7.2      v recipes   0.1.14
+v dials     0.0.9      v rsample   0.0.8 
+v dplyr     1.0.2      v tibble    3.0.4 
+v ggplot2   3.3.2      v tidyr     1.1.2 
+v infer     0.5.3      v tune      0.1.1 
+v modeldata 0.1.0      v workflows 0.2.1 
+v parsnip   0.1.4      v yardstick 0.0.7 
+v purrr     0.3.4      
+
+-- Conflicts ------------------------------- tidymodels_conflicts() --
+x purrr::discard() masks scales::discard()
+x dplyr::filter()  masks stats::filter()
+x dplyr::lag()     masks stats::lag()
+x recipes::step()  masks stats::step()
+```
+
+???
+Explain:
+- very similar when you load the whole tidyverse
+- as you can see tidymodels loads also some of the tidyverse packages (however, usually you would load both at the beginning of your R session)
+- again we have some conflicts here, so these functions override functions by the base `R` `stats` package
+- `tidymodels v0.1.1`: relatively new package ecosystem, it is not unlikely that some of the functionalities or interfaces will change slightly in the future
+
+---
+
+## 2 Introduction to `tidymodels`
+
+`r emo::ji("monocle")` Remember, modeling is one of the main steps in our day-2-day data science workflow. And this is precisely where `tidymodels` fits in!
+<br><br><br>
+```{r, echo=F, out.width='80%', out.height='80%', fig.align='center'}
+knitr::include_graphics("https://d33wubrfki0l68.cloudfront.net/571b056757d68e6df81a3e3853f54d3c76ad6efc/32d37/diagrams/data-science.png")
+```
+
+???
+src: https://d33wubrfki0l68.cloudfront.net/571b056757d68e6df81a3e3853f54d3c76ad6efc/32d37/diagrams/data-science.png
+
+---
+
+layout: false
+class: middle, center, inverse
+
+# 3 Himalayan Climbing Expeditions Data
+
+---
+
+## 3 Himalayan Climbing Expeditions Data
+
+From here on, to illustrate the features of the `tidymodels` ecosystem, we use the [*Himalayan Climbing Expeditions* data set](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-09-22/readme.md) from the [`tidytuesday` project](https://github.com/rfordatascience/tidytuesday).
+
+```{r, cache=T}
+# install.packages("tidytuesdayR")
+tt_data <- tidytuesdayR::tt_load(2020, week = 39)
+```
+
+???
+Tidytuesday: social project to motivate the R online community to learn working with tools like ggplot2, dplyr and tidyr and applying them to real-world data
+
+---
+
+## 3 Himalayan Climbing Expeditions Data
+
+.pull-left[
+The data set contains a large record of data spanning the 1905-2019 period about
+- `r emo::ji("mountain_snow")` the several **peaks** of the mountain range,
+- `r emo::ji("paw_prints")` **expeditions** during this period, and
+- `r emo::ji("woman_climbing")` the **members** of each expedition.
+
+In this workshop, we will try to predict the likelihood of an expedition coming to a lethal end. This, in turn, may then help us to derive drivers for a successful expedition and eventually reduce death rates.
+]
+.pull-right[
+```{r, eval=F}
+tt_data$members %>% 
+  skimr::skim() 
+```
+
+```
+> -- Data Summary ------------------------
+>                            Values    
+> Name                       Piped data
+> Number of rows             76519     
+> Number of columns          21        
+> _______________________              
+> Column type frequency:               
+>   character                10        
+>   logical                  6         
+>   numeric                  5         
+> ________________________             
+> Group variables            None      
+```
+]
+
+???
+use `skimr` package to get a high-level view of the data and most important descriptives
+total of 76,519 expedition members
+
+---
+
+## 3 Himalayan Climbing Expeditions Data
+
+*continued:*
+```
+> -- Variable type: character ---------------------------------------------------------------------------
+> # A tibble: 10 x 8
+>    skim_variable   n_missing complete_rate   min   max empty n_unique whitespace
+>  * <chr>               <int>         <dbl> <int> <int> <int>    <int>      <int>
+>  1 expedition_id           0        1          9     9     0    10350          0
+>  2 member_id               0        1         12    12     0    76518          0
+>  3 peak_id                 0        1          4     4     0      391          0
+>  4 peak_name              15        1.00       4    25     0      390          0
+>  5 season                  0        1          6     7     0        5          0
+>  6 sex                     2        1.00       1     1     0        2          0
+>  7 citizenship            10        1.00       2    23     0      212          0
+>  8 expedition_role        21        1.00       4    25     0      524          0
+>  9 death_cause         75413        0.0145     3    27     0       12          0
+> 10 injury_type         74807        0.0224     3    27     0       11          0
+```
+
+???
+- three id columns, these are likely not supposed to end up in any predictive model -> in any case, if you have an id variable with predictive value you should question in the data generating process behind the id column
+- 391 different peaks, but only 390 different peak names
+- with 76,519 climbers, almost 1000 died (75,413 non-death causes), and another 600 came back injured (74,807 non-injured) -> imbalanced prediction task
+- 524 different expedition roles
+- why do we have five seasons? (probably an unknown category)
+
+---
+
+## 3 Himalayan Climbing Expeditions Data
+
+*continued:*
+```
+> -- Variable type: logical -----------------------------------------------------------------------------
+> # A tibble: 6 x 5
+>   skim_variable n_missing complete_rate    mean count                 
+> * <chr>             <int>         <dbl>   <dbl> <chr>                 
+> 1 hired                 0             1 0.206   FAL: 60788, TRU: 15731
+> 2 success               0             1 0.382   FAL: 47320, TRU: 29199
+> 3 solo                  0             1 0.00158 FAL: 76398, TRU: 121  
+> 4 oxygen_used           0             1 0.238   FAL: 58286, TRU: 18233
+> 5 died                  0             1 0.0145  FAL: 75413, TRU: 1106 
+> 6 injured               0             1 0.0224  FAL: 74806, TRU: 1713 
+>
+> -- Variable type: numeric -----------------------------------------------------------------------------
+> # A tibble: 5 x 11
+>   skim_variable        n_missing complete_rate   mean     sd    p0   p25   p50   p75  p100 hist 
+> * <chr>                    <int>         <dbl>  <dbl>  <dbl> <dbl> <dbl> <dbl> <dbl> <dbl> <chr>
+> 1 year                         0        1      2000.    14.8  1905  1991  2004  2012  2019 ▁▁▁▃▇
+> 2 age                       3497        0.954    37.3   10.4     7    29    36    44    85 ▁▇▅▁▁
+> 3 highpoint_metres         21833        0.715  7471.  1040.   3800  6700  7400  8400  8850 ▁▁▆▃▇
+> 4 death_height_metres      75451        0.0140 6593.  1308.    400  5800  6600  7550  8830 ▁▁▂▇▆
+> 5 injury_height_metres     75510        0.0132 7050.  1214.    400  6200  7100  8000  8880 ▁▁▂▇▇
+```
+
+???
+logical:
+- never missing
+- `hired` natives (around 20% of the expedition members)
+- only 38% expeditions made it to the top (`success`)
+- likely we can have expeditions that were succesful, but where one or several member died
+- died and injured corresponds to the numbers of `death_cause` and `injury_type`
+
+numeric:
+- hist of `year` expeditions took place more and more often in the two recent decades
+- `age`: most climbers i would expect to be between 20-40, with few very old climbers (85), and some super young (7?!)
+- `age` and `highpoint_metres` has a lot of missings!
+
+usually, you would do a lot more EDA right now:
+- plot of expedition year against success/failure rates -> more recent expeditions likely more successful as you know more about the region/have better equipment
+- plot of age against success/failure rates -> younger, more athletic climbers more successful?
+- check which peaks or seasons are most associated with climber deaths
+- check if oxygen use is associated with death rates
+- good practice is always to do a correlation matrix
+
+---
+
+## 3 Himalayan Climbing Expeditions Data
+
+```{r}
+climbers_df <- tt_data$members %>% 
+  select(
+    member_id, peak_name, season, year,sex, age, citizenship,
+    expedition_role, hired, solo, oxygen_used, success, died) %>% 
+  filter(!is.na(sex), !is.na(citizenship), !is.na(peak_name), !is.na(expedition_role)) %>% 
+  mutate(across(where(~ is.character(.) || is.logical(.)), as.factor))
+
+climbers_df
+```
+
+.pull-right[.pull-right[.footnote[
+*Note: After the removal of missing values in the `sex`, `citizenship`, `peak_name` and `expedition_role` predictor the data set shrinks from `r dim(tt_data$members)[1] %>% scales::comma(big.mark = ",")` to `r dim(climbers_df)[1] %>% scales::comma(big.mark = ",")` observations.*
+]]]

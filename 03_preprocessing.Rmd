@@ -1,0 +1,266 @@
+---
+title: "03_preprocessing"
+output: html_document
+---
+
+layout: false
+class: middle, center, inverse
+
+# 4.2 `recipes`:<br><br>Preprocessing Tools to Create Design Matrices
+
+---
+
+background-image: url(https://www.tidymodels.org/images/recipes.png)
+background-position: 95% 5%
+background-size: 7.5%
+layout: true
+
+---
+
+## 4.2 `recipes`: Preprocessing Tools
+
+> In statistics, a **design matrix** (also known as **regressor matrix** or **model matrix**) is a matrix of values of explanatory variables of a set of objects, often denoted by X. Each row represents an individual object, with the successive columns corresponding to the variables and their specific values for that object. ~ [Wikipedia](https://en.wikipedia.org/wiki/Design_matrix)
+
+--
+
+In `R`, every model requires a design matrix as input. Intuitively, we can think of a design or model matrix as a tidy data frame with one observation per row and one predictor per column - which is why we often provide a data frame to the models that we build.
+
+--
+
+The concrete form of the matrix depends however on the model that we are about to apply which boils down to the issue of feature engineering. For example:
+- A linear model (`lm()`) requires categorical predictors to be one-hot encoded into C-1 binary predictors.
+- A decision tree (`rpart()`) does not require strictly numerical predictors.
+- A support vector machine (`svm()`) performs best with scaled predictors.
+- And numerous models reject missing values in their model matrix.
+
+???
+Most R functions create the design matrix automatically from a given data frame according to the formula that is provided in the function call.
+
+---
+
+## 4.2 `recipes`: Preprocessing Tools
+
+The `recipes` package provides functions for defining a **blueprint for feature engineering**. Each `recipe` is constructed by sequentially chaining different preprocessing steps.
+
+First, create a `recipe` object from your data using the `recipe()` function and two arguments:
+- **`formula`:** A formula to declare variable roles, i.e. everything on the LHS of the `~` is declared as `outcome` and everything on the RHS as `predictor`.
+- **`data`:** The data to which the feature engineering steps are later applied. The data set is only used to catalogue the variables and their respective types (which is why you usually provide the training set).
+```{r}
+mod_recipe <- recipe(formula = died ~ ., data = train_set)
+mod_recipe
+```
+
+---
+
+## 4.2 `recipes`: Preprocessing Tools
+
+Second, we add new steps (`step_*()`) to the recipe in order to declare feature engineering steps:
+
+- Use `update_role()` to assign a new custom role to a predictors. As `member_id` simply enumerates our observations, it is assigned the `"id"` role and hence not considered in any downstream modeling task.<br><br>
+- Use `step_medianimpute()` to impute `NA` values by the median predictor value. Since roughly 3,500 missing values are inherent to `age`, we use median-imputation to retain those observations.<br><br>
+- Use `step_normalize()` to scale numerical data to zero mean and unit standard deviation (which is required for scale-sensitive classifiers).<br><br>
+- Use `step_other()` to lump together rarely occurring factor levels. `peak_name`, `citizenship` and `expedition_role` all have several 100 factor levels and hence a high risk being near-zero variance features. All factor levels with a relative frequency below 5% are pooled into `"other"`.<br><br>
+- Use `step_dummy()` to one-hot encode categorical predictors.<br><br>
+- Finally, we use `step_smote()` from the `themis` package to tackle class imbalance. Synthetic samples are generated via 5-NN to establish a class distribution of 3:5.
+
+---
+
+## 4.2 `recipes`: Preprocessing Tools
+
+```{r}
+mod_recipe <- mod_recipe %>% 
+  update_role(member_id, new_role = "id")
+
+mod_recipe
+```
+
+.pull-right[.pull-right[.footnote[
+*Note: Generally, *`step_*()` *functions do not change the role of a predictor. However, each* `step_*()` *function contains a `role` argument to explicitly specify the role of a newly generated predictor.*
+]]]
+
+---
+
+## 4.2 `recipes`: Preprocessing Tools
+
+```{r}
+mod_recipe <- mod_recipe %>% 
+  step_medianimpute(age)
+
+mod_recipe
+```
+
+---
+
+## 4.2 `recipes`: Preprocessing Tools
+
+```{r}
+mod_recipe <- mod_recipe %>% 
+  step_normalize(all_numeric())
+
+mod_recipe
+```
+
+.pull-right[.pull-right[.footnote[
+*Note: Variables can be selected by referring either to their name, their data type, their role (as specified by the recipe) or by using the `select()` helpers from `dplyr` (e.g., `contains()`, `starts_with()`).*
+]]]
+
+---
+
+## 4.2 `recipes`: Preprocessing Tools
+
+```{r}
+mod_recipe <- mod_recipe %>% 
+  step_other(peak_name, citizenship, expedition_role, threshold = 0.05)
+
+mod_recipe
+```
+
+.pull-right[.pull-right[.footnote[
+*Note: You should always take care of the order of your steps. For example, you should first lump together factor levels and then create dummies. Otherwise the `recipe` would generate a large amount of near-zero variance predictors.*
+]]]
+
+???
+same holds for the normalize steps which should follow the median-impute step.
+
+---
+
+## 4.2 `recipes`: Preprocessing Tools
+
+```{r}
+mod_recipe <- mod_recipe %>% 
+  step_dummy(all_predictors(), -all_numeric())
+
+mod_recipe
+```
+
+.pull-right[.pull-right[.footnote[
+*Note: Use `one_hot = TRUE` in case you want to retain all C factor levels instead of just C - 1.*
+]]]
+
+---
+
+## 4.2 `recipes`: Preprocessing Tools
+
+```{r}
+mod_recipe <- mod_recipe %>% 
+  themis::step_smote(died, over_ratio = 0.6, neighbors = 5, seed = 2020, skip = TRUE)
+
+mod_recipe
+```
+
+.pull-right[.pull-right[.footnote[
+*Note: Each* `step_*()` *function contains a `skip` argument which is mostly equal to `FALSE` by default. Yet, for certain preprocessing steps (e.g., under- or oversampling) we want to ensure that the step is not applied to test set later on to retain the original properties of the test data.*
+]]]
+
+---
+
+layout: false
+
+## Excursus: Imperative vs. Declarative Programming
+
+Up to this point, you have not performed any actual transformation of your data - you have only just sketched a blueprint of what `R` is theoretically supposed to do with your data. The difference between instantly executing a command and declaring it in case it is prospectively needed relates to two important programming paradigms [[1]](https://mastering-shiny.org/basic-reactivity.html#imperative-vs-declarative-programming):
+- **Imperative programming:** A command is entered and immediately executed (what you are likely used to do in `R` so far).<br><br>
+- **Declarative programming:** A command is specified, along with some important constraints, however, the execution of the code occurs at later point in time, either specified by your or the program (what you have to get used to when working with machine learning workflows, e.g., `tidymodels`).
+
+---
+
+background-image: url(https://www.tidymodels.org/images/recipes.png)
+background-position: 95% 5%
+background-size: 7.5%
+layout: true
+
+---
+
+## 4.2 `recipes`: Preprocessing Tools
+
+Third, let's fit our `mod_recipe` to determine the unknown quantities (e.g., medians or pooled factor levels):
+```{r}
+mod_recipe_prepped <- prep(mod_recipe, retain = T)
+mod_recipe_prepped
+```
+
+.pull-right[.pull-right[.footnote[
+*Note: By applying `prep()` to the gradually built recipe, we fit the recipe only on the training set (as specified in the `recipe()` function above. Thus, we prevent the issue of **data leakage**!*<br><br>
+]]]
+
+???
+- retain saves the preprocessed data set (here the training data)
+- see in the output that the steps are now `[trained]`
+
+---
+
+## 4.2 `recipes`: Preprocessing Tools
+
+In a last step, we can finally apply the fitted `recipe` to our data and perform the feature engineering steps.
+```{r eval=F}
+bake(mod_recipe_prepped, new_data = NULL)
+```
+```{r, echo=F}
+print(bake(mod_recipe_prepped, new_data = NULL), n = 5)
+```
+
+
+.pull-right[.pull-right[.footnote[
+*Note: Set `new_data = NULL` for applying the `recipe` to the data set provided to `recipe()`, i.e. the training test. Set `new_data = test_set` instead, if it should be applied to the test set.*
+]]]
+
+???
+Note:
+- dummy encodings worked
+- encoding `other` category worked
+- smote worked (96,470 vs. 61,177 samples in the original train_set)
+
+---
+
+## 4.2 `recipes`: Preprocessing Tools
+
+```{r, echo=F, out.height='50%', out.width='50%', fig.align='center'}
+knitr::include_graphics("https://tenor.com/view/swedish-chef-baking-muppet-gif-15620659.gif")
+```
+
+---
+
+## 4.2 `recipes`: Preprocessing Tools
+
+```{r, echo=F, out.height='75%', out.width='75%', fig.align='center'}
+knitr::include_graphics("https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/rstats-artwork/recipes.png")
+```
+
+---
+
+## 4.2 `recipes`: Preprocessing Tools
+
+Altogether, the `recipes` packages offers a plethora of built-in preprocessing steps:
+```{r, include=F}
+grep("^step_", ls("package:recipes"), value = TRUE)  
+```
+```
+>  [1] "step_arrange"       "step_bagimpute"     "step_bin2factor"    "step_BoxCox"        "step_bs"           
+>  [6] "step_center"        "step_classdist"     "step_corr"          "step_count"         "step_cut"          
+> [11] "step_date"          "step_depth"         "step_discretize"    "step_downsample"    "step_dummy"        
+> [16] "step_factor2string" "step_filter"        "step_geodist"       "step_holiday"       "step_hyperbolic"   
+> [21] "step_ica"           "step_impute_linear" "step_integer"       "step_interact"      "step_intercept"    
+> [26] "step_inverse"       "step_invlogit"      "step_isomap"        "step_knnimpute"     "step_kpca"         
+> [31] "step_kpca_poly"     "step_kpca_rbf"      "step_lag"           "step_lincomb"       "step_log"          
+> [36] "step_logit"         "step_lowerimpute"   "step_meanimpute"    "step_medianimpute"  "step_modeimpute"   
+> [41] "step_mutate"        "step_mutate_at"     "step_naomit"        "step_nnmf"          "step_normalize"    
+> [46] "step_novel"         "step_ns"            "step_num2factor"    "step_nzv"           "step_ordinalscore" 
+> [51] "step_other"         "step_pca"           "step_pls"           ...
+```
+In addition, you may also include checks in your pipeline to test for a specific condition of your variables:
+```{r, include=F}
+grep("check_", ls("package:recipes"), value = TRUE)  
+```
+```
+> [1] "check_class"      "check_cols"       "check_missing"    "check_name"       "check_new_values"
+> [6] "check_range"      "check_type"
+```
+
+???
+- `step_date`: converts a date into factor variables, e.g., day of the week or month
+- `step_holiday`: creates a dummy for a national holiday
+- `step_corr`: removes variables that have large absolute correlations with other variables
+- `step_normalize`: applies z-Transformation to predictors
+- `step_mutate`: to engineer new variables (analogue to `dplyr`)
+
+-> basically, all transformation steps you would do using dplyr before modelling, can be embedded as a recipe step within your modeling workflow

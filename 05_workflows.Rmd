@@ -1,0 +1,115 @@
+---
+title: "05_workflows"
+output: html_document
+---
+
+layout: false
+class: middle, center, inverse
+
+## 4.4 `workflows`:<br><br>Modeling Workflows
+
+---
+
+background-image: url(https://www.tidymodels.org/images/workflows.png)
+background-position: 95% 5%
+background-size: 7.5%
+layout: true
+
+---
+
+## 4.4 `workflows`: Modeling Workflows
+
+`workflows` introduces a function for bundling preprocessing recipes and model specifications. A **workflow** encapsulates the three main modeling steps: data preprocessing, model fitting and post-processing (with the later not yet being implemented in the `workflows` package).
+
+```{r, results='hide'}
+cls_wf <- workflow() %>% 
+  add_recipe(mod_recipe) %>% 
+  add_model(log_cls)
+
+cls_wf
+```
+```
+> == Workflow ===================================================================================
+> Preprocessor: Recipe
+> Model: logistic_reg()
+> 
+> -- Preprocessor -------------------------------------------------------------------------------
+> 5 Recipe Steps
+> * step_medianimpute()   * step_dummy()
+> * step_normalize()      * step_smote()
+> * step_other()
+> 
+> -- Model --------------------------------------------------------------------------------------
+> Logistic Regression Model Specification (classification)
+> Computational engine: glm 
+```
+
+???
+- if no preprocessing is required `add_formula()` could be used
+- example for post processing: modifying the probability cutoff for binary classification; or calibration of probabilities; or determination of euqivocal zones
+
+---
+
+## 4.4 `workflows`: Modeling Workflows
+
+When calling `fit()` on a `workflow` object, `tidymodels` performs the following steps for us:
+1. It fits the `recipe` object to the training set and produces the in-sample estimates (`prep()`).
+2. It applies the fitted recipe to the training set to engineer the predictors (`bake()`).
+3. It trains the specified model on the transformed training set (`fit()`/`fit_xy()`).
+
+```{r, results='hide'}
+cls_wf_fitted <- cls_wf %>% 
+  fit(train_set)
+
+cls_wf_fitted # output on next slide
+```
+
+--
+
+Again, after having fitted the workflow, we can proceed to predicting the response in the test data:
+```{r, eval=F}
+cls_wf_fitted %>% 
+  predict(new_data = test_set, type = "prob")
+```
+
+.footnote[
+*Note: Call `pull_workflow_fit()` or `pull_workflow_prepped_recipe()` to extract the fitted model or the `recipe` object from the workflow.*
+]
+
+???
+- workflows abstract away the need for `prep` and `bake`
+
+---
+
+## 4.4 `workflows`: Modeling Workflows
+
+```
+> == Workflow [trained] =========================================================================
+> Preprocessor: Recipe
+> Model: logistic_reg()
+> 
+> -- Preprocessor -------------------------------------------------------------------------------
+> 5 Recipe Steps
+> * step_medianimpute()   * step_dummy()
+> * step_normalize()      * step_smote()
+> * step_other()
+> 
+> -- Model --------------------------------------------------------------------------------------
+> Call:  stats::glm(formula = ..y ~ ., family = stats::binomial, data = data)
+> 
+> Coefficients:
+>                (Intercept)                        year                         age  
+>                   -2.76543                    -0.44060                     0.05288  
+>          peak_name_Cho.Oyu           peak_name_Everest           peak_name_Manaslu  
+>                    0.09953                     1.19280                     1.41512  
+>            peak_name_other               season_Spring                         ...  
+>                    1.31090                     0.02033                         ...  
+> 
+> Degrees of Freedom: 96469 Total (i.e. Null);  96447 Residual
+> Null Deviance:	    127600 
+> Residual Deviance: 110100 	AIC: 110200
+
+```
+
+???
+output abbreviated
