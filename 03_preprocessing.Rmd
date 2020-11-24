@@ -19,7 +19,7 @@ layout: true
 
 ## 4.2 `recipes`: Preprocessing Tools
 
-> In statistics, a **design matrix** (also known as **regressor matrix** or **model matrix**) is a matrix of values of explanatory variables of a set of objects, often denoted by X. Each row represents an individual object, with the successive columns corresponding to the variables and their specific values for that object. ~ [Wikipedia](https://en.wikipedia.org/wiki/Design_matrix)
+> In statistics, a **design matrix** (also known as **regressor matrix** or **model matrix**) is a matrix of values of explanatory variables of a set of objects, often denoted by $X$. Each row represents an individual object, with the successive columns corresponding to the variables and their specific values for that object. ~ [Wikipedia](https://en.wikipedia.org/wiki/Design_matrix)
 
 --
 
@@ -27,10 +27,10 @@ In `R`, every model requires a design matrix as input. Intuitively, we can think
 
 --
 
-The concrete form of the matrix depends however on the model that we are about to apply which boils down to the issue of feature engineering. For example:
-- A linear model (`lm()`) requires categorical predictors to be one-hot encoded into C-1 binary predictors.
-- A decision tree (`rpart()`) does not require strictly numerical predictors.
-- A support vector machine (`svm()`) performs best with scaled predictors.
+The concrete form of the matrix depends however on the model that we are about to apply which boils down to the issue of *feature engineering*. For example:
+- A linear model (`lm`) requires categorical predictors to be one-hot encoded into $C-1$ binary predictors.
+- A decision tree (`rpart`) does not require strictly numerical predictors.
+- A support vector machine (`svm`) performs best with scaled predictors.
 - And numerous models reject missing values in their model matrix.
 
 ???
@@ -42,9 +42,11 @@ Most R functions create the design matrix automatically from a given data frame 
 
 The `recipes` package provides functions for defining a **blueprint for feature engineering**. Each `recipe` is constructed by sequentially chaining different preprocessing steps.
 
+--
+
 First, create a `recipe` object from your data using the `recipe()` function and two arguments:
 - **`formula`:** A formula to declare variable roles, i.e. everything on the LHS of the `~` is declared as `outcome` and everything on the RHS as `predictor`.
-- **`data`:** The data to which the feature engineering steps are later applied. The data set is only used to catalogue the variables and their respective types (which is why you usually provide the training set).
+- **`data`:** The data to which the feature engineering steps are later applied. The data set is only used to catalogue the variables and their respective types (which is why you generally provide the training set).
 ```{r}
 mod_recipe <- recipe(formula = died ~ ., data = train_set)
 mod_recipe
@@ -59,9 +61,9 @@ Second, we add new steps (`step_*()`) to the recipe in order to declare feature 
 - Use `update_role()` to assign a new custom role to a predictors. As `member_id` simply enumerates our observations, it is assigned the `"id"` role and hence not considered in any downstream modeling task.<br><br>
 - Use `step_medianimpute()` to impute `NA` values by the median predictor value. Since roughly 3,500 missing values are inherent to `age`, we use median-imputation to retain those observations.<br><br>
 - Use `step_normalize()` to scale numerical data to zero mean and unit standard deviation (which is required for scale-sensitive classifiers).<br><br>
-- Use `step_other()` to lump together rarely occurring factor levels. `peak_name`, `citizenship` and `expedition_role` all have several 100 factor levels and hence a high risk being near-zero variance features. All factor levels with a relative frequency below 5% are pooled into `"other"`.<br><br>
+- Use `step_other()` to lump together rarely occurring factor levels. `peak_name`, `citizenship` and `expedition_role` all have several 100 factor levels and hence a high risk of being near-zero variance features. All factor levels with a relative frequency below 5% are pooled into `"other"`.<br><br>
 - Use `step_dummy()` to one-hot encode categorical predictors.<br><br>
-- Finally, we use `step_smote()` from the `themis` package to tackle class imbalance. Synthetic samples are generated via 5-NN to establish a class distribution of 3:5.
+- Finally, we use `step_smote()` from the `themis` package to tackle class imbalance. Synthetic samples are generated via 5-NN to establish a class distribution ratio of 3:5.
 
 ---
 
@@ -116,7 +118,7 @@ mod_recipe
 ```
 
 .pull-right[.pull-right[.footnote[
-*Note: You should always take care of the order of your steps. For example, you should first lump together factor levels and then create dummies. Otherwise the `recipe` would generate a large amount of near-zero variance predictors.*
+*Note: You should always take care of the order of your steps. For example, you should first lump together factor levels and then create dummies. Otherwise the `recipe` would generate a large amount of near-zero variance dummies.*
 ]]]
 
 ???
@@ -134,7 +136,7 @@ mod_recipe
 ```
 
 .pull-right[.pull-right[.footnote[
-*Note: Use `one_hot = TRUE` in case you want to retain all C factor levels instead of just C - 1.*
+*Note: Use `one_hot = T` in case you want to retain all $C$ factor levels instead of just $C-1$.*
 ]]]
 
 ---
@@ -143,13 +145,13 @@ mod_recipe
 
 ```{r}
 mod_recipe <- mod_recipe %>% 
-  themis::step_smote(died, over_ratio = 0.6, neighbors = 5, seed = 2020, skip = TRUE)
+  themis::step_smote(died, over_ratio = 0.6, neighbors = 5, seed = 2020, skip = T)
 
 mod_recipe
 ```
 
 .pull-right[.pull-right[.footnote[
-*Note: Each* `step_*()` *function contains a `skip` argument which is mostly equal to `FALSE` by default. Yet, for certain preprocessing steps (e.g., under- or oversampling) we want to ensure that the step is not applied to test set later on to retain the original properties of the test data.*
+*Note: Each* `step_*()` *function contains a `skip` argument which is mostly equal to `FALSE` by default. Yet, for certain preprocessing steps (e.g., under- or oversampling) we want to ensure that the step is not applied to test set to retain the original properties of the unseen test data.*
 ]]]
 
 ---
@@ -158,9 +160,9 @@ layout: false
 
 ## Excursus: Imperative vs. Declarative Programming
 
-Up to this point, you have not performed any actual transformation of your data - you have only just sketched a blueprint of what `R` is theoretically supposed to do with your data. The difference between instantly executing a command and declaring it in case it is prospectively needed relates to two important programming paradigms [[1]](https://mastering-shiny.org/basic-reactivity.html#imperative-vs-declarative-programming):
+Up to this point, you have not performed any actual transformation of your data - you have only sketched a blueprint of what `R` is theoretically supposed to do with your data. The difference between instantly executing a command and declaring it in case it is prospectively needed relates to two important programming paradigms [[1]](https://mastering-shiny.org/basic-reactivity.html#imperative-vs-declarative-programming):
 - **Imperative programming:** A command is entered and immediately executed (what you are likely used to do in `R` so far).<br><br>
-- **Declarative programming:** A command is specified, along with some important constraints, however, the execution of the code occurs at later point in time, either specified by your or the program (what you have to get used to when working with machine learning workflows, e.g., `tidymodels`).
+- **Declarative programming:** A command is specified, along with some important constraints, however, the execution of the code occurs at later point in time, either specified by the user or the program (which you have to get used to when working with machine learning tools, e.g., `tidymodels`).
 
 ---
 
@@ -180,7 +182,7 @@ mod_recipe_prepped
 ```
 
 .pull-right[.pull-right[.footnote[
-*Note: By applying `prep()` to the gradually built recipe, we fit the recipe only on the training set (as specified in the `recipe()` function above. Thus, we prevent the issue of **data leakage**!*<br><br>
+*Note: By applying `prep()` to the final recipe, we fit the recipe only to the training set (as specified in the `recipe()` function above). Thus, we prevent the issue of *data leakage*!*
 ]]]
 
 ???
@@ -191,7 +193,7 @@ mod_recipe_prepped
 
 ## 4.2 `recipes`: Preprocessing Tools
 
-In a last step, we can finally apply the fitted `recipe` to our data and perform the feature engineering steps.
+In a last step, we can finally apply the fitted `recipe` to our data and perform the feature engineering steps:
 ```{r eval=F}
 bake(mod_recipe_prepped, new_data = NULL)
 ```
@@ -199,9 +201,8 @@ bake(mod_recipe_prepped, new_data = NULL)
 print(bake(mod_recipe_prepped, new_data = NULL), n = 5)
 ```
 
-
 .pull-right[.pull-right[.footnote[
-*Note: Set `new_data = NULL` for applying the `recipe` to the data set provided to `recipe()`, i.e. the training test. Set `new_data = test_set` instead, if it should be applied to the test set.*
+*Note: Set `new_data = NULL` to apply the `recipe` to the data set provided to `recipe()`, i.e. the training test. Set `new_data = test_set` instead, if it should be applied to the test set.*
 ]]]
 
 ???
@@ -230,7 +231,7 @@ knitr::include_graphics("https://raw.githubusercontent.com/allisonhorst/stats-il
 
 ## 4.2 `recipes`: Preprocessing Tools
 
-Altogether, the `recipes` packages offers a plethora of built-in preprocessing steps:
+Altogether, the `recipes` packages offers a variety of built-in preprocessing steps:
 ```{r, include=F}
 grep("^step_", ls("package:recipes"), value = TRUE)  
 ```
@@ -247,6 +248,7 @@ grep("^step_", ls("package:recipes"), value = TRUE)
 > [46] "step_novel"         "step_ns"            "step_num2factor"    "step_nzv"           "step_ordinalscore" 
 > [51] "step_other"         "step_pca"           "step_pls"           ...
 ```
+
 In addition, you may also include checks in your pipeline to test for a specific condition of your variables:
 ```{r, include=F}
 grep("check_", ls("package:recipes"), value = TRUE)  

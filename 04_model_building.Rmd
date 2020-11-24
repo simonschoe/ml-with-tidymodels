@@ -20,11 +20,11 @@ layout: true
 ## 4.3 `parsnip`: A Unified Modeling API
 
 .pull-left[
-So far, you have worked a heterogenous set of packages and functions to implement your models:
+So far, you have worked with a heterogeneous set of packages to implement your models:
 
 `stats::lm`, `stats::glm`, `MASS::lda`, `class::knn`, `glmnet::glmnet`, `rpart::rpart`, `gbm::gbm`, `randomForest::randomForest`, `e1071::svm`, ...
 
-Likely, you have repeatedly struggled with the varying naming conventions, interfaces and syntactical intricacies of each package.
+Likely, you have struggled with the varying naming conventions, interfaces and syntactical intricacies of each package.
 ]
 .pull-right[
 ```{r, echo=F, out.height='60%', out.width='60%', fig.align='center'}
@@ -36,11 +36,11 @@ knitr::include_graphics("https://tenor.com/view/ballin-juggling-talent-juggle-wo
 
 The same holds for implementations of one and the same model by different packages:
 ```{r, eval=F}
-randomForest::randomForest(y ~ ., data = df, mtry = 10, ntree = 2000, importance = TRUE)
+randomForest::randomForest(y ~ ., data = df, mtry = 10, ntree = 2000, importance = T)
 
 ranger::ranger(y ~ ., data = df, mtry = 10, num.trees = 2000, importance = "impurity")
 
-sparklyr:: ml_random_forest(
+sparklyr::ml_random_forest(
   df, response = "y", features = df %>% select(-y), col.sample.rate = 10, num.trees = 2000
 )
 ```
@@ -55,8 +55,8 @@ sparklyr:: ml_random_forest(
 
 .pull-left[
 `parsnip` provides a **unified interface** and syntax to modeling which facilitates your overall modeling workflow. The goals of `parsnip` are twofold:
-1. Decoupling model definition from model fitting and model evaluation
-2. Harmonize argument names (e.g., `ntree` and `num.trees` or `mtry` and `col.sample.rate`)
+1. Decoupling model definition from model fitting and model evaluation<br><br>
+2. Harmonizing function arguments (e.g., `ntree` and `num.trees` or `mtry` and `col.sample.rate`)
 ]
 .pull-right[
 ```{r, echo=F, out.height='65%', out.width='65%', fig.align='center'}
@@ -75,7 +75,7 @@ knitr::include_graphics("https://raw.githubusercontent.com/allisonhorst/stats-il
 In `parsnip` a model is always made up of three individual components:
 - **Type:** The model type that is about to be fitted (e.g., linear/logit regression, random forest or SVM).<br><br>
 - **Mode:** The mode of prediction, i.e. regression or classification.<br><br>
-- **Engine:** The computational engine implemented in `R` which usually corresponds to a certain package (e.g., `rpart`, `glm` or `randomForest`) or computing framework (e.g., `Stan` or `Spark`)
+- **Engine:** The computational engine implemented in `R` which usually corresponds to a certain package (e.g., `rpart`, `glm` or `randomForest`) or computing framework (e.g., `Stan` or `sparklyr`).
 
 Check all models and engines supported by `parsnip` on the [`tidymodels` website](https://www.tidymodels.org/find/parsnip/).
 
@@ -188,14 +188,14 @@ svm_rbf() %>%
 ```
 
 .footnote[
-*Note: Apply the `translate()` function to your model specification to investigate how `parsnip` translates the specification back into the underlying computational engine.*
+*Note: Apply `translate()` to investigate how `parsnip` translates the specification into the underlying computational engine.*
 ]
 
 ---
 
 ## 4.3 `parsnip`: A Unified Modeling API
 
-Finally, the time has come to fit our specified models to the training data. Since some packages require a formula (`~`) as input and others a vector, a matrix or a data frame, `parsnip` offers two alternatives for model fitting: a formula-based interface (`fit()`) and a non-formula-based interface (`fit_xy()`).
+Finally, the time has come to fit our specified models to the training data. Since some packages require a formula (`~`) as input and others a vector, a matrix or a data frame, `parsnip` offers two modes for model fitting: a formula-based interface (`fit()`) and a non-formula-based interface (`fit_xy()`).
 ```{r, eval=F}
 dt_cls_fit <- dt_cls %>% 
   fit(formula = died ~ ., data = train_set)
@@ -204,7 +204,7 @@ dt_cls_fit <- dt_cls %>%
 dt_cls_fit <- dt_cls %>% 
   fit_xy(x = train_set %>% select(-died), y = train_set$died)
 ```
-After having fitted the model, we can proceed to predicting the response in the test data:
+After fitting the model, we can eventually predict the response in the test data:
 ```{r, eval=F}
 dt_cls_fit %>% 
   predict(new_data = test_set, type = "prob")
@@ -228,3 +228,6 @@ Likewise, the tree model will always predict the negative class due to the sever
 ---
 
 # Question: When to specify something in model and when in engine?
+
+Baustelle
+

@@ -15,7 +15,7 @@ class: left, middle, inverse, title-slide
 ## Modeling Workflows<br>with Tidymodels
 ### Simon Schölzel
 ### <em>Research Team Berens</em>
-### 2020-08-20 (updated: 2020-11-18)
+### 2020-12-07 (updated: 2020-11-24)
 
 ---
 
@@ -47,13 +47,13 @@ name: agenda
 4.7 `broom`: Convert Statistical Objects into Tidy Tibbles  
 4.8 `yardstick`: Tidy Characterizations of Model Performance
 
-**5 Additions to the tidymodels Ecosystem**
+**5 Additions to the `tidymodels` Ecosystem**
 
 ---
 
 ## 1 Learning Objectives 💡
 
-This workshop introduces `tidymodels`, a unified framework towards modeling in `R` using tidy data principles. You will get to know tools that facilitate every step of your machine learning workflow, from resampling, over feature engineering and model building, to model tuning and performance evaluation.
+This workshop introduces `tidymodels`, a unified framework towards modeling and machine learning in `R` using tidy data principles. You will get to know tools that facilitate every step of your machine learning workflow, from resampling, over feature engineering and model building, to model tuning and performance evaluation.
 
 More specifically, after this workshop you will
 - be familiar with the core packages of the `tidymodels` ecosystem and hopefully realize the value of a unified modeling framework,&lt;br&gt;&lt;br&gt;
@@ -111,7 +111,7 @@ Official `tidymodels` [Hex Sticker](https://github.com/rstudio/hex-stickers)
 &gt; The tidymodels framework is a **collection of packages** for modeling and machine learning using tidyverse principles. ~ [tidymodels.org](https://www.tidymodels.org/)
 
 .pull-left[
-**`tidymodels` core packages along the typical machine learning workflow:**
+**`tidymodels` core packages along the generic machine learning pipeline:**
 - `rsample`: general methods for resampling
 - `recipes`: unified interface to data preprocessing
 - `parsnip`: unified interface to modeling
@@ -189,7 +189,7 @@ class: middle, center, inverse
 
 ## 3 Himalayan Climbing Expeditions Data
 
-From here on, to illustrate the features of the `tidymodels` ecosystem, we use the [*Himalayan Climbing Expeditions* data set](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-09-22/readme.md) from the [`tidytuesday` project](https://github.com/rfordatascience/tidytuesday).
+In order to illustrate the features of the `tidymodels` ecosystem, we use the [*Himalayan Climbing Expeditions* data set](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-09-22/readme.md) from the [`tidytuesday` project](https://github.com/rfordatascience/tidytuesday).
 
 
 ```r
@@ -373,9 +373,9 @@ climbers_df
 &gt; #   oxygen_used &lt;fct&gt;, success &lt;fct&gt;, died &lt;fct&gt;
 ```
 
-.pull-right[.pull-right[.footnote[
-*Note: After the removal of missing values in the `sex`, `citizenship`, `peak_name` and `expedition_role` predictor the data set shrinks from 76,519 to 76,471 observations.*
-]]]
+
+???
+Note: After the removal of missing values in the `sex`, `citizenship`, `peak_name` and `expedition_role` predictor the data set shrinks 76,519 to 76,471 observations
 
 ---
 
@@ -425,7 +425,7 @@ strata: conduct a stratified split -&gt; keep proportions (i.e. imbalance) in tr
 
 ## 4.1 `rsample`: Resampling Infrastructure
 
-To eventually extract the training and test data, we can use the `training()` and `testing()` functions. 
+To extract the training and test data, we can use the `training()` and `testing()` functions:
 
 ```r
 train_set &lt;- training(climbers_split)
@@ -451,7 +451,7 @@ train_set
 
 ## 4.1 `rsample`: Resampling Infrastructure
 
-Since we want to eventually implement classifiers that also contain hyperparameters we require a three-way split of our data:
+Since we want to implement classifiers that contain hyperparameters we require a three-way data split:
 - The *training set*, which is used for fitting the model
 - The *validation set*, which is used for finding the optimal hyperparameter
 - The *test set*, which is used for computing a robust estimate of the misclassification error
@@ -459,7 +459,7 @@ Since we want to eventually implement classifiers that also contain hyperparamet
 --
 
 .pull-left[
-Consequently, we need to further parition our initial `train_set` into a smaller training as well as a validation set using `initial_split()`.
+Consequently, we need to further partition our initial `train_set` into a smaller training as well as a validation set using `initial_split()`.
 
 &lt;img src="https://www.tidymodels.org/start/case-study/img/validation-split.svg" width="40%" height="40%" style="display: block; margin: auto;" /&gt;
 ]
@@ -467,7 +467,7 @@ Consequently, we need to further parition our initial `train_set` into a smaller
 --
 
 .pull-right[
- Or we refer to a resample approach, such as cross-validation (CV) or the bootstrap, to create resamples from our initial training set.
+ Or we refer to a resampling approach, such as cross-validation (CV) or the bootstrap, to create resamples from our initial training set.
  
 &lt;img src="https://www.tidymodels.org/start/resampling/img/resampling.svg" width="70%" height="70%" style="display: block; margin: auto;" /&gt;
 ]
@@ -481,7 +481,6 @@ Consequently, we need to further parition our initial `train_set` into a smaller
 ## 4.1 `rsample`: Resampling Infrastructure
 
 In this case study, we implement a **10-fold CV** approach using the `vfold_cv()` function. It returns a `tibble` containing the indexes of 10 separate splits.
-
 
 ```r
 set.seed(2020)
@@ -516,7 +515,7 @@ climbers_folds
 
 ## 4.1 `rsample`: Resampling Infrastructure
 
-To extract the training and validation data from each fold, we can use the `anaylsis()` and `assessment()` functions. 
+To extract the training and validation data from each fold, we use the `anaylsis()` and `assessment()` functions:
 
 ```r
 climbers_folds %&gt;%
@@ -530,11 +529,11 @@ climbers_folds %&gt;%
   assessment()
 ```
 Note that `rsample` discriminates between train and test as well as analysis and assessment sets:
-- use `training()` and `testing()` to extract data after partitioning
-- use `analysis()` and `assessment()` to extract data after resampling
+- use `training()` and `testing()` to extract data after data partitioning,
+- use `analysis()` and `assessment()` to extract data after resampling.
 
 .footnote[
-&lt;i&gt;Note: For data with a strong time-series component (i.e. temporally ordered data), `rsample` also provides appropriate resampling infrastructure. For example, you may use `initial_time_split()` to produce a non-random temporal train-test-split and `rolling_origin()` or the `slide_*()` methods to generate time-series resamples.&lt;/i&gt;
+&lt;i&gt;Note: For data with a strong time-series component (i.e. temporally ordered data), `rsample` provides an appropriate resampling infrastructure as well. For example, you may use `initial_time_split()` to produce a non-random temporal train-test-split and `rolling_origin()` or the `slide_*()` methods to generate time-series resamples.&lt;/i&gt;
 ]
 
 ---
@@ -557,7 +556,7 @@ layout: true
 
 ## 4.2 `recipes`: Preprocessing Tools
 
-&gt; In statistics, a **design matrix** (also known as **regressor matrix** or **model matrix**) is a matrix of values of explanatory variables of a set of objects, often denoted by X. Each row represents an individual object, with the successive columns corresponding to the variables and their specific values for that object. ~ [Wikipedia](https://en.wikipedia.org/wiki/Design_matrix)
+&gt; In statistics, a **design matrix** (also known as **regressor matrix** or **model matrix**) is a matrix of values of explanatory variables of a set of objects, often denoted by `\(X\)`. Each row represents an individual object, with the successive columns corresponding to the variables and their specific values for that object. ~ [Wikipedia](https://en.wikipedia.org/wiki/Design_matrix)
 
 --
 
@@ -565,10 +564,10 @@ In `R`, every model requires a design matrix as input. Intuitively, we can think
 
 --
 
-The concrete form of the matrix depends however on the model that we are about to apply which boils down to the issue of feature engineering. For example:
-- A linear model (`lm()`) requires categorical predictors to be one-hot encoded into C-1 binary predictors.
-- A decision tree (`rpart()`) does not require strictly numerical predictors.
-- A support vector machine (`svm()`) performs best with scaled predictors.
+The concrete form of the matrix depends however on the model that we are about to apply which boils down to the issue of *feature engineering*. For example:
+- A linear model (`lm`) requires categorical predictors to be one-hot encoded into `\(C-1\)` binary predictors.
+- A decision tree (`rpart`) does not require strictly numerical predictors.
+- A support vector machine (`svm`) performs best with scaled predictors.
 - And numerous models reject missing values in their model matrix.
 
 ???
@@ -580,9 +579,11 @@ Most R functions create the design matrix automatically from a given data frame 
 
 The `recipes` package provides functions for defining a **blueprint for feature engineering**. Each `recipe` is constructed by sequentially chaining different preprocessing steps.
 
+--
+
 First, create a `recipe` object from your data using the `recipe()` function and two arguments:
 - **`formula`:** A formula to declare variable roles, i.e. everything on the LHS of the `~` is declared as `outcome` and everything on the RHS as `predictor`.
-- **`data`:** The data to which the feature engineering steps are later applied. The data set is only used to catalogue the variables and their respective types (which is why you usually provide the training set).
+- **`data`:** The data to which the feature engineering steps are later applied. The data set is only used to catalogue the variables and their respective types (which is why you generally provide the training set).
 
 ```r
 mod_recipe &lt;- recipe(formula = died ~ ., data = train_set)
@@ -608,9 +609,9 @@ Second, we add new steps (`step_*()`) to the recipe in order to declare feature 
 - Use `update_role()` to assign a new custom role to a predictors. As `member_id` simply enumerates our observations, it is assigned the `"id"` role and hence not considered in any downstream modeling task.&lt;br&gt;&lt;br&gt;
 - Use `step_medianimpute()` to impute `NA` values by the median predictor value. Since roughly 3,500 missing values are inherent to `age`, we use median-imputation to retain those observations.&lt;br&gt;&lt;br&gt;
 - Use `step_normalize()` to scale numerical data to zero mean and unit standard deviation (which is required for scale-sensitive classifiers).&lt;br&gt;&lt;br&gt;
-- Use `step_other()` to lump together rarely occurring factor levels. `peak_name`, `citizenship` and `expedition_role` all have several 100 factor levels and hence a high risk being near-zero variance features. All factor levels with a relative frequency below 5% are pooled into `"other"`.&lt;br&gt;&lt;br&gt;
+- Use `step_other()` to lump together rarely occurring factor levels. `peak_name`, `citizenship` and `expedition_role` all have several 100 factor levels and hence a high risk of being near-zero variance features. All factor levels with a relative frequency below 5% are pooled into `"other"`.&lt;br&gt;&lt;br&gt;
 - Use `step_dummy()` to one-hot encode categorical predictors.&lt;br&gt;&lt;br&gt;
-- Finally, we use `step_smote()` from the `themis` package to tackle class imbalance. Synthetic samples are generated via 5-NN to establish a class distribution of 3:5.
+- Finally, we use `step_smote()` from the `themis` package to tackle class imbalance. Synthetic samples are generated via 5-NN to establish a class distribution ratio of 3:5.
 
 ---
 
@@ -728,7 +729,7 @@ mod_recipe
 ```
 
 .pull-right[.pull-right[.footnote[
-*Note: You should always take care of the order of your steps. For example, you should first lump together factor levels and then create dummies. Otherwise the `recipe` would generate a large amount of near-zero variance predictors.*
+*Note: You should always take care of the order of your steps. For example, you should first lump together factor levels and then create dummies. Otherwise the `recipe` would generate a large amount of near-zero variance dummies.*
 ]]]
 
 ???
@@ -765,7 +766,7 @@ mod_recipe
 ```
 
 .pull-right[.pull-right[.footnote[
-*Note: Use `one_hot = TRUE` in case you want to retain all C factor levels instead of just C - 1.*
+*Note: Use `one_hot = T` in case you want to retain all `\(C\)` factor levels instead of just `\(C-1\)`.*
 ]]]
 
 ---
@@ -775,7 +776,7 @@ mod_recipe
 
 ```r
 mod_recipe &lt;- mod_recipe %&gt;% 
-  themis::step_smote(died, over_ratio = 0.6, neighbors = 5, seed = 2020, skip = TRUE)
+  themis::step_smote(died, over_ratio = 0.6, neighbors = 5, seed = 2020, skip = T)
 
 mod_recipe
 ```
@@ -800,7 +801,7 @@ mod_recipe
 ```
 
 .pull-right[.pull-right[.footnote[
-*Note: Each* `step_*()` *function contains a `skip` argument which is mostly equal to `FALSE` by default. Yet, for certain preprocessing steps (e.g., under- or oversampling) we want to ensure that the step is not applied to test set later on to retain the original properties of the test data.*
+*Note: Each* `step_*()` *function contains a `skip` argument which is mostly equal to `FALSE` by default. Yet, for certain preprocessing steps (e.g., under- or oversampling) we want to ensure that the step is not applied to test set to retain the original properties of the unseen test data.*
 ]]]
 
 ---
@@ -809,9 +810,9 @@ layout: false
 
 ## Excursus: Imperative vs. Declarative Programming
 
-Up to this point, you have not performed any actual transformation of your data - you have only just sketched a blueprint of what `R` is theoretically supposed to do with your data. The difference between instantly executing a command and declaring it in case it is prospectively needed relates to two important programming paradigms [[1]](https://mastering-shiny.org/basic-reactivity.html#imperative-vs-declarative-programming):
+Up to this point, you have not performed any actual transformation of your data - you have only sketched a blueprint of what `R` is theoretically supposed to do with your data. The difference between instantly executing a command and declaring it in case it is prospectively needed relates to two important programming paradigms [[1]](https://mastering-shiny.org/basic-reactivity.html#imperative-vs-declarative-programming):
 - **Imperative programming:** A command is entered and immediately executed (what you are likely used to do in `R` so far).&lt;br&gt;&lt;br&gt;
-- **Declarative programming:** A command is specified, along with some important constraints, however, the execution of the code occurs at later point in time, either specified by your or the program (what you have to get used to when working with machine learning workflows, e.g., `tidymodels`).
+- **Declarative programming:** A command is specified, along with some important constraints, however, the execution of the code occurs at later point in time, either specified by the user or the program (which you have to get used to when working with machine learning tools, e.g., `tidymodels`).
 
 ---
 
@@ -853,7 +854,7 @@ mod_recipe_prepped
 ```
 
 .pull-right[.pull-right[.footnote[
-*Note: By applying `prep()` to the gradually built recipe, we fit the recipe only on the training set (as specified in the `recipe()` function above. Thus, we prevent the issue of **data leakage**!*&lt;br&gt;&lt;br&gt;
+*Note: By applying `prep()` to the final recipe, we fit the recipe only to the training set (as specified in the `recipe()` function above). Thus, we prevent the issue of *data leakage*!*
 ]]]
 
 ???
@@ -864,7 +865,7 @@ mod_recipe_prepped
 
 ## 4.2 `recipes`: Preprocessing Tools
 
-In a last step, we can finally apply the fitted `recipe` to our data and perform the feature engineering steps.
+In a last step, we can finally apply the fitted `recipe` to our data and perform the feature engineering steps:
 
 ```r
 bake(mod_recipe_prepped, new_data = NULL)
@@ -888,9 +889,8 @@ bake(mod_recipe_prepped, new_data = NULL)
 &gt; #   oxygen_used_TRUE. &lt;dbl&gt;, success_TRUE. &lt;dbl&gt;
 ```
 
-
 .pull-right[.pull-right[.footnote[
-*Note: Set `new_data = NULL` for applying the `recipe` to the data set provided to `recipe()`, i.e. the training test. Set `new_data = test_set` instead, if it should be applied to the test set.*
+*Note: Set `new_data = NULL` to apply the `recipe` to the data set provided to `recipe()`, i.e. the training test. Set `new_data = test_set` instead, if it should be applied to the test set.*
 ]]]
 
 ???
@@ -915,7 +915,7 @@ Note:
 
 ## 4.2 `recipes`: Preprocessing Tools
 
-Altogether, the `recipes` packages offers a plethora of built-in preprocessing steps:
+Altogether, the `recipes` packages offers a variety of built-in preprocessing steps:
 
 ```
 &gt;  [1] "step_arrange"       "step_bagimpute"     "step_bin2factor"    "step_BoxCox"        "step_bs"           
@@ -930,6 +930,7 @@ Altogether, the `recipes` packages offers a plethora of built-in preprocessing s
 &gt; [46] "step_novel"         "step_ns"            "step_num2factor"    "step_nzv"           "step_ordinalscore" 
 &gt; [51] "step_other"         "step_pca"           "step_pls"           ...
 ```
+
 In addition, you may also include checks in your pipeline to test for a specific condition of your variables:
 
 ```
@@ -967,11 +968,11 @@ layout: true
 ## 4.3 `parsnip`: A Unified Modeling API
 
 .pull-left[
-So far, you have worked a heterogenous set of packages and functions to implement your models:
+So far, you have worked with a heterogeneous set of packages to implement your models:
 
 `stats::lm`, `stats::glm`, `MASS::lda`, `class::knn`, `glmnet::glmnet`, `rpart::rpart`, `gbm::gbm`, `randomForest::randomForest`, `e1071::svm`, ...
 
-Likely, you have repeatedly struggled with the varying naming conventions, interfaces and syntactical intricacies of each package.
+Likely, you have struggled with the varying naming conventions, interfaces and syntactical intricacies of each package.
 ]
 .pull-right[
 &lt;img src="https://tenor.com/view/ballin-juggling-talent-juggle-wow-gif-16262578.gif" width="60%" height="60%" style="display: block; margin: auto;" /&gt;
@@ -982,11 +983,11 @@ Likely, you have repeatedly struggled with the varying naming conventions, inter
 The same holds for implementations of one and the same model by different packages:
 
 ```r
-randomForest::randomForest(y ~ ., data = df, mtry = 10, ntree = 2000, importance = TRUE)
+randomForest::randomForest(y ~ ., data = df, mtry = 10, ntree = 2000, importance = T)
 
 ranger::ranger(y ~ ., data = df, mtry = 10, num.trees = 2000, importance = "impurity")
 
-sparklyr:: ml_random_forest(
+sparklyr::ml_random_forest(
   df, response = "y", features = df %&gt;% select(-y), col.sample.rate = 10, num.trees = 2000
 )
 ```
@@ -1001,8 +1002,8 @@ sparklyr:: ml_random_forest(
 
 .pull-left[
 `parsnip` provides a **unified interface** and syntax to modeling which facilitates your overall modeling workflow. The goals of `parsnip` are twofold:
-1. Decoupling model definition from model fitting and model evaluation
-2. Harmonize argument names (e.g., `ntree` and `num.trees` or `mtry` and `col.sample.rate`)
+1. Decoupling model definition from model fitting and model evaluation&lt;br&gt;&lt;br&gt;
+2. Harmonizing function arguments (e.g., `ntree` and `num.trees` or `mtry` and `col.sample.rate`)
 ]
 .pull-right[
 &lt;img src="https://tenor.com/view/balls-rolling-racing-rolling-on-ball-yoga-balls-gif-15365855.gif" width="65%" height="65%" style="display: block; margin: auto;" /&gt;
@@ -1017,7 +1018,7 @@ sparklyr:: ml_random_forest(
 In `parsnip` a model is always made up of three individual components:
 - **Type:** The model type that is about to be fitted (e.g., linear/logit regression, random forest or SVM).&lt;br&gt;&lt;br&gt;
 - **Mode:** The mode of prediction, i.e. regression or classification.&lt;br&gt;&lt;br&gt;
-- **Engine:** The computational engine implemented in `R` which usually corresponds to a certain package (e.g., `rpart`, `glm` or `randomForest`) or computing framework (e.g., `Stan` or `Spark`)
+- **Engine:** The computational engine implemented in `R` which usually corresponds to a certain package (e.g., `rpart`, `glm` or `randomForest`) or computing framework (e.g., `Stan` or `sparklyr`).
 
 Check all models and engines supported by `parsnip` on the [`tidymodels` website](https://www.tidymodels.org/find/parsnip/).
 
@@ -1210,14 +1211,14 @@ svm_rbf() %&gt;%
 ```
 
 .footnote[
-*Note: Apply the `translate()` function to your model specification to investigate how `parsnip` translates the specification back into the underlying computational engine.*
+*Note: Apply `translate()` to investigate how `parsnip` translates the specification into the underlying computational engine.*
 ]
 
 ---
 
 ## 4.3 `parsnip`: A Unified Modeling API
 
-Finally, the time has come to fit our specified models to the training data. Since some packages require a formula (`~`) as input and others a vector, a matrix or a data frame, `parsnip` offers two alternatives for model fitting: a formula-based interface (`fit()`) and a non-formula-based interface (`fit_xy()`).
+Finally, the time has come to fit our specified models to the training data. Since some packages require a formula (`~`) as input and others a vector, a matrix or a data frame, `parsnip` offers two modes for model fitting: a formula-based interface (`fit()`) and a non-formula-based interface (`fit_xy()`).
 
 ```r
 dt_cls_fit &lt;- dt_cls %&gt;% 
@@ -1228,7 +1229,7 @@ dt_cls_fit &lt;- dt_cls %&gt;%
 dt_cls_fit &lt;- dt_cls %&gt;% 
   fit_xy(x = train_set %&gt;% select(-died), y = train_set$died)
 ```
-After having fitted the model, we can proceed to predicting the response in the test data:
+After fitting the model, we can eventually predict the response in the test data:
 
 ```r
 dt_cls_fit %&gt;% 
@@ -1253,6 +1254,9 @@ Likewise, the tree model will always predict the negative class due to the sever
 ---
 
 # Question: When to specify something in model and when in engine?
+
+Baustelle
+
 
 ---
 
@@ -1413,7 +1417,7 @@ Most machine learning models require the user to pre-define so-called **hyperpar
 - **Boosting:** `trees`, `mtry`, `min_n`, `tree_depth`, `learn_rate`
 
 .footnote[
-*Note: This is list is not exhaustive! Depending on the implementation, i.e. engine, an even broader set of hyperparameters can be specified. You may use `args()` to inspect all hyperparameters (i.e. function arguments) available in a `parsnip` object.*
+*Note: This list is not exhaustive! Depending on the implementation, i.e. engine, an even broader set of hyperparameters can be specified. You may use `args()` to inspect all hyperparameters (i.e. function arguments) available in a `parsnip` object.*
 ]
 
 ???
@@ -1428,6 +1432,8 @@ Most machine learning models require the user to pre-define so-called **hyperpar
 ## 4.5 `dials`: Creating Hyperparameter Values
 
 `dials` streamlines the handling of hyperparameters. It provides functions for specifying hyperparameter sequences as well as grids, `parameters` objects that can be processed by the `parsnip` package, and ensures consistent parameter names.
+
+--
 
 In the context of a **regularized regression**, `penalty` and `mixture` are the two central hyperparameters. `dials` comes with a pre-defined `parameters` object for both:
 .pull-left[
@@ -1469,15 +1475,15 @@ layout: false
 **Hyperparameter scaling:** In practice, you will often find that hyperparameters are defined on the log instead of the original, linear scale. There are two prominent rationals for preferring a log over a linear scale:
 
 1. You have usually no clue regarding the potential optimum. Hence, you are inclined to evaluate a large, heterogeneous search space with extremely small but also very large candidate values. On a linear scale, you would simply ignore a large proportion of the search space.&lt;br&gt;&lt;br&gt;
-  - **Linear scale:** [0.000001; 10,000]-interval
+  - **Linear scale:** `\([0.000001; 10,000]\)`-interval
   ```
   &gt; [1] 0.000001  1000  2000  3000  4000  5000  6000  7000  8000  9000 10000
   ```
-  - **Log scale:** [0.000001; 10,000]-interval
+  - **Log scale:** `\([0.000001; 10,000]\)`-interval
   ```
   &gt; [1] 1e-06 1e-05 1e-04 1e-03 1e-02 1e-01 1e+00 1e+01 1e+02 1e+03
   ```
-2. For some models and hyperparameter sets, the model's accuracy is relatively insensitive to certain regions of the search space. Those cases demand a large variation in order to observe any impact on the underlying performance metrics.
+2. For some models and hyperparameter sets, the model's accuracy is relatively insensitive to certain regions of the search space. Those models demand a large variation in order to observe any impact on the underlying performance metrics.
 
 If you have identified a promising parameter subspace, you may eventually narrow it down by further restricting the search space of your hyperparameter grid.
 
@@ -1507,6 +1513,8 @@ penalty() %&gt;% # default
 &gt; $upper
 &gt; [1] 1
 ```
+]
+.pull-right[
 
 ```r
 penalty(range = c(-10, 10)) %&gt;% # custom
@@ -1520,8 +1528,6 @@ penalty(range = c(-10, 10)) %&gt;% # custom
 &gt; $upper
 &gt; [1] 1e+10
 ```
-]
-.pull-right[
 
 ```r
 penalty() %&gt;% 
@@ -1561,7 +1567,7 @@ penalty() %&gt;%
 
 ```r
 penalty() %&gt;% 
-  value_set(seq(-10, 0, by = 2)) # set the concrete of parameter values
+  value_set(seq(-10, 0, by = 2)) # set the concrete parameter values
 ```
 
 ```
@@ -1608,6 +1614,9 @@ finalize(mtry(), x = train_set %&gt;% select(-died))
 ## 4.5 `dials`: Creating Hyperparameter Values
 
 Finally, `dials` renders the systematic querying and evaluation of multiple hyperparameters possible. The simultaneous optimization of multiple hyperparameters is referred to as **(random) grid search**.
+
+--
+
 .pull-left[
 
 ```r
@@ -1666,6 +1675,7 @@ grid_regular(
 
 ???
 - there are other, more advanced search procedures, e.g., Tree Parzen or Bayesian Optimization
+- generally, grid search is a brute-force like method which is not really efficient (usually it makes more sense to refer to Bayesian techniques while specifying reasonable priors)
 
 ---
 
@@ -1685,7 +1695,7 @@ layout: true
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-The `tune` package eventually unites the previous steps in the context of hyperparameter tuning with the **`tune_grid()`** function being the primary modeling workhorse:
+The `tune` package unites the previous steps in the context of hyperparameter tuning with the **`tune_grid()`** function being the primary modeling workhorse:
 
 ```r
 tune_grid(
@@ -1712,11 +1722,11 @@ tune_grid(
 ```
 **Keyword arguments:**
 - `grid`: the number of candidate hyperparameter combinations to be tried (defaults to `10` draws from a [Latin hypercube](https://en.wikipedia.org/wiki/Latin_hypercube_sampling)) respectively a pre-defined parameter grid
-- `metrics`: a set of performance metrics (defaults to *RMSE* and *R^2* for regression and *ROC-AUC* and *accuracy* for classification tasks) computed for each resample (customize via `yardstick::metric_set()`) 
+- `metrics`: a set of performance metrics (defaults to *RMSE* and *R&lt;sup&gt;2&lt;/sup&gt;* for regression and *ROC-AUC* and *accuracy* for classification tasks) computed for each resample (customize via `yardstick::metric_set()`) 
 - `control`: additional options to control the tuning process (e.g., `save_pred = T` to retain the predictions for each fold or `verbose = T` print the tuning progress)
 
 .footnote[
-*Note: Retaining the predictions for each fold can pose a heavy memory burden which may become unwieldy if your data set and/or the number of resamples is large.*
+*Note: Retaining the predictions for each fold can impose a heavy burden on your machine's memory which may become unwieldy if your data set and/or the number of resamples is large.*
 ]
 
 ???
@@ -1812,7 +1822,7 @@ ___
 .center[
 ⏳ 💤 🤯
 
-Eventually, the process of hyperparameter tuning can take several minutes, hours or even days - depending on your resample size, the richness of your candidate grid and your hardware.
+Eventually, the process of hyperparameter tuning can take several minutes, hours or even days - depending on your resample size, the richness of your candidate grid, the model's complexity and your hardware.
 ]
 
 ---
@@ -1881,7 +1891,7 @@ Sys.time() - start
 ```
 
 .footnote[
-*Note: By default, `tidymodels` copies only its core packages to all concurrently running sessions. If you leverage any additional packages (e.g., `themis`) as part of you modeling pipeline, it must be provided in the tuning controls.*
+*Note: By default, `tidymodels` copies only its core packages to all concurrently running `R` sessions. If you leverage additional packages (e.g., `themis`) as part of your modeling pipeline, it must be provided in the tuning controls.*
 ]
 
 ---
@@ -1913,7 +1923,7 @@ cls_wf_tuned
 &gt;  9 &lt;split [55.1K/6.1~ Fold09 &lt;tibble [400 x ~ &lt;tibble [0 x ~ &lt;tibble [611,700 x ~
 &gt; 10 &lt;split [55.1K/6.1~ Fold10 &lt;tibble [400 x ~ &lt;tibble [0 x ~ &lt;tibble [611,700 x ~
 ```
-Now, there are several neat things we can do with our fitted `climbers_folds` `tibble`. Let's look at some selective functions provided by the `tune` package.
+Now, there are several neat things we can do with our fitted `climbers_folds` data frame. Let's look at some selective functions provided by the `tune` package.
 
 ???
 - note that the resulting tibble does neither include the data (only the indices) nor the fitted models, but only the performance metrics and predictions (usually we are not interested in the models themselves during resampling, but only in the optimal hyperparameter set)
@@ -1976,7 +1986,7 @@ cls_wf_tuned %&gt;%
 ```
 
 .foonote[
-*Note: Extract the predictions for each fold and candidate hyperparameter set (only applicable if `control = control_grid(save_pred = TRUE)`) using `collect_predictions()`.*
+*Note: Extract the predictions for each fold and candidate hyperparameter set (only applicable if `control = control_grid(save_pred = TRUE)`) via `collect_predictions()`.*
 ]
 
 ???
@@ -2011,11 +2021,14 @@ cls_wf_tuned %&gt;%
 &gt; # ... with 390 more rows
 ```
 
+???
+now also with uncertainty estimates, i.e. std_err
+
 ---
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-Extract the `n` best performing models specifications based on *ROC-AUC*:
+Extract the `n` best performing models specifications based on the *ROC-AUC*:
 
 ```r
 cls_wf_tuned %&gt;% 
@@ -2030,7 +2043,7 @@ cls_wf_tuned %&gt;%
 &gt; 2 0.000464   1     roc_auc binary     0.714    10 0.00862 Model097
 &gt; 3 0.000464   0.889 roc_auc binary     0.714    10 0.00863 Model087
 ```
-Extract the overall best performing model specifications based on *ROC-AUC*:
+Extract the overall best performing model specifications based on the *ROC-AUC*:
 
 ```r
 cls_wf_tuned %&gt;% 
@@ -2069,9 +2082,9 @@ cls_wf %&gt;%
   )
 ```
 
-.footnote[
-*Note: This approach is only reasonable if your are not supposed to tune any hyperparameters!* 
-]
+???
+Note: This approach is only reasonable if your are not supposed to tune any hyperparameters!
+
 
 ---
 
@@ -2173,13 +2186,13 @@ Eventually, however, we would like multiple models to compete on a given task an
 
 --
 
-**Kuhn/Johnson (2013) framework for model selection [[2, p. 79]](#references):** 
+**Kuhn/Johnson (2013) framework for model selection [[1, p. 79]](#references):** 
 1. Start with very flexible *black-box* models (e.g., boosted trees or SVM) to produce an optimal benchmark (*performance ceiling*).
 2. Evaluate slightly less opaque models which provide a baseline degree of interpretability (e.g., PLS, PCA or regularized regression).
 3. Try out a parsimonious *white-box* model (e.g., linear regression or CART) and investigate if it can reasonably approximate the performance ceiling.
 
 .footnote[
-_Note: For a comprehensive overview of the topic of *interpretable ML* check out [this book](https://christophm.github.io/interpretable-ml-book/) by Christoph Mulner. [[3](#references)]_
+_Note: For a comprehensive overview of the topic of *interpretable ML* check out [this book](https://christophm.github.io/interpretable-ml-book/) by Christoph Mulner. [[2](#references)]_
 ]
 
 ???
@@ -2205,9 +2218,9 @@ layout: true
 
 ## 4.7 `broom`: Tidy Model Outputs
 
-`broom` provides three useful functions to convert model objects (e.g., `lm`, `glm`, `rpart`) into tidy `tibbles`:
+`broom` provides three useful functions for converting model objects (e.g., `lm`, `glm`, `rpart`) into tidy `tibbles`:
 - `tidy()`: produces a tidy output of model components (e.g., coefficients, weights, clusters)
-- `glance()`: produces a tidy output of model summaries (e.g., goodness-of-fit, F-statistics)
+- `glance()`: produces a tidy output of model summaries (e.g., goodness-of-fit, `\(F\)`-statistics)
 - `augment()`: adds additional information about observations (e.g., fitted values, residuals)
 
 &lt;img src="https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/rstats-artwork/broom_package.png" width="60%" style="display: block; margin: auto;" /&gt;
@@ -2300,7 +2313,7 @@ Unfortunately, `augment()` is not supported for `glmnet` models (check [availabl
 ]
 
 .footnote[
-*Note: Depending on the class of the model object your are providing to `tidy()`, it offers several advanced outputs, such as returning odds-ratios for logit-models (`exponentiate = T`) or confidence interval (`conf.int = T`).*
+*Note: Depending on the class of the model object your are providing to `tidy()`, it offers several advanced features, such as returning odds-ratios for logit-models (`exponentiate = T`) or confidence interval (`conf.int = T`).*
 ]
 
 ???
@@ -2330,11 +2343,11 @@ layout: true
 Similar to `broom`, `yardstick`'s endeavor is to enable model evaluation using *tidy data principles*. It ships with three types of metrics which can be distinguished by their input arguments and use case:
 
 **Classification:**
-- **Class metrics** are based on the predicted class (*hard predictions*) take two `fct` columns (`truth` and `estimate`).
-- **Class probability metrics** are based on the predicted probabilities (*soft predictions*) take one `fct` column (`truth`) and one/multiple `dbl` columns containing the class probabilities (`estimate`).
+- **Class metrics** are based on the predicted class (*hard predictions*) and take two `fct` columns (`truth` and `estimate`).
+- **Class probability metrics** are based on the predicted probabilities (*soft predictions*) and take one `fct` column (`truth`) and one/multiple `dbl` columns containing the class probabilities (`estimate`).
 
 **Regression:**
-- **Numeric metrics** are based on a numerical prediction take two `dbl` columns (`truth` and `estimate`).
+- **Numeric metrics** are based on a numerical prediction and take two `dbl` columns (`truth` and `estimate`).
 
 .footnote[
 *Note: Find all available metrics grouped by their type on [tidymodels.org](https://yardstick.tidymodels.org/articles/metric-types.html#metrics).*
@@ -2615,9 +2628,10 @@ ls("package:usemodels", pattern = "use_")
 
 ## 5 Additions to the `tidymodels` Ecosystem
 
-&lt;img src="./img/tidymodels-priorities.PNG" width="65%" height="65%" style="display: block; margin: auto;" /&gt;
+&lt;img src="./img/tidymodels-priorities.PNG" width="60%" height="60%" style="display: block; margin: auto;" /&gt;
 
-.footnote[*Source: [RStudio blog](https://connect.rstudioservices.com/tidymodels-priorities-survey/README.html)*]
+.footnote[*Source: [RStudio blog](https://connect.rstudioservices.com/tidymodels-priorities-survey/README.html)*
+]
 
 ---
 
@@ -2636,10 +2650,11 @@ ls("package:usemodels", pattern = "use_")
 
 ## Thank You!
 
-&lt;img src="./img/ai-meme.jpg" style="display: block; margin: auto;" /&gt;
+&lt;img src="./img/ai-meme.jpg" width="55%" height="55%" style="display: block; margin: auto;" /&gt;
 
+.footnote[
 *Source: [deeplearning.ai](https://www.linkedin.com/posts/deeplearningai_aifun-activity-6602264745171136512-QIwE)*
-
+]
 
 ---
 
@@ -2647,30 +2662,19 @@ name: references
 
 ## References
 
-[1]: 
+[1]: Kuhn, M./Johnson, K. (2013): Applied Predictive Modeling. Chapter 3 (Data Pre-processing). Springer: New York 2013.
 
-[2]: Kuhn, M./Johnson, K. (2013): Applied Predictive Modeling. Chapter 3 (Data Pre-processing). Springer: New York 2013.
+[2]: Mulner, C. (2020): Interpretable Machine Learning: A Guide for Making Black Box Models Explainable. URL: https://christophm.github.io/interpretable-ml-book/.
 
-[3]: https://christophm.github.io/interpretable-ml-book/
-
----
+&lt;br&gt;&lt;br&gt;
 
 ## Further Resources
 
-https://www.youtube.com/watch?v=9f6t5vaNyEM&amp;t=2188s
+**tidymodels.org:** Learn Section. ULR: https://www.tidymodels.org/learn/.
 
-https://www.tidymodels.org/learn/
+**Kuhn, M./Silge, J. (2020):** Tidy Modeling in R. URL: https://www.tmwr.org (work-in-progress).
 
-https://www.tmwr.org/index.html
-
-tidytuesday julia silge
-
-https://www.tmwr.org/ 
-
-???
-convert online presentation to pdf:
-
-docker run --rm -t -v %cd%/desktop/l09_desktop/workshops/02_tidyverse/slides:/slides astefanutti/decktape https://simonschoe.github.io/Introduction-to-the-Tidyverse/#1 index.pdf
+**Silge, J.:** TidyTuesday Contributions. URL: https://juliasilge.com/blog/.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

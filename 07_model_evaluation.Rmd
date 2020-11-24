@@ -19,9 +19,9 @@ layout: true
 
 ## 4.7 `broom`: Tidy Model Outputs
 
-`broom` provides three useful functions to convert model objects (e.g., `lm`, `glm`, `rpart`) into tidy `tibbles`:
+`broom` provides three useful functions for converting model objects (e.g., `lm`, `glm`, `rpart`) into tidy `tibbles`:
 - `tidy()`: produces a tidy output of model components (e.g., coefficients, weights, clusters)
-- `glance()`: produces a tidy output of model summaries (e.g., goodness-of-fit, F-statistics)
+- `glance()`: produces a tidy output of model summaries (e.g., goodness-of-fit, $F$-statistics)
 - `augment()`: adds additional information about observations (e.g., fitted values, residuals)
 
 ```{r, echo=F, out.width='60%', fig.align='center'}
@@ -94,7 +94,7 @@ Unfortunately, `augment()` is not supported for `glmnet` models (check [availabl
 ]
 
 .footnote[
-*Note: Depending on the class of the model object your are providing to `tidy()`, it offers several advanced outputs, such as returning odds-ratios for logit-models (`exponentiate = T`) or confidence interval (`conf.int = T`).*
+*Note: Depending on the class of the model object your are providing to `tidy()`, it offers several advanced features, such as returning odds-ratios for logit-models (`exponentiate = T`) or confidence interval (`conf.int = T`).*
 ]
 
 ???
@@ -124,11 +124,11 @@ layout: true
 Similar to `broom`, `yardstick`'s endeavor is to enable model evaluation using *tidy data principles*. It ships with three types of metrics which can be distinguished by their input arguments and use case:
 
 **Classification:**
-- **Class metrics** are based on the predicted class (*hard predictions*) take two `fct` columns (`truth` and `estimate`).
-- **Class probability metrics** are based on the predicted probabilities (*soft predictions*) take one `fct` column (`truth`) and one/multiple `dbl` columns containing the class probabilities (`estimate`).
+- **Class metrics** are based on the predicted class (*hard predictions*) and take two `fct` columns (`truth` and `estimate`).
+- **Class probability metrics** are based on the predicted probabilities (*soft predictions*) and take one `fct` column (`truth`) and one/multiple `dbl` columns containing the class probabilities (`estimate`).
 
 **Regression:**
-- **Numeric metrics** are based on a numerical prediction take two `dbl` columns (`truth` and `estimate`).
+- **Numeric metrics** are based on a numerical prediction and take two `dbl` columns (`truth` and `estimate`).
 
 .footnote[
 *Note: Find all available metrics grouped by their type on [tidymodels.org](https://yardstick.tidymodels.org/articles/metric-types.html#metrics).*

@@ -55,7 +55,7 @@ knitr::include_graphics("https://avatars3.githubusercontent.com/u/5731043?s=460&
 > The tidymodels framework is a **collection of packages** for modeling and machine learning using tidyverse principles. ~ [tidymodels.org](https://www.tidymodels.org/)
 
 .pull-left[
-**`tidymodels` core packages along the typical machine learning workflow:**
+**`tidymodels` core packages along the generic machine learning pipeline:**
 - `rsample`: general methods for resampling
 - `recipes`: unified interface to data preprocessing
 - `parsnip`: unified interface to modeling
@@ -136,7 +136,7 @@ class: middle, center, inverse
 
 ## 3 Himalayan Climbing Expeditions Data
 
-From here on, to illustrate the features of the `tidymodels` ecosystem, we use the [*Himalayan Climbing Expeditions* data set](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-09-22/readme.md) from the [`tidytuesday` project](https://github.com/rfordatascience/tidytuesday).
+In order to illustrate the features of the `tidymodels` ecosystem, we use the [*Himalayan Climbing Expeditions* data set](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-09-22/readme.md) from the [`tidytuesday` project](https://github.com/rfordatascience/tidytuesday).
 
 ```{r, cache=T}
 # install.packages("tidytuesdayR")
@@ -276,6 +276,6 @@ climbers_df <- tt_data$members %>%
 climbers_df
 ```
 
-.pull-right[.pull-right[.footnote[
-*Note: After the removal of missing values in the `sex`, `citizenship`, `peak_name` and `expedition_role` predictor the data set shrinks from `r dim(tt_data$members)[1] %>% scales::comma(big.mark = ",")` to `r dim(climbers_df)[1] %>% scales::comma(big.mark = ",")` observations.*
-]]]
+
+???
+Note: After the removal of missing values in the `sex`, `citizenship`, `peak_name` and `expedition_role` predictor the data set shrinks 76,519 to 76,471 observations

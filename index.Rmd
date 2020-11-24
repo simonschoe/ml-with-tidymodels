@@ -214,11 +214,12 @@ ls("package:usemodels", pattern = "use_")
 
 ## 5 Additions to the `tidymodels` Ecosystem
 
-```{r, echo=F, out.height='65%', out.width='65%', fig.align='center'}
+```{r, echo=F, out.height='60%', out.width='60%', fig.align='center'}
 knitr::include_graphics("./img/tidymodels-priorities.PNG")
 ```
 
-.footnote[*Source: [RStudio blog](https://connect.rstudioservices.com/tidymodels-priorities-survey/README.html)*]
+.footnote[*Source: [RStudio blog](https://connect.rstudioservices.com/tidymodels-priorities-survey/README.html)*
+]
 
 ---
 
@@ -241,12 +242,13 @@ knitr::include_graphics("https://tenor.com/view/homer-gif-10571731.gif")
 
 ## Thank You!
 
-```{r, echo=F, fig.align='center'}
+```{r, echo=F, out.width='55%', out.height='55%', fig.align='center'}
 knitr::include_graphics("./img/ai-meme.jpg")
 ```
 
+.footnote[
 *Source: [deeplearning.ai](https://www.linkedin.com/posts/deeplearningai_aifun-activity-6602264745171136512-QIwE)*
-
+]
 
 ---
 
@@ -254,27 +256,16 @@ name: references
 
 ## References
 
-[1]: 
+[1]: Kuhn, M./Johnson, K. (2013): Applied Predictive Modeling. Chapter 3 (Data Pre-processing). Springer: New York 2013.
 
-[2]: Kuhn, M./Johnson, K. (2013): Applied Predictive Modeling. Chapter 3 (Data Pre-processing). Springer: New York 2013.
+[2]: Mulner, C. (2020): Interpretable Machine Learning: A Guide for Making Black Box Models Explainable. URL: https://christophm.github.io/interpretable-ml-book/.
 
-[3]: https://christophm.github.io/interpretable-ml-book/
-
----
+<br><br>
 
 ## Further Resources
 
-https://www.youtube.com/watch?v=9f6t5vaNyEM&t=2188s
+**tidymodels.org:** Learn Section. ULR: https://www.tidymodels.org/learn/.
 
-https://www.tidymodels.org/learn/
+**Kuhn, M./Silge, J. (2020):** Tidy Modeling in R. URL: https://www.tmwr.org (work-in-progress).
 
-https://www.tmwr.org/index.html
-
-tidytuesday julia silge
-
-https://www.tmwr.org/ 
-
-???
-convert online presentation to pdf:
-
-docker run --rm -t -v %cd%/desktop/l09_desktop/workshops/02_tidyverse/slides:/slides astefanutti/decktape https://simonschoe.github.io/Introduction-to-the-Tidyverse/#1 index.pdf
+**Silge, J.:** TidyTuesday Contributions. URL: https://juliasilge.com/blog/.

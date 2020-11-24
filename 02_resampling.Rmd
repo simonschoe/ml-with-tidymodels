@@ -41,7 +41,7 @@ strata: conduct a stratified split -> keep proportions (i.e. imbalance) in train
 
 ## 4.1 `rsample`: Resampling Infrastructure
 
-To eventually extract the training and test data, we can use the `training()` and `testing()` functions. 
+To extract the training and test data, we can use the `training()` and `testing()` functions:
 ```{r, results='hide'}
 train_set <- training(climbers_split)
 test_set <- testing(climbers_split)
@@ -56,7 +56,7 @@ print(train_set, n = 5)
 
 ## 4.1 `rsample`: Resampling Infrastructure
 
-Since we want to eventually implement classifiers that also contain hyperparameters we require a three-way split of our data:
+Since we want to implement classifiers that contain hyperparameters we require a three-way data split:
 - The *training set*, which is used for fitting the model
 - The *validation set*, which is used for finding the optimal hyperparameter
 - The *test set*, which is used for computing a robust estimate of the misclassification error
@@ -64,7 +64,7 @@ Since we want to eventually implement classifiers that also contain hyperparamet
 --
 
 .pull-left[
-Consequently, we need to further parition our initial `train_set` into a smaller training as well as a validation set using `initial_split()`.
+Consequently, we need to further partition our initial `train_set` into a smaller training as well as a validation set using `initial_split()`.
 
 ```{r, echo=F, out.width='40%', out.height='40%', fig.align='center'}
 knitr::include_graphics("https://www.tidymodels.org/start/case-study/img/validation-split.svg")
@@ -74,7 +74,7 @@ knitr::include_graphics("https://www.tidymodels.org/start/case-study/img/validat
 --
 
 .pull-right[
- Or we refer to a resample approach, such as cross-validation (CV) or the bootstrap, to create resamples from our initial training set.
+ Or we refer to a resampling approach, such as cross-validation (CV) or the bootstrap, to create resamples from our initial training set.
  
 ```{r, echo=F, out.width='70%', out.height='70%', fig.align='center'}
 knitr::include_graphics("https://www.tidymodels.org/start/resampling/img/resampling.svg")
@@ -90,7 +90,6 @@ knitr::include_graphics("https://www.tidymodels.org/start/resampling/img/resampl
 ## 4.1 `rsample`: Resampling Infrastructure
 
 In this case study, we implement a **10-fold CV** approach using the `vfold_cv()` function. It returns a `tibble` containing the indexes of 10 separate splits.
-
 ```{r}
 set.seed(2020)
 climbers_folds <- train_set %>% 
@@ -107,7 +106,7 @@ climbers_folds
 
 ## 4.1 `rsample`: Resampling Infrastructure
 
-To extract the training and validation data from each fold, we can use the `anaylsis()` and `assessment()` functions. 
+To extract the training and validation data from each fold, we use the `anaylsis()` and `assessment()` functions:
 ```{r, eval=F}
 climbers_folds %>%
   pluck("splits", 1) %>%
@@ -119,9 +118,9 @@ climbers_folds %>%
   assessment()
 ```
 Note that `rsample` discriminates between train and test as well as analysis and assessment sets:
-- use `training()` and `testing()` to extract data after partitioning
-- use `analysis()` and `assessment()` to extract data after resampling
+- use `training()` and `testing()` to extract data after data partitioning,
+- use `analysis()` and `assessment()` to extract data after resampling.
 
 .footnote[
-<i>Note: For data with a strong time-series component (i.e. temporally ordered data), `rsample` also provides appropriate resampling infrastructure. For example, you may use `initial_time_split()` to produce a non-random temporal train-test-split and `rolling_origin()` or the `slide_*()` methods to generate time-series resamples.</i>
+<i>Note: For data with a strong time-series component (i.e. temporally ordered data), `rsample` provides an appropriate resampling infrastructure as well. For example, you may use `initial_time_split()` to produce a non-random temporal train-test-split and `rolling_origin()` or the `slide_*()` methods to generate time-series resamples.</i>
 ]
