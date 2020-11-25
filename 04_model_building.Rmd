@@ -140,8 +140,13 @@ dt_cls
 rand_forest() %>% 
   set_args(trees = 1000) %>% 
   set_engine("randomForest") %>% 
-  set_mode("classification")
+  set_mode("classification") %>% 
+  translate()
 ```
+
+.footnote[
+*Note: Apply `translate()` to investigate how `parsnip` translates the specification into the underlying computational engine.*
+]
 
 ---
 
@@ -150,13 +155,13 @@ rand_forest() %>%
 **Random forest classifier:**
 ```{r}
 rand_forest() %>%
-  set_args(trees = 1000, mtry = varying()) %>% 
+  set_args(trees = 1000, mtry = .cols()) %>% 
   set_engine("randomForest") %>% 
   set_mode("classification")
 ```
 
 .footnote[
-*Note: Use `varying()` or `tune()` as model arguments when the parameter is supposed to be specified later on in the workflow (e.g., during hyperparameter tuning).*
+*Note: Use data set characteristics as placeholder arguments which reflect the number of predictors in your data set. `.preds()` and `.cols()` capture the number of predictors in your data prior respectively subsequent to feature engineering (e.g., one-hot encoding).*
 ]
 
 ---
@@ -183,33 +188,52 @@ nearest_neighbor() %>%
 svm_rbf() %>% 
   set_args(cost = tune(), rbf_sigma = tune()) %>% 
   set_engine("kernlab") %>% 
-  set_mode("classification") %>% 
-  translate()
+  set_mode("classification")
 ```
 
 .footnote[
-*Note: Apply `translate()` to investigate how `parsnip` translates the specification into the underlying computational engine.*
+*Note: Use the `tune()` placeholder as a model argument when the parameter is supposed to be specified later on in the workflow (e.g., during hyperparameter tuning).*
 ]
 
 ---
 
 ## 4.3 `parsnip`: A Unified Modeling API
 
-Finally, the time has come to fit our specified models to the training data. Since some packages require a formula (`~`) as input and others a vector, a matrix or a data frame, `parsnip` offers two modes for model fitting: a formula-based interface (`fit()`) and a non-formula-based interface (`fit_xy()`).
+Finally, it is time to fit our specified model to the training data. Since some packages require a formula (`~`) as input and others a vector, matrix or data frame, `parsnip` offers two modes for fitting:
+
+a formula-based interface (`fit()`),
 ```{r, eval=F}
 dt_cls_fit <- dt_cls %>% 
-  fit(formula = died ~ ., data = train_set)
+  fit(
+    formula = died ~ .,
+    data = train_set
+  )
 ```
+ and a non-formula-based interface (`fit_xy()`).
 ```{r, eval=F}
 dt_cls_fit <- dt_cls %>% 
-  fit_xy(x = train_set %>% select(-died), y = train_set$died)
+  fit_xy(
+    x = train_set %>% select(-died),
+    y = train_set$died
+  )
 ```
+
+---
+
+## 4.3 `parsnip`: A Unified Modeling API
+
 After fitting the model, we can eventually predict the response in the test data:
 ```{r, eval=F}
 dt_cls_fit %>% 
   predict(new_data = test_set, type = "prob")
 ```
+More conveniently, we can directly combine the predictions with the `test_set`:
+```{r, eval=F}
+test_set %>% 
+  bind_cols(predict(dt_cls_fit, new_data = ., type = "prob"))
+```
 
+<br><br>
 --
 
 ___

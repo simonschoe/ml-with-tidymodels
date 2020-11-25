@@ -102,6 +102,9 @@ climbers_folds
 *Note: Alternatively, use `bootstraps()` to draw bootstrap samples with replacement. Observations not included in the bootstrap samples constitute the validation set ("out-of-bag" observations).*
 ]]
 
+???
+- `repeats` enables repetition of the basic CV scheme, e.g., with `repeats=3`, there will be 30 folds in total -> to produce an even more robust estimate of your test set error that is independent of the way the folds were resampled
+
 ---
 
 ## 4.1 `rsample`: Resampling Infrastructure

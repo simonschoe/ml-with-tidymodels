@@ -143,7 +143,7 @@ mod_recipe
 
 ## 4.2 `recipes`: Preprocessing Tools
 
-```{r}
+```{r, message=F, warning=F}
 mod_recipe <- mod_recipe %>% 
   themis::step_smote(died, over_ratio = 0.6, neighbors = 5, seed = 2020, skip = T)
 

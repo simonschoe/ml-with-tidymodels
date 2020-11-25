@@ -15,7 +15,7 @@ class: left, middle, inverse, title-slide
 ## Modeling Workflows<br>with Tidymodels
 ### Simon Schölzel
 ### <em>Research Team Berens</em>
-### 2020-12-07 (updated: 2020-11-24)
+### 2020-12-07 (updated: 2020-11-25)
 
 ---
 
@@ -510,6 +510,9 @@ climbers_folds
 .footnote[.pull-right[
 *Note: Alternatively, use `bootstraps()` to draw bootstrap samples with replacement. Observations not included in the bootstrap samples constitute the validation set ("out-of-bag" observations).*
 ]]
+
+???
+- `repeats` enables repetition of the basic CV scheme, e.g., with `repeats=3`, there will be 30 folds in total -&gt; to produce an even more robust estimate of your test set error that is independent of the way the folds were resampled
 
 ---
 
@@ -1117,7 +1120,8 @@ dt_cls
 rand_forest() %&gt;% 
   set_args(trees = 1000) %&gt;% 
   set_engine("randomForest") %&gt;% 
-  set_mode("classification")
+  set_mode("classification") %&gt;% 
+  translate()
 ```
 
 ```
@@ -1126,8 +1130,16 @@ rand_forest() %&gt;%
 &gt; Main Arguments:
 &gt;   trees = 1000
 &gt; 
-&gt; Computational engine: randomForest
+&gt; Computational engine: randomForest 
+&gt; 
+&gt; Model fit template:
+&gt; randomForest::randomForest(x = missing_arg(), y = missing_arg(), 
+&gt;     ntree = 1000)
 ```
+
+.footnote[
+*Note: Apply `translate()` to investigate how `parsnip` translates the specification into the underlying computational engine.*
+]
 
 ---
 
@@ -1137,7 +1149,7 @@ rand_forest() %&gt;%
 
 ```r
 rand_forest() %&gt;%
-  set_args(trees = 1000, mtry = varying()) %&gt;% 
+  set_args(trees = 1000, mtry = .cols()) %&gt;% 
   set_engine("randomForest") %&gt;% 
   set_mode("classification")
 ```
@@ -1146,14 +1158,14 @@ rand_forest() %&gt;%
 &gt; Random Forest Model Specification (classification)
 &gt; 
 &gt; Main Arguments:
-&gt;   mtry = varying()
+&gt;   mtry = .cols()
 &gt;   trees = 1000
 &gt; 
 &gt; Computational engine: randomForest
 ```
 
 .footnote[
-*Note: Use `varying()` or `tune()` as model arguments when the parameter is supposed to be specified later on in the workflow (e.g., during hyperparameter tuning).*
+*Note: Use data set characteristics as placeholder arguments which reflect the number of predictors in your data set. `.preds()` and `.cols()` capture the number of predictors in your data prior respectively subsequent to feature engineering (e.g., one-hot encoding).*
 ]
 
 ---
@@ -1192,8 +1204,7 @@ nearest_neighbor() %&gt;%
 svm_rbf() %&gt;% 
   set_args(cost = tune(), rbf_sigma = tune()) %&gt;% 
   set_engine("kernlab") %&gt;% 
-  set_mode("classification") %&gt;% 
-  translate()
+  set_mode("classification")
 ```
 
 ```
@@ -1203,39 +1214,56 @@ svm_rbf() %&gt;%
 &gt;   cost = tune()
 &gt;   rbf_sigma = tune()
 &gt; 
-&gt; Computational engine: kernlab 
-&gt; 
-&gt; Model fit template:
-&gt; kernlab::ksvm(x = missing_arg(), data = missing_arg(), C = tune(), 
-&gt;     kernel = "rbfdot", prob.model = TRUE, kpar = list(sigma = ~tune()))
+&gt; Computational engine: kernlab
 ```
 
 .footnote[
-*Note: Apply `translate()` to investigate how `parsnip` translates the specification into the underlying computational engine.*
+*Note: Use the `tune()` placeholder as a model argument when the parameter is supposed to be specified later on in the workflow (e.g., during hyperparameter tuning).*
 ]
 
 ---
 
 ## 4.3 `parsnip`: A Unified Modeling API
 
-Finally, the time has come to fit our specified models to the training data. Since some packages require a formula (`~`) as input and others a vector, a matrix or a data frame, `parsnip` offers two modes for model fitting: a formula-based interface (`fit()`) and a non-formula-based interface (`fit_xy()`).
+Finally, it is time to fit our specified model to the training data. Since some packages require a formula (`~`) as input and others a vector, matrix or data frame, `parsnip` offers two modes for fitting:
+
+a formula-based interface (`fit()`),
 
 ```r
 dt_cls_fit &lt;- dt_cls %&gt;% 
-  fit(formula = died ~ ., data = train_set)
+  fit(
+    formula = died ~ .,
+    data = train_set
+  )
 ```
+ and a non-formula-based interface (`fit_xy()`).
 
 ```r
 dt_cls_fit &lt;- dt_cls %&gt;% 
-  fit_xy(x = train_set %&gt;% select(-died), y = train_set$died)
+  fit_xy(
+    x = train_set %&gt;% select(-died),
+    y = train_set$died
+  )
 ```
+
+---
+
+## 4.3 `parsnip`: A Unified Modeling API
+
 After fitting the model, we can eventually predict the response in the test data:
 
 ```r
 dt_cls_fit %&gt;% 
   predict(new_data = test_set, type = "prob")
 ```
+More conveniently, we can directly combine the predictions with the `test_set`:
 
+```r
+test_set %&gt;% 
+  bind_cols(predict(dt_cls_fit, new_data = ., type = "prob"))
+```
+
+&lt;br&gt;&lt;br&gt;
 --
 
 ___
@@ -2090,7 +2118,7 @@ Note: This approach is only reasonable if your are not supposed to tune any hype
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-&lt;img src="index_files/figure-html/unnamed-chunk-95-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-96-1.png" style="display: block; margin: auto;" /&gt;
 
 ???
 - if we have filled the `metrics` argument in `tune_grid`, we can immediately analyze model performance across the different folds and hyperparameter combinations (here averaged over all 10 folds)
@@ -2515,7 +2543,7 @@ cls_wf_tuned %&gt;%
 ```
 ]
 .pull-right[
-&lt;img src="index_files/figure-html/unnamed-chunk-111-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-112-1.png" style="display: block; margin: auto;" /&gt;
 ]
 
 ???
