@@ -34,20 +34,21 @@ knitr::include_graphics("https://tenor.com/view/ballin-juggling-talent-juggle-wo
 
 --
 
-The same holds for implementations of one and the same model by different packages:
-```{r, eval=F}
-randomForest::randomForest(y ~ ., data = df, mtry = 10, ntree = 2000, importance = T)
-
-ranger::ranger(y ~ ., data = df, mtry = 10, num.trees = 2000, importance = "impurity")
-
-sparklyr::ml_random_forest(
-  df, response = "y", features = df %>% select(-y), col.sample.rate = 10, num.trees = 2000
-)
+.center[The same holds for implementations of one and the same model by different packages:]
+```{r, echo=F, fig.align='center'}
+tibble(
+  'Argument' = c("Number of predictors", "Number of trees", "Number of split points"),
+  'randomForest' = c("mtry", "ntree", "nodesize"),
+  'ranger' = c("mtry", " num.trees", "min.node.size"),
+  'sparklyr' = c("feature_subset_strategy", "num_trees", "min_instances_per_node")
+) %>% 
+  knitr::kable()
 ```
 
 ???
 - spark is an alternative programming language
 - often machine learning methods are implemented in C++ due to superior speed and a R frontend is put on top of the C++ implementation
+- note: this heterogeneity can be observed across the whole modeling landscape in R (e.g., also each package has its own `predict()` functions with slightly differing naming conventions)
 
 ---
 
@@ -56,13 +57,16 @@ sparklyr::ml_random_forest(
 .pull-left[
 `parsnip` provides a **unified interface** and syntax to modeling which facilitates your overall modeling workflow. The goals of `parsnip` are twofold:
 1. Decoupling model definition from model fitting and model evaluation<br><br>
-2. Harmonizing function arguments (e.g., `ntree` and `num.trees` or `mtry` and `col.sample.rate`)
+2. Harmonizing function arguments (e.g., `ntree`, `num.trees` and `num_trees` become `trees` or `k` becomes `neighbors`)
 ]
 .pull-right[
 ```{r, echo=F, out.height='65%', out.width='65%', fig.align='center'}
 knitr::include_graphics("https://tenor.com/view/balls-rolling-racing-rolling-on-ball-yoga-balls-gif-15365855.gif")
 ```
 ]
+
+???
+the goal is to make function arguments more expressive (`neighbor` instead of `k`, `penalty` instead of `lambda`)
 
 ---
 
@@ -75,7 +79,7 @@ knitr::include_graphics("https://raw.githubusercontent.com/allisonhorst/stats-il
 In `parsnip` a model is always made up of three individual components:
 - **Type:** The model type that is about to be fitted (e.g., linear/logit regression, random forest or SVM).<br><br>
 - **Mode:** The mode of prediction, i.e. regression or classification.<br><br>
-- **Engine:** The computational engine implemented in `R` which usually corresponds to a certain package (e.g., `rpart`, `glm` or `randomForest`) or computing framework (e.g., `Stan` or `sparklyr`).
+- **Engine:** The computational engine implemented in `R` which usually corresponds to a certain package (e.g., `rpart`, `glm`, `randomForest`) or computing framework (e.g., `Stan`, `sparklyr`).
 
 Check all models and engines supported by `parsnip` on the [`tidymodels` website](https://www.tidymodels.org/find/parsnip/).
 
@@ -93,7 +97,8 @@ log_cls
 ```
 
 ???
-note that some model families support both modes, some only one of the two (e.g., LDA only for classification, ARIMA models only for regressions)
+- note that some model families support both modes, some only one of the two (e.g., LDA only for classification, ARIMA models only for regressions)
+- note that we did not reference the data in any way so far (variable roles are entirely specified by our recipe)
 
 ---
 
@@ -108,6 +113,10 @@ lasso_cls <- logistic_reg() %>%
 
 lasso_cls
 ```
+
+.footnote[
+*Note: `parsnip` distinguishes between model arguments (frequently used across engines) and engine arguments (rarely used and/or only apply to specific engines).*
+]
 
 ???
 - the function arguments could also be specified directly in the model function, but this way it is more transparent and sequential
@@ -199,41 +208,60 @@ svm_rbf() %>%
 
 ## 4.3 `parsnip`: A Unified Modeling API
 
-Finally, it is time to fit our specified model to the training data. Since some packages require a formula (`~`) as input and others a vector, matrix or data frame, `parsnip` offers two modes for fitting:
+Finally, it is time to fit our specified model to the training data. Since some modeling functions require a formula (e.g., `lm()`) as input and others a vector, a matrix (e.g., `glmnet()`) or a data frame, `parsnip` offers two modes for fitting.
 
-a formula-based interface (`fit()`),
-```{r, eval=F}
+**Formula-based interface:**
+```{r, eval=T}
 dt_cls_fit <- dt_cls %>% 
-  fit(
-    formula = died ~ .,
-    data = train_set
-  )
+  fit(formula = died ~ ., data = train_set)
 ```
- and a non-formula-based interface (`fit_xy()`).
-```{r, eval=F}
+**Non-formula-based interface:**
+```{r, eval=T}
 dt_cls_fit <- dt_cls %>% 
-  fit_xy(
-    x = train_set %>% select(-died),
-    y = train_set$died
-  )
+  fit_xy(x = train_set %>% select(-died), y = train_set$died)
 ```
+
+.footnote[
+*Note: To accommodate different user preferences, `parsnip` allows you to use any of the two interfaces independent of the requirements of the underlying engine. Bare in mind, however, that only the formula notation automatically creates dummies whereas `fit_xy()` takes the data as-is.*
+]
 
 ---
 
 ## 4.3 `parsnip`: A Unified Modeling API
 
+.pull-left[
 After fitting the model, we can eventually predict the response in the test data:
-```{r, eval=F}
+```{r}
 dt_cls_fit %>% 
   predict(new_data = test_set, type = "prob")
 ```
-More conveniently, we can directly combine the predictions with the `test_set`:
-```{r, eval=F}
+]
+
+--
+
+.pull-right[
+**`tidymodels` prediction rules:** [[1, ch. 7.3](#references)]
+1. Predictions are returned as a `tibble` (no need to extract predictions from an object).<br><br>
+2. Column names are predictable (`.pred`, `.pred_class`, `.pred_lower`/`.pred_upper`, etc. depending on the prediction `type`).<br><br>
+3. The number of predictions equals the number of data points in `new_data` (and is in the same order).
+]
+
+???
+- leading dots protect against merging errors based on identical column names
+
+---
+
+## 4.3 `parsnip`: A Unified Modeling API
+
+Thanks to these rules, we can directly combine the predictions with the `test_set`:
+```{r}
 test_set %>% 
-  bind_cols(predict(dt_cls_fit, new_data = ., type = "prob"))
+  bind_cols(predict(dt_cls_fit, new_data = ., type = "prob")) %>% 
+  slice_head(n = 3)
 ```
 
-<br><br>
+<br>
+
 --
 
 ___
@@ -245,13 +273,3 @@ ___
 Besides, the Lasso model would perform poorly due to the differently scaled predictors.  
 Likewise, the tree model will always predict the negative class due to the severe class imbalance.*
 ]
-
-???
-- predict: can be easily used with `dplyr::bind_cols()` to attach the predictions to the test set.
-
----
-
-# Question: When to specify something in model and when in engine?
-
-Baustelle
-

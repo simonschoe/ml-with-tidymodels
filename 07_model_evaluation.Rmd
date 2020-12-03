@@ -36,10 +36,10 @@ knitr::include_graphics("https://raw.githubusercontent.com/allisonhorst/stats-il
 
 ## 4.7 `broom`: Tidy Model Outputs
 
-In order to illustrate the convenience of the three `broom` functions, let us first extract our optimal model from `cls_wf_results`:
+In order to illustrate the convenience of the three `broom` functions, let us first extract our optimal model from `cls_wf_results`.
 ```{r, results='hide'}
 elnet_cls_final <- cls_wf_results %>% 
-  pluck(".workflow",1 ) %>% 
+  pluck(".workflow", 1) %>% 
   pull_workflow_fit()
 
 elnet_cls_final
@@ -94,7 +94,7 @@ Unfortunately, `augment()` is not supported for `glmnet` models (check [availabl
 ]
 
 .footnote[
-*Note: Depending on the class of the model object your are providing to `tidy()`, it offers several advanced features, such as returning odds-ratios for logit-models (`exponentiate = T`) or confidence interval (`conf.int = T`).*
+*Note: Depending on the class of the model object you are providing to `tidy()`, it offers several advanced features, such as returning odds-ratios for logit-models (`exponentiate = T`) or confidence interval (`conf.int = T`).*
 ]
 
 ???
@@ -138,7 +138,7 @@ Similar to `broom`, `yardstick`'s endeavor is to enable model evaluation using *
 
 ## 4.8 `yardstick`: Tidy Model Performance
 
-In order to compute various *class* and *class probability metrics* for our regularized logistic classifier, we must first extract the `.predictions` from our optimal fitted model:
+In order to compute various *class* and *class probability metrics* for our regularized logistic classifier, we must first extract the `.predictions` from our optimal fitted model.
 ```{r}
 cls_wf_results <- cls_wf_results %>% 
   purrr::pluck(".predictions", 1) 
@@ -151,36 +151,50 @@ cls_wf_results
 ## 4.8 `yardstick`: Tidy Model Performance
 
 .pull-left[
-**Class metrics:** accuracy with `accuracy()`
-```{r}
-cls_wf_results %>% 
-  accuracy(died, estimate = .pred_class)
-```
-**Class metrics:** confusion matrix with `conf_mat()`
+**Class metrics:** `conf_mat()`
 ```{r}
 cls_wf_results %>% 
   conf_mat(died, estimate = .pred_class)
 ```
-]
-.pull-right[
-**Class metrics:** sensitivity with `sens()`
-```{r}
+**Class metrics:** `sens()` (sensitivity)
+```{r, eval=F}
 cls_wf_results %>% 
   sens(died, estimate = .pred_class)
 ```
-**Class metrics:** specificity with `spec()`
-```{r}
+**Class metrics:** `spec()` (specificity)
+```{r, eval=F}
 cls_wf_results %>% 
   spec(died, estimate = .pred_class)
 ```
 ]
+.pull-right[
+**Class metrics:** `accuracy()`
+```{r, eval=F}
+cls_wf_results %>% 
+  accuracy(died, estimate = .pred_class)
+```
+
+Finally, you may also create a `metric_set` to compute multiple performance metrics at once.
+```{r}
+metrics <- metric_set(accuracy, sens, spec)
+
+metrics(
+  cls_wf_results, 
+  died, estimate = .pred_class
+)
+```
+]
+
+???
+- "binary" indicates that the measures are computed for a binary classification problem
+- for multi-class problems `yardstick` has implemented generalizations of the original measures
 
 ---
 
 ## 4.8 `yardstick`: Tidy Model Performance
 
 .pull-left[
-**Class probability metrics:** ROC-curve with `roc_curve()`
+**Class probability metrics:** `roc_curve()`
 ```{r}
 cls_wf_results %>% 
   roc_curve(
@@ -190,7 +204,7 @@ cls_wf_results %>%
 ```
 ]
 .pull-right[
-**Class probability metrics:** ROC-AUC with `roc_auc()`
+**Class probability metrics:** `roc_auc()`
 ```{r}
 cls_wf_results %>% 
   roc_auc(
@@ -199,6 +213,13 @@ cls_wf_results %>%
   )
 ```
 ]
+
+.footnote[.pull-right[
+*Note: By default, `yardstick` views the first factor level as the positive class. If your outcome is one-hot encoded (e.g., `0`/`1` or `FALSE`/`TRUE`) and the event of interest relates to the second factor level, you have to make the `event_level` explicit.*
+]]
+
+???
+- class probability metrics: we provide the probability column for the event of interest
 
 ---
 
@@ -223,6 +244,10 @@ cls_wf_tuned %>%
 ```
 ]
 
+.footnote[
+*Note: Learn more about the `yardstick` package, e.g., features in the context of multi-class learning problems, in Kuhn/Silge (2020). [[1, ch. 9](#references)]*
+]
+
 ???
 - yardsticks functions have a consistent API that allows to easily operate on grouped data
 - ideally you would not only want to compare the model performance for different folds but also across models -> this is straightforward with `yardstick` as well
@@ -235,8 +260,8 @@ layout: false
 
 - **Scalability:** How well does the model scale to larger data sets? Is the speed of model re-training and prediction adversely affected in a real-time scenario?<br><br>
 - **Robustness**: Is the model robust against perturbations (e.g., missing values or outliers) in the unseen data? Does the performance deteriorate rapidly in the context of data drift?<br><br>
-- **Transferability:** Can the model be applied to related tasks without substantial re-training of the model and without a substantial loss is predictive accuracy?<br><br>
+- **Transferability:** Can the model be applied to related tasks without substantial re-training of the model and without a substantial loss of predictive accuracy?<br><br>
 - **Interpretability:** Are predictions explainable? Can the relationship between a predictor and the outcome be extracted from the model?<br><br>
-- **Fairness & Compliance:** Does the model systematically discriminates against certain sub-populations or ethical groups? Does it comply with prevalent law in a given domain?<br><br>
+- **Fairness & Compliance:** Does the model systematically discriminate against certain sub-populations or ethical groups? Does it comply with prevalent law in a given domain?<br><br>
 - **Justifiability:** Are the predictions in line with well-known business rules? Are the most important predictors consistent with prior beliefs?<br><br>
-- **Causality:** Does the model allow causal inference? If no, does it enable the user to generate hypotheses than can be tested using alternative statistical approaches?<br><br>
+- **Causality:** Does the model allow causal inference? If no, does it enable the user to generate hypotheses that can be tested using alternative statistical approaches?<br><br>

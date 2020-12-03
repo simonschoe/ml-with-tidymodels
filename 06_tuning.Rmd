@@ -33,7 +33,7 @@ Most machine learning models require the user to pre-define so-called **hyperpar
 - **Boosting:** `trees`, `mtry`, `min_n`, `tree_depth`, `learn_rate`
 
 .footnote[
-*Note: This list is not exhaustive! Depending on the implementation, i.e. engine, an even broader set of hyperparameters can be specified. You may use `args()` to inspect all hyperparameters (i.e. function arguments) available in a `parsnip` object.*
+*Note: This list is not exhaustive! Depending on the engine an even broader set of hyperparameters can be specified. Use `args()` to inspect all hyperparameters (i.e. function arguments) available in a `parsnip` object.*
 ]
 
 ???
@@ -51,7 +51,7 @@ Most machine learning models require the user to pre-define so-called **hyperpar
 
 --
 
-In the context of a **regularized regression**, `penalty` and `mixture` are the two central hyperparameters. `dials` comes with a pre-defined `parameters` object for both:
+In the context of a **regularized regression**, `penalty` and `mixture` are the two central hyperparameters. `dials` comes with a pre-defined `parameters` object for both.
 .pull-left[
 ```{r}
 mixture()
@@ -75,16 +75,16 @@ layout: false
 
 ## Excursus: Hyperparameters on the Log Scale
 
-**Hyperparameter scaling:** In practice, you will often find that hyperparameters are defined on the log instead of the original, linear scale. There are two prominent rationals for preferring a log over a linear scale:
+**Hyperparameter scaling:** In practice, you will often find that hyperparameters are defined on the log instead of the original linear scale. There are two prominent rationals for preferring a log over a linear scale:
 
 1. You have usually no clue regarding the potential optimum. Hence, you are inclined to evaluate a large, heterogeneous search space with extremely small but also very large candidate values. On a linear scale, you would simply ignore a large proportion of the search space.<br><br>
   - **Linear scale:** $[0.000001; 10,000]$-interval
   ```
-  > [1] 0.000001  1000  2000  3000  4000  5000  6000  7000  8000  9000 10000
+  > 0.000001  1000  2000  3000  4000  5000  6000  7000  8000  9000 10000
   ```
   - **Log scale:** $[0.000001; 10,000]$-interval
   ```
-  > [1] 1e-06 1e-05 1e-04 1e-03 1e-02 1e-01 1e+00 1e+01 1e+02 1e+03
+  > 1e-06 1e-05 1e-04 1e-03 1e-02 1e-01 1e+00 1e+01 1e+02 1e+03
   ```
 2. For some models and hyperparameter sets, the model's accuracy is relatively insensitive to certain regions of the search space. Those models demand a large variation in order to observe any impact on the underlying performance metrics.
 
@@ -101,7 +101,7 @@ layout: true
 
 ## 4.5 `dials`: Creating Hyperparameter Values
 
-`parameters` objects are accompanied by various helper functions to query and specify the hyperparameters, e.g., the **parameter ranges**:
+`parameters` objects are accompanied by various helper functions to query and specify the hyperparameters, e.g., the **parameter ranges**.
 .pull-left[
 ```{r}
 penalty() %>% # default
@@ -123,7 +123,7 @@ penalty() %>%
 
 ## 4.5 `dials`: Creating Hyperparameter Values
 
-`parameters` objects are accompanied by various helper functions to query and specify the hyperparameters, e.g., the **parameter values**:
+`parameters` objects are accompanied by various helper functions to query and specify the hyperparameters, e.g., the **parameter values**.
 ```{r}
 penalty() %>% 
   value_sample(n = 6) # draw six parameter values with replacement (random line search)
@@ -148,11 +148,11 @@ penalty() %>%
 
 ## 4.5 `dials`: Creating Hyperparameter Values
 
-There are special cases where the concrete hyperparameter values depend on your data set, e.g., the `mtry` argument (number of randomly sampled predictors at each split) in `parsnip::rand_forest()`:
+There are special cases where the concrete hyperparameter values depend on your data set, e.g., the `mtry` argument (number of randomly sampled predictors at each split) in `parsnip::rand_forest()`.
 ```{r}
 mtry()
 ```
-Therefore, we must `finalize()` the hyperparameter set-up based on the training set:
+Therefore, we must `finalize()` the hyperparameter set-up based on the training set.
 ```{r}
 finalize(mtry(), x = train_set %>% select(-died))
 ```
@@ -207,7 +207,7 @@ layout: true
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-The `tune` package unites the previous steps in the context of hyperparameter tuning with the **`tune_grid()`** function being the primary modeling workhorse:
+The `tune` package unites the previous steps in the context of hyperparameter tuning with the **`tune_grid()`** function being the primary modeling workhorse.
 ```{r, eval=F}
 tune_grid(
   object, preprocessor, resamples, #<<
@@ -223,7 +223,7 @@ tune_grid(
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-The `tune` package eventually unites the previous steps in the context of hyperparameter tuning with the **`tune_grid()`** function being the primary modeling workhorse:
+The `tune` package unites the previous steps in the context of hyperparameter tuning with the **`tune_grid()`** function being the primary modeling workhorse.
 ```{r, eval=F}
 tune_grid(
   object, preprocessor, resamples,
@@ -233,7 +233,7 @@ tune_grid(
 **Keyword arguments:**
 - `grid`: the number of candidate hyperparameter combinations to be tried (defaults to `10` draws from a [Latin hypercube](https://en.wikipedia.org/wiki/Latin_hypercube_sampling)) respectively a pre-defined parameter grid
 - `metrics`: a set of performance metrics (defaults to *RMSE* and *R<sup>2</sup>* for regression and *ROC-AUC* and *accuracy* for classification tasks) computed for each resample (customize via `yardstick::metric_set()`) 
-- `control`: additional options to control the tuning process (e.g., `save_pred = T` to retain the predictions for each fold or `verbose = T` print the tuning progress)
+- `control`: additional options to control the tuning process (e.g., `save_pred = T` to retain the predictions for each fold or `verbose = T` to print the log)
 
 .footnote[
 *Note: Retaining the predictions for each fold can impose a heavy burden on your machine's memory which may become unwieldy if your data set and/or the number of resamples is large.*
@@ -253,7 +253,7 @@ elnet_cls <- logistic_reg() %>%
   set_mode("classification") %>% 
   set_engine("glmnet", family = "binomial")
 ```
-Second, we bundle the preprocessing recipe and model specification using the `workflows` package:
+Second, we bundle the preprocessing recipe and model specification using the `workflows` package.
 ```{r}
 cls_wf <- workflow() %>% 
   add_recipe(mod_recipe) %>% 
@@ -261,7 +261,7 @@ cls_wf <- workflow() %>%
 ```
 
 .footnote[
-*Note: Tunable hyperparameters (indicated by `tune()`) accept an `id` argument to assign each hyperparameter a custom name. This may be relevant in cases where you are supposed to tune two hyperparameters which go by the same name. Otherwise, it is usually easier to go by the default name (e.g., `penalty` or `mixture`).*
+*Note: Tunable hyperparameters (indicated by `tune()`) accept an `id` argument to assign a custom name to each hyperparameter. This may be relevant in cases where you are supposed to tune two hyperparameters which go by the same name. Otherwise, it is usually easier to go by the default name (e.g., `penalty` or `mixture`).*
 ]
 
 ???
@@ -274,13 +274,13 @@ cls_wf <- workflow() %>%
 
 Third, we create a grid of hyperparameter candidates for performing a random grid search. In general, `dials` offers two alternative ways for creating a set of hyperparameter candidates.
 
-We can either define the grid by providing the `grid_*()` function with one or several `param` objects:
+We can either define the grid by providing the `grid_*()` function with one or several `param` objects.
 ```{r}
 param_grid <- grid_regular(penalty(), mixture(), levels = c(10,10))
 param_grid %>% 
   tibble::glimpse()
 ```
-Or we extract `param` objects (i.e. hyperparameter flagged with `tune()`) from an already defined preprocessing recipe, model specification or modeling workflow using `parameters()`:
+Or we extract `param` objects (i.e. hyperparameter flagged with `tune()`) from an already defined preprocessing recipe, model specification or modeling workflow using `parameters()`.
 ```{r, eval=F}
 param_grid <- cls_wf %>% 
   parameters() %>% 
@@ -327,34 +327,37 @@ Eventually, the process of hyperparameter tuning can take several minutes, hours
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-**Parallel processing:** Under the hood, `tune` is equipped with a series of distributed computing capabilities (which stem from an integration of the [`foreach` package](https://cran.r-project.org/web/packages/foreach/vignettes/foreach.html)). For example, it allows to parallelize the grid search algorithm and CV approach across multiple cores.
+**Parallel processing:** Under the hood, `tune` is equipped distributed computing capabilities (which stem from an integration of the [`foreach` package](https://cran.r-project.org/web/packages/foreach/vignettes/foreach.html)). Since the models created during CV are indepedent of each other, it allows to parallelize the grid search algorithm and CV approach across multiple cores.
 
-First, let's detect the number of (physical/logical) cores available for computations:
+First, let's detect the number of physical and/or logical cores available for computations using the base `R` `parallel` package.
 ```{r}
 all_cores <- parallel::detectCores(logical = F)
 all_cores
 ```
-Second, we create a cluster of `R` sessions running in parallel:
-
+Second, we create a cluster of `R` sessions running in parallel.
 ```{r}
-comp_cluster <- makeCluster(all_cores)
+comp_cluster <- parallel::makeCluster(all_cores - 2)
 comp_cluster
 ```
 
 ???
-- Physical cores are number of physical cores, actual hardware components.
-- Logical cores are the number of physical cores times the number of threads that can run on each core through the use of hyperthreading.
-- parallel is a base R package for parallel computing
+- **Physical cores** are number of physical cores, actual hardware components.
+- **Logical cores** are the number of physical cores times the number of threads that can run on each core through the use of hyper-threading (number of possible parallel simultaneous processes).
+
 - in the background:
   - `tune` divides your data (e.g., resamples) and allocates it across clusters
   - it can be viewed as multiple `R` session running in parallel
-- use one core less in order to still be able to work on your computer (otherwise CPU is at the limit)
+  
+- tip: its generally a good idea to not use all available clusters
+  - oftentimes, performance increases are not linear but you get a rate of diminishing returns
+  - the memory load is proportional as copies of your data are transferred to every core
+  - you still want to be able to work on your computer while the computations are executed
 
 ---
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-Third, we register a backend for parallel computing using the `doParallel` package and re-run our tuning procedure - now with the 250 models being trained on `r all_cores` different cores.
+Third, we register a backend for parallel computing (here the `doParallel` package), which defines how parallelization is executed, and re-run our tuning procedure - this time with the 250 models being trained on `r all_cores` different cores.
 
 ```{r, echo=F, out.height='35%', out.width='35%', out.extra='style="float:right; padding: 30px"'}
 knitr::include_graphics("https://tenor.com/view/yay-traffic-car-race-gif-14739892.gif")
@@ -376,12 +379,16 @@ cls_wf_tuned <- tune_grid(
 Sys.time() - start
 ```
 ```
-> Time difference of 4.344456 mins
+> Time difference of 3.706945 mins
 ```
 
 .footnote[
 *Note: By default, `tidymodels` copies only its core packages to all concurrently running `R` sessions. If you leverage additional packages (e.g., `themis`) as part of your modeling pipeline, it must be provided in the tuning controls.*
 ]
+
+???
+- there are different backends packages that you can use for parallel processing. They start with `do` and vary in the way of how they enable parallel processing.
+- as you can see the speed-up is not proportional but diminishing in the number of cores (also somewhat depending on what you are doing in the background)
 
 ---
 
@@ -395,17 +402,18 @@ cls_wf_tuned <- read_rds("./slides/cls_wf_tuned.rds")
 ```{r}
 cls_wf_tuned
 ```
-Now, there are several neat things we can do with our fitted `climbers_folds` data frame. Let's look at some selective functions provided by the `tune` package.
+Now, there are several neat things we can do with our fitted `climbers_folds` data frame. Let's have a look at some selective functions provided by the `tune` package.
 
 ???
-- note that the resulting tibble does neither include the data (only the indices) nor the fitted models, but only the performance metrics and predictions (usually we are not interested in the models themselves during resampling, but only in the optimal hyperparameter set)
+- note that the resulting tibble does neither include the data (only the indexes) nor the fitted models, but only the performance metrics and predictions (usually we are not interested in the models themselves during resampling, but only in the optimal hyperparameter set)
 - .notes captures warnings and errors that occur during execution to help you debugging (i.e. which model and fold potentially produced an error)
+- reconfigure this tibble using `tidyr` tools or `tidymodels` convenience functions
 
 ---
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-Extract the performance metrics for a single fold:
+Extract the performance metrics for a single fold.
 ```{r}
 cls_wf_tuned %>% 
   purrr::pluck(".metrics", 1)
@@ -415,15 +423,11 @@ cls_wf_tuned %>%
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-Extract the performance metrics for each fold:
+Extract the performance metrics for each fold.
 ```{r}
 cls_wf_tuned %>% 
   collect_metrics(summarize = F)
 ```
-
-.foonote[
-*Note: Extract the predictions for each fold and candidate hyperparameter set (only applicable if `control = control_grid(save_pred = TRUE)`) via `collect_predictions()`.*
-]
 
 ???
 - 4 metrics * 1,000 models
@@ -433,7 +437,7 @@ cls_wf_tuned %>%
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-Extract the average performance metrics for all folds:
+Extract the average performance metrics for all folds.
 ```{r}
 cls_wf_tuned %>% 
   collect_metrics(summarize = T)
@@ -446,12 +450,12 @@ now also with uncertainty estimates, i.e. std_err
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-Extract the `n` best performing models specifications based on the *ROC-AUC*:
+Extract the `n` best performing model specifications based on the $AUC$:
 ```{r}
 cls_wf_tuned %>% 
   show_best(metric = "roc_auc", n = 3)
 ```
-Extract the overall best performing model specifications based on the *ROC-AUC*:
+Extract the overall best performing model specifications based on the $AUC$:
 ```{r}
 cls_wf_tuned %>% 
   select_best(metric = "roc_auc") # alternatively: select_by_one_std_err(metric = "roc_auc")
@@ -464,7 +468,20 @@ cls_wf_tuned %>%
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-If we are not concerned about hyperparameter tuning per sé, e.g., because we are interested in training a very simple and explainable model, we can refer to `fit_resamples()` instead of `tune_grid()`.
+Extract the validation set predictions for each fold and the optimal model specification (only applicable if `control = control_grid(save_pred = TRUE)`).
+```{r}
+cls_wf_tuned %>% 
+  collect_predictions(
+    summarize = F,
+    parameters = select_best(cls_wf_tuned, metric = "roc_auc")
+  )
+```
+
+---
+
+## 4.6 `tune`: Tidy Tuning Tools
+
+If we are not concerned about hyperparameter tuning per sé, e.g., because we are training a very simple and explainable model, we can refer to `fit_resamples()` instead of `tune_grid()`.
 ```{r, eval=F}
 elnet_cls <- logistic_reg() %>%
   set_args(penalty = 0.1, mixture = 1) %>% 
@@ -482,7 +499,6 @@ cls_wf %>%
 
 ???
 Note: This approach is only reasonable if your are not supposed to tune any hyperparameters!
-
 
 ---
 
@@ -506,7 +522,7 @@ cls_wf_tuned %>%
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-Since we have now optimized our model for the most promising candidate hyperparameter pair of `mixture` and `penalty`, we can finalize our initial `workflow` object:
+Since we have now optimized our model for the most promising candidate hyperparameter pair of `mixture` and `penalty`, we can finalize our initial `workflow` object.
 ```{r, results='hide'}
 cls_wf_final <- cls_wf %>% 
   finalize_workflow(select_best(cls_wf_tuned, metric = "roc_auc"))
@@ -550,7 +566,7 @@ cls_wf_final # output on next slide
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-Let us now retrain our finalized workflow on the whole train set and predict death rates for the unseen data:
+Let's retrain our finalized workflow on the whole training set and predict death rates for the unseen data.
 ```{r, eval=F}
 cls_wf_final %>% 
   fit(data = train_set) %>% 
@@ -581,13 +597,13 @@ Eventually, however, we would like multiple models to compete on a given task an
 
 --
 
-**Kuhn/Johnson (2013) framework for model selection [[1, p. 79]](#references):** 
+**Kuhn/Johnson (2013) framework for model selection [[2, p. 79]](#references):** 
 1. Start with very flexible *black-box* models (e.g., boosted trees or SVM) to produce an optimal benchmark (*performance ceiling*).
 2. Evaluate slightly less opaque models which provide a baseline degree of interpretability (e.g., PLS, PCA or regularized regression).
 3. Try out a parsimonious *white-box* model (e.g., linear regression or CART) and investigate if it can reasonably approximate the performance ceiling.
 
 .footnote[
-_Note: For a comprehensive overview of the topic of *interpretable ML* check out [this book](https://christophm.github.io/interpretable-ml-book/) by Christoph Mulner. [[2](#references)]_
+_Note: For a comprehensive overview of the topic of *interpretable ML* check out [this book](https://christophm.github.io/interpretable-ml-book/) by Christoph Mulner. [[3](#references)]_
 ]
 
 ???

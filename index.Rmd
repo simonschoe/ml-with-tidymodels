@@ -29,7 +29,7 @@ knitr::opts_chunk$set(
 ```{r packages, warning=F, message=F, echo=F}
 #install.packages("pacman")
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(xaringanthemer, tidyverse, tidymodels, showtext, glmnet, doParallel, usemodels)
+pacman::p_load(xaringanthemer, xaringanExtra, tidyverse, tidymodels, showtext, glmnet, doParallel, usemodels)
 pacman::p_load_gh("hadley/emo")
 ```
 
@@ -47,6 +47,14 @@ style_mono_accent(
   code_font_size = "smaller",
   code_inline_background_color = "#F4F4F4",
   outfile = "./custom/xaringan-themer.css"
+)
+```
+
+```{r xaringan-extra, echo=F}
+xaringanExtra::use_panelset()
+
+xaringanExtra::use_extra_styles(
+  hover_code_line = T
 )
 ```
 
@@ -124,14 +132,14 @@ class: center, middle
 
 ---
 
-```{r child='./07_model_evaluation.Rmd', eval=T}
+```{r child='./07_model_evaluation.Rmd', eval=F}
 ```
 
 ---
 
 ## 5 Additions to the `tidymodels` Ecosystem
 
-Similar to the `tidyverse` ecosystem, there is already a promising supply of complementary packages that further improve the capabilities of `tidymodels`:
+Similar to the `tidyverse` ecosystem, there is already a promising supply of complementary packages that further improve the capabilities of `tidymodels`, e.g.:
 .pull-left[
 
 - `textrecipes`: Extra recipes for text processing<br><br>
@@ -140,7 +148,6 @@ Similar to the `tidyverse` ecosystem, there is already a promising supply of com
 - `stacks`: Tidy model stacking<br><br>
 - `probably`: Tools for post-processing class probability estimates<br><br>
 - `usemodels`: Boilerplate code for `tidymodels` analyses<br><br>
-- many, many more
 ]
 .pull-right[
 ```{r, echo=F, fig.align='center'}
@@ -149,7 +156,7 @@ knitr::include_graphics("https://tenor.com/view/shocked-po-kung-fu-panda-gif-425
 ]
 
 ???
-- textrecipes as extension to the recipes package
+- textrecipes as extension to the recipes package for natural language processing
 - baguette as add-on to the parsnip package
 - probably enables the identification of optimal probability thresholds and equivocal zones (uncertain probability regions)
 - themis extends recipes package
@@ -164,6 +171,11 @@ knitr::include_graphics("https://tenor.com/view/shocked-po-kung-fu-panda-gif-425
 library(usemodels)
 use_glmnet(died ~ ., data = climbers_df, verbose = F, prefix = "glmnet_mod")
 ```
+
+.panelset[
+
+.panel[
+.panel-name[Recipe Template]
 ```
 > glmnet_mod_recipe <- 
 >   recipe(formula = died ~ ., data = climbers_df) %>% 
@@ -171,27 +183,28 @@ use_glmnet(died ~ ., data = climbers_df, verbose = F, prefix = "glmnet_mod")
 >   step_dummy(all_nominal(), -all_outcomes()) %>% 
 >   step_zv(all_predictors()) %>% 
 >   step_normalize(all_predictors(), -all_nominal()) 
-> 
+```
+]
+.panel[
+.panel-name[Model Spec Template]
+```
 > glmnet_mod_spec <- 
 >   logistic_reg(penalty = tune(), mixture = tune()) %>% 
 >   set_mode("classification") %>% 
 >   set_engine("glmnet") 
-> 
+```
+]
+.panel[
+.panel-name[Workflow Template]
+```
 > glmnet_mod_workflow <- 
 >   workflow() %>% 
 >   add_recipe(glmnet_mod_recipe) %>% 
 >   add_model(glmnet_mod_spec) 
 ```
-
-???
-- recipe template contains minimal required steps
-- `verbose = T` adds some additional commons for why some of the feature engineering steps are included
-
----
-
-## 5 Additions to the `tidymodels` Ecosystem
-
-*continued:*
+]
+.panel[
+.panel-name[Tuning Template]
 ```
 > glmnet_mod_grid <- tidyr::crossing(penalty = 10^seq(-6, -1, length.out = 20), 
 >     mixture = c(0.05, 0.2, 0.4, 0.6, 0.8, 1)) 
@@ -200,13 +213,22 @@ use_glmnet(died ~ ., data = climbers_df, verbose = F, prefix = "glmnet_mod")
 >   tune_grid(glmnet_mod_workflow, resamples = stop("add your rsample object"), 
 >     grid = glmnet_mod_grid) 
 ```
-<br><br>
+]
+
+]
+
+--
+
+<br>
+
 `usemodels` ships with boilerplate code for several model types:
 ```{r}
 ls("package:usemodels", pattern = "use_")
 ```
 
 ???
+- `verbose = T` adds some additional commons for why some of the feature engineering steps are included
+- recipe template contains minimal required steps
 - proposed tuning grid might not be the best for your specific use case
 - the template urges the user to manually specify the resampling method
 
@@ -256,16 +278,16 @@ name: references
 
 ## References
 
-[1]: Kuhn, M./Johnson, K. (2013): Applied Predictive Modeling. Chapter 3 (Data Pre-processing). Springer: New York 2013.
+[1]: **Kuhn, M./Silge, J. (2020):** Tidy Modeling in R. URL: https://www.tmwr.org (work-in-progress).
 
-[2]: Mulner, C. (2020): Interpretable Machine Learning: A Guide for Making Black Box Models Explainable. URL: https://christophm.github.io/interpretable-ml-book/.
+[2]: **Kuhn, M./Johnson, K. (2013):** Applied Predictive Modeling. Chapter 3 (Data Pre-processing). Springer: New York 2013.
+
+[3]: **Mulner, C. (2020):** Interpretable Machine Learning: A Guide for Making Black Box Models Explainable. URL: https://christophm.github.io/interpretable-ml-book/.
 
 <br><br>
 
 ## Further Resources
 
 **tidymodels.org:** Learn Section. ULR: https://www.tidymodels.org/learn/.
-
-**Kuhn, M./Silge, J. (2020):** Tidy Modeling in R. URL: https://www.tmwr.org (work-in-progress).
 
 **Silge, J.:** TidyTuesday Contributions. URL: https://juliasilge.com/blog/.

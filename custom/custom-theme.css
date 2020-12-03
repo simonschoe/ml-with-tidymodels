@@ -21,3 +21,14 @@ ul li::before {
   margin-left: -1em; /* Also needed for space (tweak if needed) */
   line-height: 1;
 }
+
+a:hover {
+  font-weight: bold;
+}
+
+.remark-code, .remark-inline-code {
+  font-size: 80%;
+  font-weight: 400;
+  border-radius: 3px;
+  padding: 1px 5px 1px 5px;
+}

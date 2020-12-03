@@ -21,12 +21,16 @@ name: data-split
 
 ## 4.1 `rsample`: Resampling Infrastructure
 
-`rsample` provides a set of methods for estimating the sampling distribution of a statistic (e.g., the test set error). A *resample* of the original data is viewed as the outcome of a resampling methode, e.g., a fold resulting from *k*-fold cross-validation or a bootstrapped sample resulting from sampling with replacement.
+`rsample` provides a set of methods for 
+- **data partitioning**, i.e. splitting the data into a training and testing set, and
+- **resampling**, i.e. sub-splitting the training set to estimate the sampling distribution of a given statistic (e.g., the validation set error).
+
+Thereby, a *resample* of the original data is viewed as the outcome of a resampling method, e.g., a fold resulting from $k$-fold cross-validation or a bootstrapped sample resulting from sampling with replacement. In general, resampling is conducted subsequent to data partitioning and only on the training set.
 <br><br>
 
 --
 
-Resampling is generally applied subsequent to **data partitioning**, i.e. after the initial train-test-split. Note that the output of the `inital_split()` function does not contain the train and test data itself. It rather indexes the original data points according to their membership to the training respectively test set.
+First, let's partition our data via `initial_split()`. The resulting `rsplit` object indexes the original data points according to their data set membership.
 ```{r}
 set.seed(2020)
 climbers_split <- initial_split(climbers_df, prop = 0.8, strata = died)
@@ -35,13 +39,16 @@ climbers_split
 ```
 
 ???
-strata: conduct a stratified split -> keep proportions (i.e. imbalance) in training as well as in test set -> since sampling is random it might otherwise be that sampling creates an even severer or slighter imbalance
+- for imbalanced samples, random sample can lead to catastrophic model
+- strata: conduct a stratified split -> keep proportions (i.e. imbalance) in training as well as in test set -> since sampling is random it might otherwise be that sampling creates an even severer or slighter imbalance
+- with regression problems, stratified samples can be drawn based on a binned outcome (e.g., quartiles)
+- indexing is more memory efficient
 
 ---
 
 ## 4.1 `rsample`: Resampling Infrastructure
 
-To extract the training and test data, we can use the `training()` and `testing()` functions:
+To extract the training and test data, we can use the `training()` and `testing()` functions.
 ```{r, results='hide'}
 train_set <- training(climbers_split)
 test_set <- testing(climbers_split)
@@ -57,9 +64,9 @@ print(train_set, n = 5)
 ## 4.1 `rsample`: Resampling Infrastructure
 
 Since we want to implement classifiers that contain hyperparameters we require a three-way data split:
-- The *training set*, which is used for fitting the model
-- The *validation set*, which is used for finding the optimal hyperparameter
-- The *test set*, which is used for computing a robust estimate of the misclassification error
+- The *training set*, which is used for model training (i.e. estimating the model coefficients).
+- The *validation set*, which is used for parameter tuning (i.e. finding the optimal hyperparameters).
+- The *test set*, which is used for computing a robust estimate of model performance.
 
 --
 
@@ -67,7 +74,7 @@ Since we want to implement classifiers that contain hyperparameters we require a
 Consequently, we need to further partition our initial `train_set` into a smaller training as well as a validation set using `initial_split()`.
 
 ```{r, echo=F, out.width='40%', out.height='40%', fig.align='center'}
-knitr::include_graphics("https://www.tidymodels.org/start/case-study/img/validation-split.svg")
+knitr::include_graphics("https://www.tmwr.org/premade/validation-alt.svg")
 ```
 ]
 
@@ -77,19 +84,24 @@ knitr::include_graphics("https://www.tidymodels.org/start/case-study/img/validat
  Or we refer to a resampling approach, such as cross-validation (CV) or the bootstrap, to create resamples from our initial training set.
  
 ```{r, echo=F, out.width='70%', out.height='70%', fig.align='center'}
-knitr::include_graphics("https://www.tidymodels.org/start/resampling/img/resampling.svg")
+knitr::include_graphics("https://www.tmwr.org/premade/resampling.svg")
 ```
 ]
 
 ???
+Data sets:
+- training to optimize model coefs, validation to optimize hyperparameters (as part of model tuning as well as feature engineering), test to evaluate the model
+- refit the optimal model on training and validation set and evaluate on the test set
+- i prefer the terms training and validation instead of analysis and assessment set in the context of resampling (often test, validation and hold-out set are used interchangeably)
+
+CV vs. train-test-split:
 - we usually prefer the latter as we would like to generate a distribution of our error measure and to account for uncertainty in the estimate
-- i prefer the terms training and validation instead of analysis and assessment set in the context of resampling
 
 ---
 
 ## 4.1 `rsample`: Resampling Infrastructure
 
-In this case study, we implement a **10-fold CV** approach using the `vfold_cv()` function. It returns a `tibble` containing the indexes of 10 separate splits.
+In this case study, we implement a 10-fold CV approach using the `vfold_cv()` function. It returns a `tibble` containing the indexes of 10 separate splits.
 ```{r}
 set.seed(2020)
 climbers_folds <- train_set %>% 
@@ -98,18 +110,11 @@ climbers_folds <- train_set %>%
 climbers_folds
 ```
 
-.footnote[.pull-right[
-*Note: Alternatively, use `bootstraps()` to draw bootstrap samples with replacement. Observations not included in the bootstrap samples constitute the validation set ("out-of-bag" observations).*
-]]
-
-???
-- `repeats` enables repetition of the basic CV scheme, e.g., with `repeats=3`, there will be 30 folds in total -> to produce an even more robust estimate of your test set error that is independent of the way the folds were resampled
-
 ---
 
 ## 4.1 `rsample`: Resampling Infrastructure
 
-To extract the training and validation data from each fold, we use the `anaylsis()` and `assessment()` functions:
+To extract the training and validation data, we can use `analysis()` and `assessment()`.
 ```{r, eval=F}
 climbers_folds %>%
   pluck("splits", 1) %>%
@@ -120,10 +125,34 @@ climbers_folds %>%
   pluck("splits", 1) %>%
   assessment()
 ```
-Note that `rsample` discriminates between train and test as well as analysis and assessment sets:
+
+Note that `tidymodels` discriminates between train and test as well as analysis and assessment sets:
 - use `training()` and `testing()` to extract data after data partitioning,
 - use `analysis()` and `assessment()` to extract data after resampling.
 
+???
+- usually, you dont use `analysis()` and `assessment()` as you let higher level functions access the individual resamples during hyperparameter tuning
+
+---
+
+## 4.1 `rsample`: Resampling Infrastructure
+
+**Alternative resampling approaches:** In conjunction to `vfold_cv()`, `rsample` enables various alternative resampling schemes for producing an unbiased estimate of model performance. 
+- **Repeated $k$-fold CV:** For `repeats > 1`,  `vfold_cv()` repeats the CV approach to reduce the standard error of the estimate at the cost of higher computational demand ( $k*R$ folds).<br><br>
+- **The bootstrap:** `bootstraps()` conducts sampling with replacement whereby model performance is estimated based on the "out-of-bag" observations.<br><br>
+- **Monte Carlo CV (MCCV):** `mc_cv()` lies somewhere in between $k$-fold CV and the bootstraps since it enables partly overlapping assessment sets.
+
+--
+
+**Approaches for time-dependent data:** For temporally correlated data `rsample` provides a suitable partitioning and resampling infrastructure as well. For example, use `initial_time_split()` to conduct a non-random early-late-split and `rolling_origin()` or the `slide_*()` methods to generate time-series resamples.
+
 .footnote[
-<i>Note: For data with a strong time-series component (i.e. temporally ordered data), `rsample` provides an appropriate resampling infrastructure as well. For example, you may use `initial_time_split()` to produce a non-random temporal train-test-split and `rolling_origin()` or the `slide_*()` methods to generate time-series resamples.</i>
+*Note: Find more information about the resampling approaches implemented in `rsample` in Kuhn/Silge (2020). [[1, ch. 10](#references)]*
 ]
+
+???
+- repeated CV: reduces test set error independent of the way the folds were resampled) -> increases computational demand
+
+- with time-dependent data, random sampling can lead to disastrous models
+
+- data partitioning and resampling should always be implemented by accounting for the future use of the trained model (how is the newly arriving data distributed?)

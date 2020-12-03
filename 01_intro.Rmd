@@ -21,7 +21,7 @@ layout: true
 > The tidymodels framework is a collection of packages for modeling and machine learning using tidyverse principles. ~ [tidymodels.org](https://www.tidymodels.org/)
 
 .pull-left[.center[
-```{r, echo=F, out.width='45%', out.height='45%'}
+```{r, echo=F, out.width='40%', out.height='40%'}
 knitr::include_graphics("https://raw.githubusercontent.com/tidymodels/tidymodels/master/tidymodels_hex.png")
 ```
 
@@ -30,23 +30,28 @@ Official `tidymodels` [Hex Sticker](https://github.com/rstudio/hex-stickers)
 
 .pull-right[
 .pull-left[
-```{r, echo=F, out.width='90%', out.height='90%'}
+```{r, echo=F, out.width='80%', out.height='80%'}
 knitr::include_graphics("https://pbs.twimg.com/profile_images/905186381995147264/7zKAG5sY.jpg")
 ```
 
 **Hadley Wickham** - Chief Scientist @ RStudio 
 ]
 .pull-right[
-```{r, echo=F, out.width='90%', out.height='90%'}
+```{r, echo=F, out.width='80%', out.height='80%'}
 knitr::include_graphics("https://avatars3.githubusercontent.com/u/5731043?s=460&u=814e99b02976f8bcb9b15047777742d268648d35&v=4")
 ```
 
 **Max Kuhn** - Software Engineer @ RStudio 
 ]]
 
+--
+
+> Whenever possible, the software should be able to protect users from committing mistakes. Software should make it easy for users to do the right thing. ~ [Kuhn/Silge (2020), ch. 1](#references)
+
 ???
 - a framework for modeling (guardrails) using using tidy data principles
 - very similar to the unified `scikit-learn` package in the context of `Python`
+- by the way, this is general a central distinction between R and Python: Python advocates the paradigm of having one unified approach for every problem (which makes it at times also less flexible)
 
 ---
 
@@ -118,10 +123,13 @@ Explain:
 
 `r emo::ji("monocle")` Remember, modeling is one of the main steps in our day-2-day data science workflow. And this is precisely where `tidymodels` fits in!
 <br><br><br>
-```{r, echo=F, out.width='80%', out.height='80%', fig.align='center'}
-knitr::include_graphics("https://d33wubrfki0l68.cloudfront.net/571b056757d68e6df81a3e3853f54d3c76ad6efc/32d37/diagrams/data-science.png")
+```{r, echo=F, out.width='75%', out.height='75%', fig.align='center'}
+knitr::include_graphics("https://www.tmwr.org/premade/data-science-model.svg")
 ```
 
+.footnote[
+*Source: [[1, ch. 1.3](#references)]*
+]
 ???
 src: https://d33wubrfki0l68.cloudfront.net/571b056757d68e6df81a3e3853f54d3c76ad6efc/32d37/diagrams/data-science.png
 
@@ -150,20 +158,36 @@ Tidytuesday: social project to motivate the R online community to learn working 
 
 ## 3 Himalayan Climbing Expeditions Data
 
-.pull-left[
 The data set contains a large record of data spanning the 1905-2019 period about
 - `r emo::ji("mountain_snow")` the several **peaks** of the mountain range,
 - `r emo::ji("paw_prints")` **expeditions** during this period, and
 - `r emo::ji("woman_climbing")` the **members** of each expedition.
 
 In this workshop, we will try to predict the likelihood of an expedition coming to a lethal end. This, in turn, may then help us to derive drivers for a successful expedition and eventually reduce death rates.
-]
-.pull-right[
+
 ```{r, eval=F}
 tt_data$members %>% 
   skimr::skim() 
 ```
 
+???
+- use `skimr` package to get a high-level view of the data and most important descriptives
+
+---
+
+```{r echo=FALSE}
+xaringanExtra::style_panelset_tabs(
+  active_foreground = "#0051BA",
+  hover_foreground = "#d22",
+)
+```
+
+## 3 Himalayan Climbing Expeditions Data
+
+.panelset[
+
+.panel[
+.panel-name[Output Pt. 1]
 ```
 > -- Data Summary ------------------------
 >                            Values    
@@ -180,15 +204,8 @@ tt_data$members %>%
 ```
 ]
 
-???
-use `skimr` package to get a high-level view of the data and most important descriptives
-total of 76,519 expedition members
-
----
-
-## 3 Himalayan Climbing Expeditions Data
-
-*continued:*
+.panel[
+.panel-name[Output Pt. 2]
 ```
 > -- Variable type: character ---------------------------------------------------------------------------
 > # A tibble: 10 x 8
@@ -205,19 +222,10 @@ total of 76,519 expedition members
 >  9 death_cause         75413        0.0145     3    27     0       12          0
 > 10 injury_type         74807        0.0224     3    27     0       11          0
 ```
+]
 
-???
-- three id columns, these are likely not supposed to end up in any predictive model -> in any case, if you have an id variable with predictive value you should question in the data generating process behind the id column
-- 391 different peaks, but only 390 different peak names
-- with 76,519 climbers, almost 1000 died (75,413 non-death causes), and another 600 came back injured (74,807 non-injured) -> imbalanced prediction task
-- 524 different expedition roles
-- why do we have five seasons? (probably an unknown category)
-
----
-
-## 3 Himalayan Climbing Expeditions Data
-
-*continued:*
+.panel[
+.panel-name[Output Pt. 3]
 ```
 > -- Variable type: logical -----------------------------------------------------------------------------
 > # A tibble: 6 x 5
@@ -240,13 +248,27 @@ total of 76,519 expedition members
 > 4 death_height_metres      75451        0.0140 6593.  1308.    400  5800  6600  7550  8830 ▁▁▂▇▆
 > 5 injury_height_metres     75510        0.0132 7050.  1214.    400  6200  7100  8000  8880 ▁▁▂▇▇
 ```
+]
+]
 
 ???
+**Pt. 1:**
+- total of 76,519 expedition members
+- categorization of data types
+
+**Pt. 2:**
+- three id columns, these are likely not supposed to end up in any predictive model -> in any case, if you have an id variable with predictive value you should question in the data generating process behind the id column
+- 391 different peaks, but only 390 different peak names
+- with 76,519 climbers, almost 1000 died (75,413 non-death causes), and another 600 came back injured (74,807 non-injured) -> imbalanced prediction task
+- 524 different expedition roles
+- why do we have five seasons? (probably an unknown category)
+
+**Pt. 3:**
 logical:
 - never missing
 - `hired` natives (around 20% of the expedition members)
 - only 38% expeditions made it to the top (`success`)
-- likely we can have expeditions that were succesful, but where one or several member died
+- likely we can have expeditions that were successful, but where one or several member died
 - died and injured corresponds to the numbers of `death_cause` and `injury_type`
 
 numeric:

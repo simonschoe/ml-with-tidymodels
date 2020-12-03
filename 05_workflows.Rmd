@@ -19,7 +19,7 @@ layout: true
 
 ## 4.4 `workflows`: Modeling Workflows
 
-`workflows` introduces a function for bundling preprocessing recipes and model specifications. A **workflow** encapsulates the three main modeling steps: data preprocessing, model fitting and post-processing (with the later not yet being implemented in the `workflows` package).
+`workflows` introduces a **`workflow`** object which bundles the preprocessing recipe, the model specification and potential post-processing steps to reduce code clatter. At the same time, it acts as a single entry point to your modeling workflow (respectively pipeline).
 
 ```{r, results='hide'}
 cls_wf <- workflow() %>% 
@@ -45,8 +45,8 @@ cls_wf
 ```
 
 ???
-- if no preprocessing is required `add_formula()` could be used
-- example for post processing: modifying the probability cutoff for binary classification; or calibration of probabilities; or determination of euqivocal zones
+- if no preprocessing is required (because the data is already perfect) `add_formula()` could be used (but you can only ever use one of the two)
+- in later releases, `workflows` should also be able to encapsulate post-processing steps (e.g., modifying the probability cutoff for binary classification; or calibration of probabilities; or determination of euqivocal zones)
 
 ---
 
@@ -66,14 +66,14 @@ cls_wf_fitted # output on next slide
 
 --
 
-Again, after having fitted the workflow, we can proceed to predicting the response in the test data:
+Again, after having fitted the workflow, we can proceed to predicting the response in the test data.
 ```{r, eval=F}
 cls_wf_fitted %>% 
   predict(new_data = test_set, type = "prob")
 ```
 
 .footnote[
-*Note: Call `pull_workflow_fit()` or `pull_workflow_prepped_recipe()` to extract the fitted model or the `recipe` object from the workflow.*
+*Note: Call `pull_workflow_fit()` or `pull_workflow_prepped_recipe()` to extract the fitted `parsnip` model or the estimated `recipe` object from the workflow.*
 ]
 
 ???
