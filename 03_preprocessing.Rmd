@@ -11,8 +11,8 @@ class: middle, center, inverse
 ---
 
 background-image: url(https://www.tidymodels.org/images/recipes.png)
-background-position: 95% 5%
-background-size: 7.5%
+background-position: 97.5% 5%
+background-size: 7%
 layout: true
 
 ---
@@ -80,13 +80,13 @@ mod_recipe <- mod_recipe %>%
 mod_recipe
 ```
 
-.pull-right[.pull-right[.footnote[
+.footnote[
 <i>
 Note: Change the role of a predictor to keep it in the data, however, without being used during model fitting.
 
 Usually `step_*()` functions do not change the role of a predictor. However, each `step_*()` function contains a `role` argument to explicitly specify the role of a newly generated predictor.
 </i>
-]]]
+]
 
 ???
 - with the `new_role` argument I can set any custom role name
@@ -116,9 +116,9 @@ mod_recipe <- mod_recipe %>%
 mod_recipe
 ```
 
-.pull-right[.pull-right[.footnote[
+.footnote[
 *Note: Variables can be selected by referring either to their name, their data type, their role (as specified by the recipe) or by using the `select()` helpers from `dplyr` (e.g., `contains()`, `starts_with()`).*
-]]]
+]
 
 ---
 
@@ -131,9 +131,9 @@ mod_recipe <- mod_recipe %>%
 mod_recipe
 ```
 
-.pull-right[.pull-right[.footnote[
+.footnote[
 *Note: You should always take care of the order of your steps. For example, you should first lump together factor levels and then create dummies. Otherwise the `recipe` would generate a large amount of near-zero variance dummies.*
-]]]
+]
 
 ???
 same holds for the normalize steps which should follow the median-impute step.
@@ -149,9 +149,9 @@ mod_recipe <- mod_recipe %>%
 mod_recipe
 ```
 
-.pull-right[.pull-right[.footnote[
+.footnote[
 *Note: Use `one_hot = T` in case you want to retain all $C$ factor levels instead of just $C-1$.*
-]]]
+]
 
 ---
 
@@ -164,9 +164,11 @@ mod_recipe <- mod_recipe %>%
 mod_recipe
 ```
 
-.pull-right[.pull-right[.footnote[
-*Note: Each* `step_*()` *function contains a `skip` argument which is mostly equal to `FALSE` by default. Yet, for certain preprocessing steps (e.g., under- or oversampling) we want to ensure that the step is not applied to the test set to retain the original properties of the unseen test data.*
-]]]
+.footnote[
+<i>
+Note: Each `step_*()` function contains a `skip` argument which is mostly equal to `FALSE` by default. Yet, for certain preprocessing steps (e.g., under- or oversampling) we set it to `TRUE` in order to not apply it to the test set and hence retain its original properties.
+</i>
+]
 
 ???
 - Usually, you would want to chain the steps together instead of defining each step separately (here its only done for presentation purposes)
@@ -184,8 +186,8 @@ Up to this point, you have not performed any actual transformation of your data 
 ---
 
 background-image: url(https://www.tidymodels.org/images/recipes.png)
-background-position: 95% 5%
-background-size: 7.5%
+background-position: 97.5% 5%
+background-size: 7%
 layout: true
 
 ---
@@ -199,7 +201,7 @@ mod_recipe_prepped
 ```
 
 .pull-right[.pull-right[.footnote[
-*Note: By applying `prep()` to the final recipe, we fit the recipe only to the training set (as specified in the `recipe()` function above). Thus, we prevent the issue of *data leakage*!*
+*Note: By applying `prep()` to the final recipe, we fit the recipe only to the training set (as specified in the `recipe()` function above). Thus, we prevent the issue of *data leakage*!*<br><br>
 ]]]
 
 ???
@@ -221,9 +223,9 @@ bake(mod_recipe_prepped, new_data = NULL)
 print(bake(mod_recipe_prepped, new_data = NULL), n = 5)
 ```
 
-.pull-right[.pull-right[.footnote[
+.footnote[
 *Note: Set `new_data = NULL` to apply the `recipe` to the data set provided to `recipe()`, i.e. the training set. Set `new_data = test_set` instead, if it should be applied to the test set.*
-]]]
+]
 
 ???
 Note:

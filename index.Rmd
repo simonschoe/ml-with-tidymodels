@@ -1,12 +1,13 @@
 ---
 title: "Machine Learning in R:<br/>Workshop Series"
-subtitle: "Modeling Workflows<br>with Tidymodels"
+subtitle: "Modeling Workflows with Tidymodels"
 author: "Simon Schölzel"
 institute: "*Research Team Berens*"
-date: "2020-12-07 (updated: `r Sys.Date()`)"
+date: "2020-12-07"
 
 output:
   xaringan::moon_reader:
+    seal: false
     css: [./custom/xaringan-themer.css, ./custom/custom-theme.css]
     lib_dir: libs
     nature:
@@ -17,46 +18,73 @@ output:
       ratio: '16:9'
 ---
 
-```{r setup, include = FALSE}
+```{r setup, include=F}
+
+# knitr options
 knitr::opts_chunk$set(
-  #set comment formatting
   comment = ">",
-  #collapse code and output
   collapse = F
 )
-```
 
-```{r packages, warning=F, message=F, echo=F}
-#install.packages("pacman")
+# package management
 if (!require("pacman")) install.packages("pacman")
-pacman::p_load(xaringanthemer, xaringanExtra, tidyverse, tidymodels, showtext, glmnet, doParallel, usemodels)
+pacman::p_load(
+  xaringanthemer, xaringanExtra, metathis,
+  tidyverse, tidymodels, showtext, glmnet, doParallel, usemodels
+)
 pacman::p_load_gh("hadley/emo")
-```
 
-```{r xaringan-themer, include=FALSE, warning=FALSE}
-style_mono_accent(
+# xaringan custom setup
+xaringanthemer::style_mono_accent(
   base_color = "#000000",
   link_color = "#0000EE",
   header_font_google = google_font("Josefin Sans"),
   text_font_google   = google_font("Montserrat", "700b", "400"),
   code_font_google   = google_font("Fira Mono"),
-  colors = c(
-    red = "#f34213",
-    white = "#FFFFFF"
-  ),
+  colors = c(red = "#f34213", white = "#FFFFFF"),
   code_font_size = "smaller",
   code_inline_background_color = "#F4F4F4",
   outfile = "./custom/xaringan-themer.css"
 )
-```
 
-```{r xaringan-extra, echo=F}
 xaringanExtra::use_panelset()
 
 xaringanExtra::use_extra_styles(
-  hover_code_line = T
+  hover_code_line = T,
+  mute_unhighlighted_code = T
 )
+
+metathis::meta() %>%
+  meta_name("github-repo" = "simonschoe/ml-with-tidymodels") %>% 
+  meta_social(
+    title = "Modeling Workflows with Tidymodels",
+    description = "4 hour workshop on tidymodels, a unified framework towards modeling and machine learning in R using tidy data principles.",
+    url = "https://simonschoe.github.io/ml-with-tidymodels",
+    image = "",
+    image_alt = "Title slide for Modeling Workflows with Tidymodels",
+    og_type = "website",
+    og_author = "Simon Schölzel",
+    twitter_card_type = "summary_large_image"
+  )
 ```
+
+class: center, middle, hide-count
+count: false
+
+# `r rmarkdown::metadata$title`
+### `r rmarkdown::metadata$subtitle`
+
+___
+
+**`r rmarkdown::metadata$author`**
+
+`r rmarkdown::metadata$date`
+
+<br><br>
+
+<a href="https://www.wiwi.uni-muenster.de/"><img src="https://www.wiwi.uni-muenster.de/fakultaet/sites/all/themes/wwucd/assets/images/logos/secondary_wiwi_aacsb_german.jpg" alt="fb4-logo" height="45"></a> <a href="https://www.wiwi.uni-muenster.de/ctrl/aktuelles"><img src="https://www.wiwi.uni-muenster.de/ctrl/sites/all/themes/wwucd/assets/images/logos/berenslogo5.jpg" alt="ftb-logo" height="45"></a> <a href="https://www.wiwi.uni-muenster.de/iff2/de/news"><img src="https://www.wiwi.uni-muenster.de/iff2/sites/all/themes/wwucd/assets/images/logos/logo_iff2_en2.jpg" alt="ipb-logo" height="45"></a>
+
+---
 
 name: agenda
 
@@ -132,7 +160,7 @@ class: center, middle
 
 ---
 
-```{r child='./07_model_evaluation.Rmd', eval=F}
+```{r child='./07_model_evaluation.Rmd', eval=T}
 ```
 
 ---
@@ -219,9 +247,7 @@ use_glmnet(died ~ ., data = climbers_df, verbose = F, prefix = "glmnet_mod")
 
 --
 
-<br>
-
-`usemodels` ships with boilerplate code for several model types:
+**Supported model types:**
 ```{r}
 ls("package:usemodels", pattern = "use_")
 ```
@@ -248,13 +274,13 @@ knitr::include_graphics("./img/tidymodels-priorities.PNG")
 ## Thank You!
 
 .pull-left[
-`r emo::ji("thinking_face")` **Right now**<br><br>
+.center[`r emo::ji("thinking_face")` **Right now**]<br><br>
 ```{r, echo=F, fig.align='center'}
 knitr::include_graphics("https://tenor.com/view/homer-daydreaming-thinking-simpsons-gif-8949118.gif")
 ```
 ]
 .pull-right[
-`r emo::ji("nerd_face")` **After having mastered `tidymodels`**<br><br>
+.center[`r emo::ji("nerd_face")` **After having mastered `tidymodels`**]<br><br>
 ```{r, echo=F, fig.align='center'}
 knitr::include_graphics("https://tenor.com/view/homer-gif-10571731.gif")
 ```
@@ -288,6 +314,6 @@ name: references
 
 ## Further Resources
 
-**tidymodels.org:** Learn Section. ULR: https://www.tidymodels.org/learn/.
+Learn Section of tidymodels.org. ULR: https://www.tidymodels.org/learn/.
 
-**Silge, J.:** TidyTuesday Contributions. URL: https://juliasilge.com/blog/.
+TidyTuesday Contributions by Julia Silge. URL: https://juliasilge.com/blog/.

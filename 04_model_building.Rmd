@@ -11,8 +11,8 @@ class: middle, center, inverse
 ---
 
 background-image: url(https://www.tidymodels.org/images/parsnip.png)
-background-position: 95% 5%
-background-size: 7.5%
+background-position: 97.5% 5%
+background-size: 7%
 layout: true
 
 ---
@@ -259,8 +259,6 @@ test_set %>%
   bind_cols(predict(dt_cls_fit, new_data = ., type = "prob")) %>% 
   slice_head(n = 3)
 ```
-
-<br>
 
 --
 

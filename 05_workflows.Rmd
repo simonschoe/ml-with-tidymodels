@@ -11,8 +11,8 @@ class: middle, center, inverse
 ---
 
 background-image: url(https://www.tidymodels.org/images/workflows.png)
-background-position: 95% 5%
-background-size: 7.5%
+background-position: 97.5% 5%
+background-size: 7%
 layout: true
 
 ---
@@ -61,7 +61,11 @@ When calling `fit()` on a `workflow` object, `tidymodels` performs the following
 cls_wf_fitted <- cls_wf %>% 
   fit(train_set)
 
-cls_wf_fitted # output on next slide
+cls_wf_fitted
+```
+```
+> Output on next slide
+
 ```
 
 --

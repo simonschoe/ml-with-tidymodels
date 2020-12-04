@@ -11,8 +11,8 @@ class: middle, center, inverse
 ---
 
 background-image: url(https://www.tidymodels.org/images/dials.png)
-background-position: 95% 5%
-background-size: 7.5%
+background-position: 97.5% 5%
+background-size: 7%
 layout: true
 
 ---
@@ -77,15 +77,16 @@ layout: false
 
 **Hyperparameter scaling:** In practice, you will often find that hyperparameters are defined on the log instead of the original linear scale. There are two prominent rationals for preferring a log over a linear scale:
 
-1. You have usually no clue regarding the potential optimum. Hence, you are inclined to evaluate a large, heterogeneous search space with extremely small but also very large candidate values. On a linear scale, you would simply ignore a large proportion of the search space.<br><br>
-  - **Linear scale:** $[0.000001; 10,000]$-interval
-  ```
-  > 0.000001  1000  2000  3000  4000  5000  6000  7000  8000  9000 10000
-  ```
-  - **Log scale:** $[0.000001; 10,000]$-interval
-  ```
-  > 1e-06 1e-05 1e-04 1e-03 1e-02 1e-01 1e+00 1e+01 1e+02 1e+03
-  ```
+1. Usually, you have no clue regarding the potential optimum. Hence, you are inclined to evaluate a large search space with extremely small but also very large candidate values (e.g., $[0.000001; 10,000]$-interval). On a linear scale, this approach would ignore a large proportion of the search space.
+
+  - **Linear scale:**
+  
+  `> 0.000001  1000  2000  3000  4000  5000  6000  7000  8000  9000 10000`
+  
+  - **Log scale:**
+  
+  `> 1e-06 1e-05 1e-04 1e-03 1e-02 1e-01 1e+00 1e+01 1e+02 1e+03`
+
 2. For some models and hyperparameter sets, the model's accuracy is relatively insensitive to certain regions of the search space. Those models demand a large variation in order to observe any impact on the underlying performance metrics.
 
 If you have identified a promising parameter subspace, you may eventually narrow it down by further restricting the search space of your hyperparameter grid.
@@ -93,8 +94,8 @@ If you have identified a promising parameter subspace, you may eventually narrow
 ---
 
 background-image: url(https://www.tidymodels.org/images/dials.png)
-background-position: 95% 5%
-background-size: 7.5%
+background-position: 97.5% 5%
+background-size: 7%
 layout: true
 
 ---
@@ -199,8 +200,8 @@ class: middle, center, inverse
 ---
 
 background-image: url(https://www.tidymodels.org/images/tune.png)
-background-position: 95% 5%
-background-size: 7.5%
+background-position: 97.5% 5%
+background-size: 7%
 layout: true
 
 ---
@@ -527,7 +528,10 @@ Since we have now optimized our model for the most promising candidate hyperpara
 cls_wf_final <- cls_wf %>% 
   finalize_workflow(select_best(cls_wf_tuned, metric = "roc_auc"))
 
-cls_wf_final # output on next slide
+cls_wf_final
+```
+```
+>  Output on next slide
 ```
 
 .footnote[

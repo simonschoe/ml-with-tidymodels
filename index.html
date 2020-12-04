@@ -4,32 +4,51 @@
     <title>Machine Learning in R: Workshop Series</title>
     <meta charset="utf-8" />
     <meta name="author" content="Simon Schölzel" />
+    <meta name="date" content="2020-12-07" />
     <link href="libs/panelset-0.2.4/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.4/panelset.js"></script>
     <link href="libs/xaringanExtra-extra-styles-0.2.4/xaringanExtra-extra-styles.css" rel="stylesheet" />
+    <meta name="github-repo" content="simonschoe/ml-with-tidymodels"/>
+    <meta name="twitter:title" content="Modeling Workflows with Tidymodels"/>
+    <meta name="twitter:description" content="4 hour workshop on tidymodels, a unified framework towards modeling and machine learning in R using tidy data principles."/>
+    <meta name="twitter:url" content="https://simonschoe.github.io/ml-with-tidymodels"/>
+    <meta name="twitter:image:src" content=""/>
+    <meta name="twitter:image:alt" content="Title slide for Modeling Workflows with Tidymodels"/>
+    <meta name="twitter:card" content="summary_large_image"/>
+    <meta property="og:title" content="Modeling Workflows with Tidymodels"/>
+    <meta property="og:description" content="4 hour workshop on tidymodels, a unified framework towards modeling and machine learning in R using tidy data principles."/>
+    <meta property="og:url" content="https://simonschoe.github.io/ml-with-tidymodels"/>
+    <meta property="og:image" content=""/>
+    <meta property="og:image:alt" content="Title slide for Modeling Workflows with Tidymodels"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:locale" content="en_US"/>
+    <meta property="article:author" content="Simon Schölzel"/>
     <link rel="stylesheet" href="custom/xaringan-themer.css" type="text/css" />
     <link rel="stylesheet" href="custom/custom-theme.css" type="text/css" />
   </head>
   <body>
     <textarea id="source">
-class: left, middle, inverse, title-slide
 
-# Machine Learning in R:<br/>Workshop Series
-## Modeling Workflows<br>with Tidymodels
-### Simon Schölzel
-### <em>Research Team Berens</em>
-### 2020-12-07 (updated: 2020-12-02)
+
+
+
+class: center, middle, hide-count
+count: false
+
+# Machine Learning in R:&lt;br/&gt;Workshop Series
+### Modeling Workflows with Tidymodels
+
+___
+
+**Simon Schölzel**
+
+2020-12-07
+
+&lt;br&gt;&lt;br&gt;
+
+&lt;a href="https://www.wiwi.uni-muenster.de/"&gt;&lt;img src="https://www.wiwi.uni-muenster.de/fakultaet/sites/all/themes/wwucd/assets/images/logos/secondary_wiwi_aacsb_german.jpg" alt="fb4-logo" height="45"&gt;&lt;/a&gt; &lt;a href="https://www.wiwi.uni-muenster.de/ctrl/aktuelles"&gt;&lt;img src="https://www.wiwi.uni-muenster.de/ctrl/sites/all/themes/wwucd/assets/images/logos/berenslogo5.jpg" alt="ftb-logo" height="45"&gt;&lt;/a&gt; &lt;a href="https://www.wiwi.uni-muenster.de/iff2/de/news"&gt;&lt;img src="https://www.wiwi.uni-muenster.de/iff2/sites/all/themes/wwucd/assets/images/logos/logo_iff2_en2.jpg" alt="ipb-logo" height="45"&gt;&lt;/a&gt;
 
 ---
-
-
-
-
-
-
-
-
-
 
 name: agenda
 
@@ -77,8 +96,8 @@ class: middle, center, inverse
 ---
 
 background-image: url(https://www.tidymodels.org/images/tidymodels.png)
-background-position: 95% 5%
-background-size: 7.5%
+background-position: 97.5% 5%
+background-size: 7%
 layout: true
 
 ---
@@ -223,13 +242,17 @@ tt_data &lt;- tidytuesdayR::tt_load(2020, week = 39)
 ```
 
 ```
+&gt; --- Download complete ---
+```
+```
+&gt; --- Compiling #TidyTuesday Information for 2020-09-22 ----
+&gt; --- There are 3 files available ---
+&gt; --- Starting Download ---
 &gt; 
 &gt; 	Downloading file 1 of 3: `peaks.csv`
 &gt; 	Downloading file 2 of 3: `members.csv`
 &gt; 	Downloading file 3 of 3: `expeditions.csv`
-```
-
-```
+&gt; 
 &gt; --- Download complete ---
 ```
 
@@ -410,8 +433,8 @@ class: middle, center, inverse
 ---
 
 background-image: url(https://www.tidymodels.org/images/rsample.png)
-background-position: 95% 5%
-background-size: 7.5%
+background-position: 97.5% 5%
+background-size: 7%
 layout: true
 
 ---
@@ -600,8 +623,8 @@ class: middle, center, inverse
 ---
 
 background-image: url(https://www.tidymodels.org/images/recipes.png)
-background-position: 95% 5%
-background-size: 7.5%
+background-position: 97.5% 5%
+background-size: 7%
 layout: true
 
 ---
@@ -692,13 +715,13 @@ mod_recipe
 &gt;  predictor         11
 ```
 
-.pull-right[.pull-right[.footnote[
+.footnote[
 &lt;i&gt;
 Note: Change the role of a predictor to keep it in the data, however, without being used during model fitting.
 
 Usually `step_*()` functions do not change the role of a predictor. However, each `step_*()` function contains a `role` argument to explicitly specify the role of a newly generated predictor.
 &lt;/i&gt;
-]]]
+]
 
 ???
 - with the `new_role` argument I can set any custom role name
@@ -761,9 +784,9 @@ mod_recipe
 &gt; Centering and scaling for all_numeric()
 ```
 
-.pull-right[.pull-right[.footnote[
+.footnote[
 *Note: Variables can be selected by referring either to their name, their data type, their role (as specified by the recipe) or by using the `select()` helpers from `dplyr` (e.g., `contains()`, `starts_with()`).*
-]]]
+]
 
 ---
 
@@ -794,9 +817,9 @@ mod_recipe
 &gt; Collapsing factor levels for peak_name, citizenship, expedition_role
 ```
 
-.pull-right[.pull-right[.footnote[
+.footnote[
 *Note: You should always take care of the order of your steps. For example, you should first lump together factor levels and then create dummies. Otherwise the `recipe` would generate a large amount of near-zero variance dummies.*
-]]]
+]
 
 ???
 same holds for the normalize steps which should follow the median-impute step.
@@ -831,9 +854,9 @@ mod_recipe
 &gt; Dummy variables from all_predictors(), -all_numeric()
 ```
 
-.pull-right[.pull-right[.footnote[
+.footnote[
 *Note: Use `one_hot = T` in case you want to retain all `\(C\)` factor levels instead of just `\(C-1\)`.*
-]]]
+]
 
 ---
 
@@ -866,9 +889,11 @@ mod_recipe
 &gt; SMOTE based on died
 ```
 
-.pull-right[.pull-right[.footnote[
-*Note: Each* `step_*()` *function contains a `skip` argument which is mostly equal to `FALSE` by default. Yet, for certain preprocessing steps (e.g., under- or oversampling) we want to ensure that the step is not applied to the test set to retain the original properties of the unseen test data.*
-]]]
+.footnote[
+&lt;i&gt;
+Note: Each `step_*()` function contains a `skip` argument which is mostly equal to `FALSE` by default. Yet, for certain preprocessing steps (e.g., under- or oversampling) we set it to `TRUE` in order to not apply it to the test set and hence retain its original properties.
+&lt;/i&gt;
+]
 
 ???
 - Usually, you would want to chain the steps together instead of defining each step separately (here its only done for presentation purposes)
@@ -886,8 +911,8 @@ Up to this point, you have not performed any actual transformation of your data 
 ---
 
 background-image: url(https://www.tidymodels.org/images/recipes.png)
-background-position: 95% 5%
-background-size: 7.5%
+background-position: 97.5% 5%
+background-size: 7%
 layout: true
 
 ---
@@ -923,7 +948,7 @@ mod_recipe_prepped
 ```
 
 .pull-right[.pull-right[.footnote[
-*Note: By applying `prep()` to the final recipe, we fit the recipe only to the training set (as specified in the `recipe()` function above). Thus, we prevent the issue of *data leakage*!*
+*Note: By applying `prep()` to the final recipe, we fit the recipe only to the training set (as specified in the `recipe()` function above). Thus, we prevent the issue of *data leakage*!*&lt;br&gt;&lt;br&gt;
 ]]]
 
 ???
@@ -960,9 +985,9 @@ bake(mod_recipe_prepped, new_data = NULL)
 &gt; #   success_TRUE. &lt;dbl&gt;
 ```
 
-.pull-right[.pull-right[.footnote[
+.footnote[
 *Note: Set `new_data = NULL` to apply the `recipe` to the data set provided to `recipe()`, i.e. the training set. Set `new_data = test_set` instead, if it should be applied to the test set.*
-]]]
+]
 
 ???
 Note:
@@ -1046,8 +1071,8 @@ class: middle, center, inverse
 ---
 
 background-image: url(https://www.tidymodels.org/images/parsnip.png)
-background-position: 95% 5%
-background-size: 7.5%
+background-position: 97.5% 5%
+background-size: 7%
 layout: true
 
 ---
@@ -1398,8 +1423,6 @@ test_set %&gt;%
 &gt; #   .pred_TRUE &lt;dbl&gt;
 ```
 
-&lt;br&gt;
-
 --
 
 ___
@@ -1431,8 +1454,8 @@ class: middle, center, inverse
 ---
 
 background-image: url(https://www.tidymodels.org/images/workflows.png)
-background-position: 95% 5%
-background-size: 7.5%
+background-position: 97.5% 5%
+background-size: 7%
 layout: true
 
 ---
@@ -1483,7 +1506,11 @@ When calling `fit()` on a `workflow` object, `tidymodels` performs the following
 cls_wf_fitted &lt;- cls_wf %&gt;% 
   fit(train_set)
 
-cls_wf_fitted # output on next slide
+cls_wf_fitted
+```
+```
+&gt; Output on next slide
+
 ```
 
 --
@@ -1549,8 +1576,8 @@ class: middle, center, inverse
 ---
 
 background-image: url(https://www.tidymodels.org/images/dials.png)
-background-position: 95% 5%
-background-size: 7.5%
+background-position: 97.5% 5%
+background-size: 7%
 layout: true
 
 ---
@@ -1628,15 +1655,16 @@ layout: false
 
 **Hyperparameter scaling:** In practice, you will often find that hyperparameters are defined on the log instead of the original linear scale. There are two prominent rationals for preferring a log over a linear scale:
 
-1. You have usually no clue regarding the potential optimum. Hence, you are inclined to evaluate a large, heterogeneous search space with extremely small but also very large candidate values. On a linear scale, you would simply ignore a large proportion of the search space.&lt;br&gt;&lt;br&gt;
-  - **Linear scale:** `\([0.000001; 10,000]\)`-interval
-  ```
-  &gt; 0.000001  1000  2000  3000  4000  5000  6000  7000  8000  9000 10000
-  ```
-  - **Log scale:** `\([0.000001; 10,000]\)`-interval
-  ```
-  &gt; 1e-06 1e-05 1e-04 1e-03 1e-02 1e-01 1e+00 1e+01 1e+02 1e+03
-  ```
+1. Usually, you have no clue regarding the potential optimum. Hence, you are inclined to evaluate a large search space with extremely small but also very large candidate values (e.g., `\([0.000001; 10,000]\)`-interval). On a linear scale, this approach would ignore a large proportion of the search space.
+
+  - **Linear scale:**
+  
+  `&gt; 0.000001  1000  2000  3000  4000  5000  6000  7000  8000  9000 10000`
+  
+  - **Log scale:**
+  
+  `&gt; 1e-06 1e-05 1e-04 1e-03 1e-02 1e-01 1e+00 1e+01 1e+02 1e+03`
+
 2. For some models and hyperparameter sets, the model's accuracy is relatively insensitive to certain regions of the search space. Those models demand a large variation in order to observe any impact on the underlying performance metrics.
 
 If you have identified a promising parameter subspace, you may eventually narrow it down by further restricting the search space of your hyperparameter grid.
@@ -1644,8 +1672,8 @@ If you have identified a promising parameter subspace, you may eventually narrow
 ---
 
 background-image: url(https://www.tidymodels.org/images/dials.png)
-background-position: 95% 5%
-background-size: 7.5%
+background-position: 97.5% 5%
+background-size: 7%
 layout: true
 
 ---
@@ -1841,8 +1869,8 @@ class: middle, center, inverse
 ---
 
 background-image: url(https://www.tidymodels.org/images/tune.png)
-background-position: 95% 5%
-background-size: 7.5%
+background-position: 97.5% 5%
+background-size: 7%
 layout: true
 
 ---
@@ -2293,7 +2321,10 @@ Since we have now optimized our model for the most promising candidate hyperpara
 cls_wf_final &lt;- cls_wf %&gt;% 
   finalize_workflow(select_best(cls_wf_tuned, metric = "roc_auc"))
 
-cls_wf_final # output on next slide
+cls_wf_final
+```
+```
+&gt;  Output on next slide
 ```
 
 .footnote[
@@ -2390,6 +2421,354 @@ _Note: For a comprehensive overview of the topic of *interpretable ML* check out
 
 
 
+layout: false
+class: middle, center, inverse
+
+# 4.7 `broom`:&lt;br&gt;&lt;br&gt;Convert Statistical Objects into Tidy Tibbles
+
+---
+
+background-image: url(https://www.tidymodels.org/images/broom.png)
+background-position: 97.5% 5%
+background-size: 7%
+layout: true
+
+---
+
+## 4.7 `broom`: Tidy Model Outputs
+
+`broom` provides three useful functions for converting model objects (e.g., `lm`, `glm`, `rpart`) into tidy `tibbles`:
+- `tidy()`: produces a tidy output of model components (e.g., coefficients, weights, clusters)
+- `glance()`: produces a tidy output of model summaries (e.g., goodness-of-fit, `\(F\)`-statistics)
+- `augment()`: adds additional information about observations (e.g., fitted values, residuals)
+
+&lt;img src="https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/rstats-artwork/broom_package.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+???
+- most of the columns `tidymodels` creates have the "." prefix in order to not override initial columns
+- difference to `tidyr`: these functions tidy model objects, `tidyr` is all about tidying and transforming data frames
+
+---
+
+## 4.7 `broom`: Tidy Model Outputs
+
+In order to illustrate the convenience of the three `broom` functions, let us first extract our optimal model from `cls_wf_results`.
+
+```r
+elnet_cls_final &lt;- cls_wf_results %&gt;% 
+  pluck(".workflow", 1) %&gt;% 
+  pull_workflow_fit()
+
+elnet_cls_final
+```
+```
+&gt; parsnip model object
+&gt; 
+&gt; Fit time:  4.8s 
+&gt; 
+&gt; Call:  glmnet::glmnet(x = maybe_matrix(x), y = y, family = ~"binomial", alpha = &gt; ~0.111111111111111) 
+&gt; 
+&gt;    Df  %Dev  Lambda
+&gt; 1   0  0.00 1.09200
+&gt; 2   1  0.17 0.99480
+&gt; 3   1  0.36 0.90640
+&gt; 4   2  0.56 0.82590
+&gt; 5   2  0.86 0.75250
+&gt; 6   2  1.16 0.68560
+&gt; ...
+```
+
+???
+- we see the `call`, i.e. how `tune` has translated our workflow into the original engines
+- alpha is set to 0.1111 according to our hyperparameter tuning procedure
+- non-tidy output:
+  - `Df`: number of non-zero coefs
+  - `%Dev`: a measure for the explained variation
+  - `lambda`: `penalty` hyperparameter
+
+---
+
+## 4.7 `broom`: Tidy Model Outputs
+
+.pull-left[
+**`tidy()`:** produces a tidy output of model components (e.g., coefficients, weights, clusters)
+
+```r
+tidy(elnet_cls_final)
+```
+
+```
+&gt; # A tibble: 23 x 3
+&gt;   term              estimate penalty
+&gt;   &lt;chr&gt;                &lt;dbl&gt;   &lt;dbl&gt;
+&gt; 1 (Intercept)        -2.31   0.00599
+&gt; 2 year               -0.412  0.00599
+&gt; 3 age                 0.0320 0.00599
+&gt; 4 peak_name_Cho.Oyu  -0.220  0.00599
+&gt; 5 peak_name_Everest   0.796  0.00599
+&gt; 6 peak_name_Manaslu   1.00   0.00599
+&gt; 7 peak_name_other     0.946  0.00599
+&gt; 8 season_Spring       0.0400 0.00599
+&gt; # ... with 15 more rows
+```
+]
+.pull-right[
+**`glance()`:** produces a tidy output of model diagnostics (e.g., goodness-of-fit, F-statistics)
+
+```r
+glance(elnet_cls_final)
+```
+
+```
+&gt; # A tibble: 1 x 3
+&gt;   nulldev npasses  nobs
+&gt;     &lt;dbl&gt;   &lt;int&gt; &lt;int&gt;
+&gt; 1 127642.     914 96470
+```
+
+**`augment()`:** adds additional information about observations (e.g., fitted values, residuals)
+
+Unfortunately, `augment()` is not supported for `glmnet` models (check [available methods](https://broom.tidymodels.org/articles/available-methods.html)).
+]
+
+.footnote[
+*Note: Depending on the class of the model object you are providing to `tidy()`, it offers several advanced features, such as returning odds-ratios for logit-models (`exponentiate = T`) or confidence interval (`conf.int = T`).*
+]
+
+???
+- `tidy`: useful for creating visualizations or preparing model tables for a paper
+- `glance`: useful for investigating overall model performance, identify misspecifications or compare models
+- these functions are implemented with the need of data scientist in mind, i.e. what are the statistics the modeler is most likely interested in?
+- they also work with techniques from classical statistics such as t-tests
+
+---
+
+layout: false
+class: middle, center, inverse
+
+# 4.8 `yardstick`:&lt;br&gt;&lt;br&gt;Tidy Characterizations of Model Performance
+
+---
+
+background-image: url(https://www.tidymodels.org/images/yardstick.png)
+background-position: 97.5% 5%
+background-size: 7%
+layout: true
+
+---
+
+## 4.8 `yardstick`: Tidy Model Performance
+
+Similar to `broom`, `yardstick`'s endeavor is to enable model evaluation using *tidy data principles*. It ships with three types of metrics which can be distinguished by their input arguments and use case:
+
+**Classification:**
+- **Class metrics** are based on the predicted class (*hard predictions*) and take two `fct` columns (`truth` and `estimate`).
+- **Class probability metrics** are based on the predicted probabilities (*soft predictions*) and take one `fct` column (`truth`) and one/multiple `dbl` columns containing the class probabilities (`estimate`).
+
+**Regression:**
+- **Numeric metrics** are based on a numerical prediction and take two `dbl` columns (`truth` and `estimate`).
+
+.footnote[
+*Note: Find all available metrics grouped by their type on [tidymodels.org](https://yardstick.tidymodels.org/articles/metric-types.html#metrics).*
+]
+
+---
+
+## 4.8 `yardstick`: Tidy Model Performance
+
+In order to compute various *class* and *class probability metrics* for our regularized logistic classifier, we must first extract the `.predictions` from our optimal fitted model.
+
+```r
+cls_wf_results &lt;- cls_wf_results %&gt;% 
+  purrr::pluck(".predictions", 1) 
+
+cls_wf_results
+```
+
+```
+&gt; # A tibble: 15,294 x 6
+&gt;    .pred_FALSE .pred_TRUE  .row .pred_class died  .config             
+&gt;          &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt; &lt;chr&gt;               
+&gt;  1       0.674     0.326      5 FALSE       FALSE Preprocessor1_Model1
+&gt;  2       0.792     0.208      9 FALSE       FALSE Preprocessor1_Model1
+&gt;  3       0.860     0.140     14 FALSE       FALSE Preprocessor1_Model1
+&gt;  4       0.924     0.0760    16 FALSE       FALSE Preprocessor1_Model1
+&gt;  5       0.888     0.112     21 FALSE       FALSE Preprocessor1_Model1
+&gt;  6       0.815     0.185     27 FALSE       FALSE Preprocessor1_Model1
+&gt;  7       0.763     0.237     34 FALSE       FALSE Preprocessor1_Model1
+&gt;  8       0.900     0.100     38 FALSE       FALSE Preprocessor1_Model1
+&gt;  9       0.674     0.326     48 FALSE       FALSE Preprocessor1_Model1
+&gt; 10       0.599     0.401     54 FALSE       FALSE Preprocessor1_Model1
+&gt; # ... with 15,284 more rows
+```
+
+---
+
+## 4.8 `yardstick`: Tidy Model Performance
+
+.pull-left[
+**Class metrics:** `conf_mat()`
+
+```r
+cls_wf_results %&gt;% 
+  conf_mat(died, estimate = .pred_class)
+```
+
+```
+&gt;           Truth
+&gt; Prediction FALSE  TRUE
+&gt;      FALSE 12750   137
+&gt;      TRUE   2321    86
+```
+**Class metrics:** `sens()` (sensitivity)
+
+```r
+cls_wf_results %&gt;% 
+  sens(died, estimate = .pred_class)
+```
+**Class metrics:** `spec()` (specificity)
+
+```r
+cls_wf_results %&gt;% 
+  spec(died, estimate = .pred_class)
+```
+]
+.pull-right[
+**Class metrics:** `accuracy()`
+
+```r
+cls_wf_results %&gt;% 
+  accuracy(died, estimate = .pred_class)
+```
+
+Finally, you may also create a `metric_set` to compute multiple performance metrics at once.
+
+```r
+metrics &lt;- metric_set(accuracy, sens, spec)
+
+metrics(
+  cls_wf_results, 
+  died, estimate = .pred_class
+)
+```
+
+```
+&gt; # A tibble: 3 x 3
+&gt;   .metric  .estimator .estimate
+&gt;   &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt;
+&gt; 1 accuracy binary         0.839
+&gt; 2 sens     binary         0.846
+&gt; 3 spec     binary         0.386
+```
+]
+
+???
+- "binary" indicates that the measures are computed for a binary classification problem
+- for multi-class problems `yardstick` has implemented generalizations of the original measures
+
+---
+
+## 4.8 `yardstick`: Tidy Model Performance
+
+.pull-left[
+**Class probability metrics:** `roc_curve()`
+
+```r
+cls_wf_results %&gt;% 
+  roc_curve(
+    .pred_TRUE, truth = died,
+    event_level = "second"
+  )
+```
+
+```
+&gt; # A tibble: 13,363 x 3
+&gt;    .threshold specificity sensitivity
+&gt;         &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;
+&gt;  1  -Inf        0                   1
+&gt;  2     0.0110   0                   1
+&gt;  3     0.0125   0.0000664           1
+&gt;  4     0.0142   0.000133            1
+&gt;  5     0.0149   0.000199            1
+&gt;  6     0.0163   0.000265            1
+&gt;  7     0.0163   0.000332            1
+&gt;  8     0.0163   0.000398            1
+&gt;  9     0.0169   0.000464            1
+&gt; 10     0.0172   0.000531            1
+&gt; # ... with 13,353 more rows
+```
+]
+.pull-right[
+**Class probability metrics:** `roc_auc()`
+
+```r
+cls_wf_results %&gt;% 
+  roc_auc(
+    .pred_TRUE, truth = died,
+    event_level = "second"
+  )
+```
+
+```
+&gt; # A tibble: 1 x 3
+&gt;   .metric .estimator .estimate
+&gt;   &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt;
+&gt; 1 roc_auc binary         0.710
+```
+]
+
+.footnote[.pull-right[
+*Note: By default, `yardstick` views the first factor level as the positive class. If your outcome is one-hot encoded (e.g., `0`/`1` or `FALSE`/`TRUE`) and the event of interest relates to the second factor level, you have to make the `event_level` explicit.*
+]]
+
+???
+- class probability metrics: we provide the probability column for the event of interest
+
+---
+
+## 4.8 `yardstick`: Tidy Model Performance
+
+The individual functions are not only applicable to our final test set predictions for the optimal model, but work equally well on a `tibble` of predictions, grouped by resample.
+
+.pull-left[
+
+```r
+cls_wf_tuned %&gt;% 
+  collect_predictions() %&gt;% 
+  group_by(id) %&gt;% 
+  roc_curve(
+    died, .pred_TRUE,
+    event_level = "second"
+  ) %&gt;% 
+  autoplot()
+```
+]
+.pull-right[
+&lt;img src="index_files/figure-html/unnamed-chunk-115-1.png" style="display: block; margin: auto;" /&gt;
+]
+
+.footnote[
+*Note: Learn more about the `yardstick` package, e.g., about features for multi-class learning problems, in Kuhn/Silge (2020). [[1, ch. 9](#references)]*
+]
+
+???
+- yardsticks functions have a consistent API that allows to easily operate on grouped data
+- ideally you would not only want to compare the model performance for different folds but also across models -&gt; this is straightforward with `yardstick` as well
+
+---
+
+layout: false
+
+## Excursus: Alternative Evaluation Dimensions
+
+- **Scalability:** How well does the model scale to larger data sets? Is the speed of model re-training and prediction adversely affected in a real-time scenario?&lt;br&gt;&lt;br&gt;
+- **Robustness**: Is the model robust against perturbations (e.g., missing values or outliers) in the unseen data? Does the performance deteriorate rapidly in the context of data drift?&lt;br&gt;&lt;br&gt;
+- **Transferability:** Can the model be applied to related tasks without substantial re-training of the model and without a substantial loss of predictive accuracy?&lt;br&gt;&lt;br&gt;
+- **Interpretability:** Are predictions explainable? Can the relationship between a predictor and the outcome be extracted from the model?&lt;br&gt;&lt;br&gt;
+- **Fairness &amp; Compliance:** Does the model systematically discriminate against certain sub-populations or ethical groups? Does it comply with prevalent law in a given domain?&lt;br&gt;&lt;br&gt;
+- **Justifiability:** Are the predictions in line with well-known business rules? Are the most important predictors consistent with prior beliefs?&lt;br&gt;&lt;br&gt;
+- **Causality:** Does the model allow causal inference? If no, does it enable the user to generate hypotheses that can be tested using alternative statistical approaches?&lt;br&gt;&lt;br&gt;
+
 ---
 
 ## 5 Additions to the `tidymodels` Ecosystem
@@ -2473,9 +2852,7 @@ use_glmnet(died ~ ., data = climbers_df, verbose = F, prefix = "glmnet_mod")
 
 --
 
-&lt;br&gt;
-
-`usemodels` ships with boilerplate code for several model types:
+**Supported model types:**
 
 ```r
 ls("package:usemodels", pattern = "use_")
@@ -2505,11 +2882,11 @@ ls("package:usemodels", pattern = "use_")
 ## Thank You!
 
 .pull-left[
-🤔 **Right now**&lt;br&gt;&lt;br&gt;
+.center[🤔 **Right now**]&lt;br&gt;&lt;br&gt;
 &lt;img src="https://tenor.com/view/homer-daydreaming-thinking-simpsons-gif-8949118.gif" style="display: block; margin: auto;" /&gt;
 ]
 .pull-right[
-🤓 **After having mastered `tidymodels`**&lt;br&gt;&lt;br&gt;
+.center[🤓 **After having mastered `tidymodels`**]&lt;br&gt;&lt;br&gt;
 &lt;img src="https://tenor.com/view/homer-gif-10571731.gif" style="display: block; margin: auto;" /&gt;
 ]
 
@@ -2539,9 +2916,9 @@ name: references
 
 ## Further Resources
 
-**tidymodels.org:** Learn Section. ULR: https://www.tidymodels.org/learn/.
+Learn Section of tidymodels.org. ULR: https://www.tidymodels.org/learn/.
 
-**Silge, J.:** TidyTuesday Contributions. URL: https://juliasilge.com/blog/.
+TidyTuesday Contributions by Julia Silge. URL: https://juliasilge.com/blog/.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
