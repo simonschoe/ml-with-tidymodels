@@ -25,7 +25,7 @@ name: data-split
 - **data partitioning**, i.e. splitting the data into a training and testing set, and
 - **resampling**, i.e. sub-splitting the training set to estimate the sampling distribution of a given statistic (e.g., the validation set error).
 
-Thereby, a *resample* of the original data is viewed as the outcome of a resampling method, e.g., a fold resulting from $k$-fold cross-validation or a bootstrapped sample resulting from sampling with replacement. In general, resampling is conducted subsequent to data partitioning and only on the training set.
+Thereby, a *resample* is viewed as the outcome of a resampling method, e.g., the $k$ folds resulting from $k$-fold cross-validation or a bootstrapped and hold-out sample resulting from sampling with replacement. In general, resampling is conducted subsequent to data partitioning and only on the training set.
 <br><br>
 
 --
@@ -126,6 +126,8 @@ climbers_folds %>%
   assessment()
 ```
 
+<br>
+
 Note that `tidymodels` discriminates between train and test as well as analysis and assessment sets:
 - use `training()` and `testing()` to extract data after data partitioning,
 - use `analysis()` and `assessment()` to extract data after resampling.
@@ -154,7 +156,5 @@ Note that `tidymodels` discriminates between train and test as well as analysis 
 
 ???
 - repeated CV: reduces test set error independent of the way the folds were resampled) -> increases computational demand
-
 - with time-dependent data, random sampling can lead to disastrous models
-
 - data partitioning and resampling should always be implemented by accounting for the future use of the trained model (how is the newly arriving data distributed?)

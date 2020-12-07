@@ -234,7 +234,6 @@ Note:
 - dummy encodings worked
 - encoding `other` category worked
 - smote worked (96,470 vs. 61,177 samples in the original train_set)
-
 - can also provide a selector to `bake` if your only interested in some of the transformed predictors
 - up to this point we have never used the test set, i.e. we can be sure that data leakage is absent
 - when `new_data = test_set` is does not re-estimate the quantities (e.g., mean, median) since they are drawn from the recipe that is estimated on the training data

@@ -133,6 +133,13 @@ More specifically, after this workshop you will
 
 ---
 
+layout: false
+class: center, middle
+
+# 5-Minute Break<br><br>`r emo::ji("coffee")` `r emo::ji("doughnut")`
+
+---
+
 ```{r child='./03_preprocessing.Rmd', eval=T}
 ```
 

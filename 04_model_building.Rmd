@@ -66,7 +66,8 @@ knitr::include_graphics("https://tenor.com/view/balls-rolling-racing-rolling-on-
 ]
 
 ???
-the goal is to make function arguments more expressive (`neighbor` instead of `k`, `penalty` instead of `lambda`)
+- the goal is to make function arguments more expressive (`neighbor` instead of `k`, `penalty` instead of `lambda`)
+- in `parsnip`: `trees`
 
 ---
 
@@ -130,8 +131,8 @@ lasso_cls
 ```{r}
 dt_cls <- decision_tree() %>% 
   set_args(cost_complexity = 0.01, tree_depth = 30, min_n = 20) %>% 
-  set_engine("rpart") %>% 
-  set_mode("classification")
+  set_mode("classification") %>% 
+  set_engine("rpart")
 
 dt_cls
 ```
@@ -148,8 +149,8 @@ dt_cls
 ```{r}
 rand_forest() %>% 
   set_args(trees = 1000) %>% 
-  set_engine("randomForest") %>% 
   set_mode("classification") %>% 
+  set_engine("randomForest") %>% 
   translate()
 ```
 
@@ -165,8 +166,8 @@ rand_forest() %>%
 ```{r}
 rand_forest() %>%
   set_args(trees = 1000, mtry = .cols()) %>% 
-  set_engine("randomForest") %>% 
-  set_mode("classification")
+  set_mode("classification") %>% 
+  set_engine("randomForest")
 ```
 
 .footnote[
@@ -181,8 +182,8 @@ rand_forest() %>%
 ```{r}
 nearest_neighbor() %>% 
   set_args(neighbors = 5, dist_power = 2) %>% 
-  set_engine("kknn") %>% 
-  set_mode("classification")
+  set_mode("classification") %>% 
+  set_engine("kknn")
 ```
 
 ???
@@ -196,8 +197,8 @@ nearest_neighbor() %>%
 ```{r}
 svm_rbf() %>% 
   set_args(cost = tune(), rbf_sigma = tune()) %>% 
-  set_engine("kernlab") %>% 
-  set_mode("classification")
+  set_mode("classification") %>% 
+  set_engine("kernlab")
 ```
 
 .footnote[
@@ -230,7 +231,7 @@ dt_cls_fit <- dt_cls %>%
 ## 4.3 `parsnip`: A Unified Modeling API
 
 .pull-left[
-After fitting the model, we can eventually predict the response in the test data:
+After fitting the model, we can eventually predict the response in the test data.
 ```{r}
 dt_cls_fit %>% 
   predict(new_data = test_set, type = "prob")
@@ -253,7 +254,7 @@ dt_cls_fit %>%
 
 ## 4.3 `parsnip`: A Unified Modeling API
 
-Thanks to these rules, we can directly combine the predictions with the `test_set`:
+Thanks to these rules, we can directly combine the predictions with the `test_set`.
 ```{r}
 test_set %>% 
   bind_cols(predict(dt_cls_fit, new_data = ., type = "prob")) %>% 

@@ -241,7 +241,8 @@ tt_data &lt;- tidytuesdayR::tt_load(2020, week = 39)
 ```
 
 ???
-Tidytuesday: social project to motivate the R online community to learn working with tools like ggplot2, dplyr and tidyr and applying them to real-world data
+- Tidytuesday: social project to motivate the R online community to learn working with tools like ggplot2, dplyr and tidyr and applying them to real-world data
+- around 50 different data sets right now
 
 ---
 
@@ -251,6 +252,8 @@ The data set contains a large record of data spanning the 1905-2019 period about
 - 🏔 the several **peaks** of the mountain range,
 - 🐾 **expeditions** during this period, and
 - 🧗‍♀️ the **members** of each expedition.
+
+--
 
 In this workshop, we will try to predict the likelihood of an expedition coming to a lethal end. This, in turn, may then help us to derive drivers for a successful expedition and eventually reduce death rates.
 
@@ -322,7 +325,12 @@ tt_data$members %&gt;%
 &gt; 4 oxygen_used           0             1 0.238   FAL: 58286, TRU: 18233
 &gt; 5 died                  0             1 0.0145  FAL: 75413, TRU: 1106 
 &gt; 6 injured               0             1 0.0224  FAL: 74806, TRU: 1713 
-&gt;
+```
+]
+
+.panel[
+.panel-name[Output Pt. 4]
+```
 &gt; -- Variable type: numeric -----------------------------------------------------------------------------
 &gt; # A tibble: 5 x 11
 &gt;   skim_variable        n_missing complete_rate   mean     sd    p0   p25   p50   p75  p100 hist 
@@ -356,6 +364,7 @@ logical:
 - likely we can have expeditions that were successful, but where one or several member died
 - died and injured corresponds to the numbers of `death_cause` and `injury_type`
 
+**Pt. 4:**
 numeric:
 - hist of `year` expeditions took place more and more often in the two recent decades
 - `age`: most climbers i would expect to be between 20-40, with few very old climbers (85), and some super young (7?!)
@@ -433,7 +442,7 @@ name: data-split
 - **data partitioning**, i.e. splitting the data into a training and testing set, and
 - **resampling**, i.e. sub-splitting the training set to estimate the sampling distribution of a given statistic (e.g., the validation set error).
 
-Thereby, a *resample* of the original data is viewed as the outcome of a resampling method, e.g., a fold resulting from `\(k\)`-fold cross-validation or a bootstrapped sample resulting from sampling with replacement. In general, resampling is conducted subsequent to data partitioning and only on the training set.
+Thereby, a *resample* is viewed as the outcome of a resampling method, e.g., the `\(k\)` folds resulting from `\(k\)`-fold cross-validation or a bootstrapped and hold-out sample resulting from sampling with replacement. In general, resampling is conducted subsequent to data partitioning and only on the training set.
 &lt;br&gt;&lt;br&gt;
 
 --
@@ -568,6 +577,8 @@ climbers_folds %&gt;%
   assessment()
 ```
 
+&lt;br&gt;
+
 Note that `tidymodels` discriminates between train and test as well as analysis and assessment sets:
 - use `training()` and `testing()` to extract data after data partitioning,
 - use `analysis()` and `assessment()` to extract data after resampling.
@@ -596,10 +607,15 @@ Note that `tidymodels` discriminates between train and test as well as analysis 
 
 ???
 - repeated CV: reduces test set error independent of the way the folds were resampled) -&gt; increases computational demand
-
 - with time-dependent data, random sampling can lead to disastrous models
-
 - data partitioning and resampling should always be implemented by accounting for the future use of the trained model (how is the newly arriving data distributed?)
+
+---
+
+layout: false
+class: center, middle
+
+# 5-Minute Break&lt;br&gt;&lt;br&gt;☕ 🍩
 
 ---
 
@@ -989,7 +1005,6 @@ Note:
 - dummy encodings worked
 - encoding `other` category worked
 - smote worked (96,470 vs. 61,177 samples in the original train_set)
-
 - can also provide a selector to `bake` if your only interested in some of the transformed predictors
 - up to this point we have never used the test set, i.e. we can be sure that data leakage is absent
 - when `new_data = test_set` is does not re-estimate the quantities (e.g., mean, median) since they are drawn from the recipe that is estimated on the training data
@@ -1108,7 +1123,8 @@ Likely, you have struggled with the varying naming conventions, interfaces and s
 ]
 
 ???
-the goal is to make function arguments more expressive (`neighbor` instead of `k`, `penalty` instead of `lambda`)
+- the goal is to make function arguments more expressive (`neighbor` instead of `k`, `penalty` instead of `lambda`)
+- in `parsnip`: `trees`
 
 ---
 
@@ -1192,8 +1208,8 @@ lasso_cls
 ```r
 dt_cls &lt;- decision_tree() %&gt;% 
   set_args(cost_complexity = 0.01, tree_depth = 30, min_n = 20) %&gt;% 
-  set_engine("rpart") %&gt;% 
-  set_mode("classification")
+  set_mode("classification") %&gt;% 
+  set_engine("rpart")
 
 dt_cls
 ```
@@ -1222,8 +1238,8 @@ dt_cls
 ```r
 rand_forest() %&gt;% 
   set_args(trees = 1000) %&gt;% 
-  set_engine("randomForest") %&gt;% 
   set_mode("classification") %&gt;% 
+  set_engine("randomForest") %&gt;% 
   translate()
 ```
 
@@ -1253,8 +1269,8 @@ rand_forest() %&gt;%
 ```r
 rand_forest() %&gt;%
   set_args(trees = 1000, mtry = .cols()) %&gt;% 
-  set_engine("randomForest") %&gt;% 
-  set_mode("classification")
+  set_mode("classification") %&gt;% 
+  set_engine("randomForest")
 ```
 
 ```
@@ -1280,8 +1296,8 @@ rand_forest() %&gt;%
 ```r
 nearest_neighbor() %&gt;% 
   set_args(neighbors = 5, dist_power = 2) %&gt;% 
-  set_engine("kknn") %&gt;% 
-  set_mode("classification")
+  set_mode("classification") %&gt;% 
+  set_engine("kknn")
 ```
 
 ```
@@ -1306,8 +1322,8 @@ nearest_neighbor() %&gt;%
 ```r
 svm_rbf() %&gt;% 
   set_args(cost = tune(), rbf_sigma = tune()) %&gt;% 
-  set_engine("kernlab") %&gt;% 
-  set_mode("classification")
+  set_mode("classification") %&gt;% 
+  set_engine("kernlab")
 ```
 
 ```
@@ -1352,7 +1368,7 @@ dt_cls_fit &lt;- dt_cls %&gt;%
 ## 4.3 `parsnip`: A Unified Modeling API
 
 .pull-left[
-After fitting the model, we can eventually predict the response in the test data:
+After fitting the model, we can eventually predict the response in the test data.
 
 ```r
 dt_cls_fit %&gt;% 
@@ -1393,7 +1409,7 @@ dt_cls_fit %&gt;%
 
 ## 4.3 `parsnip`: A Unified Modeling API
 
-Thanks to these rules, we can directly combine the predictions with the `test_set`:
+Thanks to these rules, we can directly combine the predictions with the `test_set`.
 
 ```r
 test_set %&gt;% 
@@ -2370,7 +2386,43 @@ cls_wf_final %&gt;%
 ```r
 cls_wf_results &lt;- cls_wf_final %&gt;% 
   last_fit(split = climbers_split, metrics = metric_set(roc_auc, accuracy, sens, spec))
+```
 
+```
+&gt; Warning: package 'rlang' was built under R version 4.0.3
+```
+
+```
+&gt; 
+&gt; Attaching package: 'rlang'
+```
+
+```
+&gt; The following objects are masked from 'package:purrr':
+&gt; 
+&gt;     %@%, as_function, flatten, flatten_chr, flatten_dbl,
+&gt;     flatten_int, flatten_lgl, flatten_raw, invoke,
+&gt;     list_along, modify, prepend, splice
+```
+
+```
+&gt; 
+&gt; Attaching package: 'vctrs'
+```
+
+```
+&gt; The following object is masked from 'package:dplyr':
+&gt; 
+&gt;     data_frame
+```
+
+```
+&gt; The following object is masked from 'package:tibble':
+&gt; 
+&gt;     data_frame
+```
+
+```r
 cls_wf_results
 ```
 
