@@ -321,7 +321,7 @@ ___
 .center[
 `r emo::ji("hourglass_flowing_sand")` `r emo::ji("zzz")` `r emo::ji("exploding_head")`
 
-Eventually, the process of hyperparameter tuning can take several minutes, hours or even days - depending on your resample size, the richness of your candidate grid, the model's complexity and your hardware.
+*Eventually, the process of hyperparameter tuning can take several minutes, hours or even days - depending on your resample size, the richness of your candidate grid, the model's complexity and your hardware.*
 ]
 
 ---
@@ -451,12 +451,12 @@ now also with uncertainty estimates, i.e. std_err
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-Extract the `n` best performing model specifications based on the $AUC$:
+Extract the `n` best performing model specifications based on the $AUC$.
 ```{r}
 cls_wf_tuned %>% 
   show_best(metric = "roc_auc", n = 3)
 ```
-Extract the overall best performing model specifications based on the $AUC$:
+Extract the overall best performing model specifications based on the $AUC$.
 ```{r}
 cls_wf_tuned %>% 
   select_best(metric = "roc_auc") # alternatively: select_by_one_std_err(metric = "roc_auc")

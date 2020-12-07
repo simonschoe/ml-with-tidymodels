@@ -121,7 +121,7 @@ Explain:
 
 ## 2 Introduction to `tidymodels`
 
-`r emo::ji("monocle")` Remember, modeling is one of the main steps in our day-2-day data science workflow. And this is precisely where `tidymodels` fits in!
+Remember, modeling is one of the main steps in our day-2-day data science workflow. And this is precisely where `tidymodels` fits in!
 <br><br><br>
 ```{r, echo=F, out.width='75%', out.height='75%', fig.align='center'}
 knitr::include_graphics("https://www.tmwr.org/premade/data-science-model.svg")
@@ -144,9 +144,9 @@ class: middle, center, inverse
 
 ## 3 Himalayan Climbing Expeditions Data
 
-In order to illustrate the features of the `tidymodels` ecosystem, we use the [*Himalayan Climbing Expeditions* data set](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-09-22/readme.md) from the [`tidytuesday` project](https://github.com/rfordatascience/tidytuesday).
+In order to illustrate the features of the `tidymodels` ecosystem, we use the [Himalayan Climbing Expeditions](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-09-22/readme.md) data set from the [`tidytuesday` project](https://github.com/rfordatascience/tidytuesday).
 
-```{r, cache=T, results='hide'}
+```{r, cache=T, results='hide', message=F}
 # install.packages("tidytuesdayR")
 tt_data <- tidytuesdayR::tt_load(2020, week = 39)
 ```

@@ -314,6 +314,6 @@ name: references
 
 ## Further Resources
 
-Learn Section of tidymodels.org. ULR: https://www.tidymodels.org/learn/.
+Learn section of tidymodels.org. ULR: https://www.tidymodels.org/learn/.
 
-TidyTuesday Contributions by Julia Silge. URL: https://juliasilge.com/blog/.
+TidyTuesday contributions by Julia Silge. URL: https://juliasilge.com/blog/.

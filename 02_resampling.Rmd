@@ -144,6 +144,8 @@ Note that `tidymodels` discriminates between train and test as well as analysis 
 
 --
 
+<br>
+
 **Approaches for time-dependent data:** For temporally correlated data `rsample` provides a suitable partitioning and resampling infrastructure as well. For example, use `initial_time_split()` to conduct a non-random early-late-split and `rolling_origin()` or the `slide_*()` methods to generate time-series resamples.
 
 .footnote[

@@ -27,6 +27,8 @@ Essentially, every model in `R` requires a design matrix as input. Intuitively, 
 
 --
 
+<br>
+
 Oftentimes, however, data frames or matrices that we apply to a model function do not come in the required format. This boils down to the issue of *feature engineering*. For example:
 - A linear model (`lm`) requires categorical predictors to be one-hot encoded into $C-1$ binary predictors.
 - A decision tree (`rpart`) does not require strictly numerical predictors.
@@ -34,7 +36,7 @@ Oftentimes, however, data frames or matrices that we apply to a model function d
 - And numerous models reject missing values in their model matrix.
 
 .footnote[
-*Note: Some functions internally convert a data frame to a numeric design matrix (e.g., `lm()` automatically one-hot encodes unordered factors or creates polynomial contrasts from ordered factors).*
+*Note: Some functions internally convert a data frame to a numeric design matrix (e.g., `lm()` automatically one-hot encodes unordered factors and creates polynomial contrasts from ordered factors).*
 ]
 
 ???
@@ -201,7 +203,7 @@ mod_recipe_prepped
 ```
 
 .pull-right[.pull-right[.footnote[
-*Note: By applying `prep()` to the final recipe, we fit the recipe only to the training set (as specified in the `recipe()` function above). Thus, we prevent the issue of *data leakage*!*<br><br>
+*Note: By applying `prep()` to the final recipe, we fit the recipe only to the training set (as specified in the `recipe()` function above). Thus, we prevent the issue of data leakage!*
 ]]]
 
 ???
@@ -236,14 +238,6 @@ Note:
 - can also provide a selector to `bake` if your only interested in some of the transformed predictors
 - up to this point we have never used the test set, i.e. we can be sure that data leakage is absent
 - when `new_data = test_set` is does not re-estimate the quantities (e.g., mean, median) since they are drawn from the recipe that is estimated on the training data
-
----
-
-## 4.2 `recipes`: Preprocessing Tools
-
-```{r, echo=F, out.height='50%', out.width='50%', fig.align='center'}
-knitr::include_graphics("https://tenor.com/view/swedish-chef-baking-muppet-gif-15620659.gif")
-```
 
 ---
 
