@@ -121,7 +121,7 @@ layout: true
 
 ## 4.8 `yardstick`: Tidy Model Performance
 
-Similar to `broom`, `yardstick`'s endeavor is to enable model evaluation using *tidy data principles*. It ships with three types of metrics which can be distinguished by their input arguments and use case:
+Similar to `broom`, `yardstick`'s endeavor is to enable model evaluation using *tidy data principles*. It ships with three types of performance metrics which can be distinguished by their input arguments and use case.
 
 **Classification:**
 - **Class metrics** are based on the predicted class (*hard predictions*) and take two `fct` columns (`truth` and `estimate`).
@@ -188,6 +188,7 @@ metrics(
 ???
 - "binary" indicates that the measures are computed for a binary classification problem
 - for multi-class problems `yardstick` has implemented generalizations of the original measures
+- you already know the metric_set from `tune_grid()` where we specified the metrics that we want to compute during our resampling approach
 
 ---
 
@@ -198,7 +199,7 @@ metrics(
 ```{r}
 cls_wf_results %>% 
   roc_curve(
-    .pred_TRUE, truth = died,
+    died, .pred_TRUE,
     event_level = "second"
   )
 ```
@@ -208,7 +209,7 @@ cls_wf_results %>%
 ```{r}
 cls_wf_results %>% 
   roc_auc(
-    .pred_TRUE, truth = died,
+    died, .pred_TRUE,
     event_level = "second"
   )
 ```

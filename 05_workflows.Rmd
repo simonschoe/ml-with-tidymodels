@@ -19,7 +19,7 @@ layout: true
 
 ## 4.4 `workflows`: Modeling Workflows
 
-`workflows` introduces a **`workflow`** object which bundles the preprocessing recipe, the model specification and potential post-processing steps to reduce code clatter. At the same time, it acts as a single entry point to your modeling workflow (respectively pipeline).
+`workflows` introduces a `workflow` object which bundles the preprocessing recipe, the model specification and potential post-processing steps to reduce code clatter. At the same time, it acts as a single entry point to your modeling workflow (respectively pipeline).
 
 ```{r, results='hide'}
 cls_wf <- workflow() %>% 

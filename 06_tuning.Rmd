@@ -85,11 +85,14 @@ layout: false
   
   - **Log scale:**
   
-  `> 1e-06 1e-05 1e-04 1e-03 1e-02 1e-01 1e+00 1e+01 1e+02 1e+03`
+  `> 1e-06 1e-05 1e-04 1e-03 1e-02 1e-01 1e+00 1e+01 1e+02 1e+03 1e+04`
 
 2. For some models and hyperparameter sets, the model's accuracy is relatively insensitive to certain regions of the search space. Those models demand a large variation in order to observe any impact on the underlying performance metrics.
 
 If you have identified a promising parameter subspace, you may eventually narrow it down by further restricting the search space of your hyperparameter grid.
+
+???
+- usually models do not behave linear in the hyperparameters (i.e. some are very sensitive on low regions and some are more sensitive in high regions)
 
 ---
 
@@ -127,11 +130,11 @@ penalty() %>%
 `parameters` objects are accompanied by various helper functions to query and specify the hyperparameters, e.g., the **parameter values**.
 ```{r}
 penalty() %>% 
-  value_sample(n = 6) # draw six parameter values with replacement (random line search)
+  value_sample(n = 5) # draw five parameter values with replacement (random line search)
 ```
 ```{r}
 penalty() %>% 
-  value_seq(n = 6, original = F) # draw a sequence of six parameter values (line search)
+  value_seq(n = 5, original = F) # draw a sequence of five parameter values (line search)
 ```
 ```{r}
 penalty() %>% 
@@ -139,7 +142,7 @@ penalty() %>%
 ```
 
 .footnote[.pull-right[
-*Note: The same helper functions can be applied to qualitative hyperparameters, such as `weight_func()` in `parsnip::nearest_neighbor()`.*
+*Note: The same helper functions can be applied to qualitative hyperparameters, such as `weight_func()` in `nearest_neighbor()`.*
 ]]
 
 ???
@@ -189,6 +192,7 @@ grid_regular(
 ???
 - there are other, more advanced search procedures, e.g., Tree Parzen or Bayesian Optimization
 - generally, grid search is a brute-force like method which is not really efficient (usually it makes more sense to refer to Bayesian techniques while specifying reasonable priors)
+- use adaptve resampling (or racing)
 
 ---
 
@@ -208,7 +212,7 @@ layout: true
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-The `tune` package unites the previous steps in the context of hyperparameter tuning with the **`tune_grid()`** function being the primary modeling workhorse.
+The `tune` package unites the previous steps in the context of hyperparameter tuning with the `tune_grid()` function being the primary modeling workhorse.
 ```{r, eval=F}
 tune_grid(
   object, preprocessor, resamples, #<<
@@ -233,7 +237,7 @@ tune_grid(
 ```
 **Keyword arguments:**
 - `grid`: the number of candidate hyperparameter combinations to be tried (defaults to `10` draws from a [Latin hypercube](https://en.wikipedia.org/wiki/Latin_hypercube_sampling)) respectively a pre-defined parameter grid
-- `metrics`: a set of performance metrics (defaults to *RMSE* and *R<sup>2</sup>* for regression and *ROC-AUC* and *accuracy* for classification tasks) computed for each resample (customize via `yardstick::metric_set()`) 
+- `metrics`: a set of performance metrics (defaults to $RMSE$ and $R^2$ for regression and $AUC$ and *accuracy* for classification tasks) computed for each resample (customize via `yardstick::metric_set()`) 
 - `control`: additional options to control the tuning process (e.g., `save_pred = T` to retain the predictions for each fold or `verbose = T` to print the log)
 
 .footnote[
@@ -277,7 +281,7 @@ Third, we create a grid of hyperparameter candidates for performing a random gri
 
 We can either define the grid by providing the `grid_*()` function with one or several `param` objects.
 ```{r}
-param_grid <- grid_regular(penalty(), mixture(), levels = c(10,10))
+param_grid <- grid_regular(penalty(), mixture(), levels = c(10, 10))
 param_grid %>% 
   tibble::glimpse()
 ```
@@ -285,11 +289,12 @@ Or we extract `param` objects (i.e. hyperparameter flagged with `tune()`) from a
 ```{r, eval=F}
 param_grid <- cls_wf %>% 
   parameters() %>% 
-  grid_regular(levels = c(10,10))
+  grid_regular(levels = c(10, 10))
 ```
 
 ???
 - hyperparameters cannot only be inherent to models, but also to preprocessing steps (e.g., the number of neighbors in `themis::step_smote()`)
+- s. 40
 
 ---
 
@@ -324,11 +329,14 @@ ___
 *Eventually, the process of hyperparameter tuning can take several minutes, hours or even days - depending on your resample size, the richness of your candidate grid, the model's complexity and your hardware.*
 ]
 
+???
+- if i use an ensemble approach like bagging or RF, this number (1,000) is to be multiplied by the number trees
+
 ---
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-**Parallel processing:** Under the hood, `tune` is equipped distributed computing capabilities (which stem from an integration of the [`foreach` package](https://cran.r-project.org/web/packages/foreach/vignettes/foreach.html)). Since the models created during CV are indepedent of each other, it allows to parallelize the grid search algorithm and CV approach across multiple cores.
+**Parallel processing:** Under the hood, `tune` is equipped with distributed computing capabilities (which stem from an integration of the [`foreach` package](https://cran.r-project.org/web/packages/foreach/vignettes/foreach.html)). Since the models created during CV are indepedent of each other, it allows to parallelize the grid search algorithm and CV approach across multiple cores.
 
 First, let's detect the number of physical and/or logical cores available for computations using the base `R` `parallel` package.
 ```{r}
@@ -345,20 +353,22 @@ comp_cluster
 - **Physical cores** are number of physical cores, actual hardware components.
 - **Logical cores** are the number of physical cores times the number of threads that can run on each core through the use of hyper-threading (number of possible parallel simultaneous processes).
 
-- in the background:
+in the background:
   - `tune` divides your data (e.g., resamples) and allocates it across clusters
   - it can be viewed as multiple `R` session running in parallel
   
-- tip: its generally a good idea to not use all available clusters
+tip: its generally a good idea to not use all available clusters
   - oftentimes, performance increases are not linear but you get a rate of diminishing returns
   - the memory load is proportional as copies of your data are transferred to every core
   - you still want to be able to work on your computer while the computations are executed
+
+there are scenarios in which parallel computing can even be detrimental
 
 ---
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-Third, we register a backend for parallel computing (here the `doParallel` package), which defines how parallelization is executed, and re-run our tuning procedure - this time with the 250 models being trained on `r all_cores` different cores.
+Third, we register a backend for parallel computing (here the `doParallel` package), which defines how parallelization is executed, and re-run our tuning procedure.
 
 ```{r, echo=F, out.height='35%', out.width='35%', out.extra='style="float:right; padding: 30px"'}
 knitr::include_graphics("https://tenor.com/view/yay-traffic-car-race-gif-14739892.gif")
@@ -403,7 +413,7 @@ cls_wf_tuned <- read_rds("./slides/cls_wf_tuned.rds")
 ```{r}
 cls_wf_tuned
 ```
-Now, there are several neat things we can do with our fitted `climbers_folds` data frame. Let's have a look at some selective functions provided by the `tune` package.
+Now, there are several neat things we can do with our fitted `climbers_folds` data frame. Let's have a look at some convenience functions provided by the `tune` package.
 
 ???
 - note that the resulting tibble does neither include the data (only the indexes) nor the fitted models, but only the performance metrics and predictions (usually we are not interested in the models themselves during resampling, but only in the optimal hyperparameter set)
@@ -507,7 +517,7 @@ Note: This approach is only reasonable if your are not supposed to tune any hype
 
 ```{r, echo=F, fig.width = 10, fig.asp = 0.618, fig.align='center'}
 cls_wf_tuned %>% 
-  collect_metrics(summarize = T) %>% 
+  collect_metrics(summarize = T) %>%
   ggplot2::ggplot(aes(x = penalty, y = mean, group = mixture, color = mixture)) +
     geom_point() +
     geom_line() +
@@ -518,6 +528,9 @@ cls_wf_tuned %>%
 
 ???
 - if we have filled the `metrics` argument in `tune_grid`, we can immediately analyze model performance across the different folds and hyperparameter combinations (here averaged over all 10 folds)
+- note sens-spec-trade off
+- note that model is very insensitive towards low penalty values
+- note that accuracy is clearly a crude measure of model performance here as for higher penalty values the model does not predict the negative class any longer
 
 ---
 
@@ -580,7 +593,7 @@ cls_wf_final %>%
 --
 
 `tune` streamlines this step and introduces the `last_fit()` function which employs the initial `split` object we generated in [chapter 4.1](#data-split) as input. More precisely, it fits the finalized workflow on the training set, predicts the unseen cases in the test set and evaluates the model's performance by benchmarking predictions against the actual response.
-```{r}
+```{r, warning=F}
 cls_wf_results <- cls_wf_final %>% 
   last_fit(split = climbers_split, metrics = metric_set(roc_auc, accuracy, sens, spec))
 

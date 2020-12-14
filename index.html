@@ -4,7 +4,7 @@
     <title>Machine Learning in R: Workshop Series</title>
     <meta charset="utf-8" />
     <meta name="author" content="Simon Schölzel" />
-    <meta name="date" content="2020-12-07" />
+    <meta name="date" content="2020-12-14" />
     <link href="libs/panelset-0.2.4/panelset.css" rel="stylesheet" />
     <script src="libs/panelset-0.2.4/panelset.js"></script>
     <link href="libs/xaringanExtra-extra-styles-0.2.4/xaringanExtra-extra-styles.css" rel="stylesheet" />
@@ -42,7 +42,7 @@ ___
 
 **Simon Schölzel**
 
-2020-12-07
+2020-12-14
 
 &lt;br&gt;&lt;br&gt;
 
@@ -395,21 +395,20 @@ climbers_df
 
 ```
 &gt; # A tibble: 76,471 x 13
-&gt;    member_id peak_name season  year sex     age citizenship
-&gt;    &lt;fct&gt;     &lt;fct&gt;     &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;      
-&gt;  1 AMAD7830~ Ama Dabl~ Autumn  1978 M        40 France     
-&gt;  2 AMAD7830~ Ama Dabl~ Autumn  1978 M        41 France     
-&gt;  3 AMAD7830~ Ama Dabl~ Autumn  1978 M        27 France     
-&gt;  4 AMAD7830~ Ama Dabl~ Autumn  1978 M        40 France     
-&gt;  5 AMAD7830~ Ama Dabl~ Autumn  1978 M        34 France     
-&gt;  6 AMAD7830~ Ama Dabl~ Autumn  1978 M        25 France     
-&gt;  7 AMAD7830~ Ama Dabl~ Autumn  1978 M        41 France     
-&gt;  8 AMAD7830~ Ama Dabl~ Autumn  1978 M        29 France     
-&gt;  9 AMAD7910~ Ama Dabl~ Spring  1979 M        35 USA        
-&gt; 10 AMAD7910~ Ama Dabl~ Spring  1979 M        37 W Germany  
-&gt; # ... with 76,461 more rows, and 6 more variables:
-&gt; #   expedition_role &lt;fct&gt;, hired &lt;fct&gt;, solo &lt;fct&gt;,
-&gt; #   oxygen_used &lt;fct&gt;, success &lt;fct&gt;, died &lt;fct&gt;
+&gt;    member_id peak_name season  year sex     age citizenship expedition_role
+&gt;    &lt;fct&gt;     &lt;fct&gt;     &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt;          
+&gt;  1 AMAD7830~ Ama Dabl~ Autumn  1978 M        40 France      Leader         
+&gt;  2 AMAD7830~ Ama Dabl~ Autumn  1978 M        41 France      Deputy Leader  
+&gt;  3 AMAD7830~ Ama Dabl~ Autumn  1978 M        27 France      Climber        
+&gt;  4 AMAD7830~ Ama Dabl~ Autumn  1978 M        40 France      Exp Doctor     
+&gt;  5 AMAD7830~ Ama Dabl~ Autumn  1978 M        34 France      Climber        
+&gt;  6 AMAD7830~ Ama Dabl~ Autumn  1978 M        25 France      Climber        
+&gt;  7 AMAD7830~ Ama Dabl~ Autumn  1978 M        41 France      Climber        
+&gt;  8 AMAD7830~ Ama Dabl~ Autumn  1978 M        29 France      Climber        
+&gt;  9 AMAD7910~ Ama Dabl~ Spring  1979 M        35 USA         Climber        
+&gt; 10 AMAD7910~ Ama Dabl~ Spring  1979 M        37 W Germany   Climber        
+&gt; # ... with 76,461 more rows, and 5 more variables: hired &lt;fct&gt;,
+&gt; #   solo &lt;fct&gt;, oxygen_used &lt;fct&gt;, success &lt;fct&gt;, died &lt;fct&gt;
 ```
 
 
@@ -482,16 +481,15 @@ train_set
 
 ```
 &gt; # A tibble: 61,177 x 13
-&gt;   member_id peak_name season  year sex     age citizenship
-&gt;   &lt;fct&gt;     &lt;fct&gt;     &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;      
-&gt; 1 AMAD7830~ Ama Dabl~ Autumn  1978 M        40 France     
-&gt; 2 AMAD7830~ Ama Dabl~ Autumn  1978 M        41 France     
-&gt; 3 AMAD7830~ Ama Dabl~ Autumn  1978 M        27 France     
-&gt; 4 AMAD7830~ Ama Dabl~ Autumn  1978 M        40 France     
-&gt; 5 AMAD7830~ Ama Dabl~ Autumn  1978 M        25 France     
-&gt; # ... with 61,172 more rows, and 6 more variables:
-&gt; #   expedition_role &lt;fct&gt;, hired &lt;fct&gt;, solo &lt;fct&gt;,
-&gt; #   oxygen_used &lt;fct&gt;, success &lt;fct&gt;, died &lt;fct&gt;
+&gt;   member_id peak_name season  year sex     age citizenship expedition_role
+&gt;   &lt;fct&gt;     &lt;fct&gt;     &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt;          
+&gt; 1 AMAD7830~ Ama Dabl~ Autumn  1978 M        40 France      Leader         
+&gt; 2 AMAD7830~ Ama Dabl~ Autumn  1978 M        41 France      Deputy Leader  
+&gt; 3 AMAD7830~ Ama Dabl~ Autumn  1978 M        27 France      Climber        
+&gt; 4 AMAD7830~ Ama Dabl~ Autumn  1978 M        40 France      Exp Doctor     
+&gt; 5 AMAD7830~ Ama Dabl~ Autumn  1978 M        25 France      Climber        
+&gt; # ... with 61,172 more rows, and 5 more variables: hired &lt;fct&gt;,
+&gt; #   solo &lt;fct&gt;, oxygen_used &lt;fct&gt;, success &lt;fct&gt;, died &lt;fct&gt;
 ```
 
 ---
@@ -822,7 +820,7 @@ mod_recipe
 &gt; 
 &gt; Median Imputation for age
 &gt; Centering and scaling for all_numeric()
-&gt; Collapsing factor levels for peak_name, ...
+&gt; Collapsing factor levels for peak_name, citizenship, expedition_role
 ```
 
 .footnote[
@@ -858,7 +856,7 @@ mod_recipe
 &gt; 
 &gt; Median Imputation for age
 &gt; Centering and scaling for all_numeric()
-&gt; Collapsing factor levels for peak_name, ...
+&gt; Collapsing factor levels for peak_name, citizenship, expedition_role
 &gt; Dummy variables from all_predictors(), -all_numeric()
 ```
 
@@ -892,7 +890,7 @@ mod_recipe
 &gt; 
 &gt; Median Imputation for age
 &gt; Centering and scaling for all_numeric()
-&gt; Collapsing factor levels for peak_name, ...
+&gt; Collapsing factor levels for peak_name, citizenship, expedition_role
 &gt; Dummy variables from all_predictors(), -all_numeric()
 &gt; SMOTE based on died
 ```
@@ -905,6 +903,7 @@ Note: Each `step_*()` function contains a `skip` argument which is mostly equal 
 
 ???
 - Usually, you would want to chain the steps together instead of defining each step separately (here its only done for presentation purposes)
+- s. 84
 
 ---
 
@@ -950,8 +949,8 @@ mod_recipe_prepped
 &gt; 
 &gt; Median Imputation for age [trained]
 &gt; Centering and scaling for year, age [trained]
-&gt; Collapsing factor levels for peak_name, ... [trained]
-&gt; Dummy variables from peak_name, season, sex, ... [trained]
+&gt; Collapsing factor levels for peak_name, citizenship, expedition_role [trained]
+&gt; Dummy variables from peak_name, season, sex, citizenship, ... [trained]
 &gt; SMOTE based on died [trained]
 ```
 
@@ -986,14 +985,13 @@ bake(mod_recipe_prepped, new_data = NULL)
 &gt; 4 AMAD7830~ -1.52  0.267 FALSE                0                0
 &gt; 5 AMAD7830~ -1.52 -1.21  FALSE                0                0
 &gt; # ... with 96,465 more rows, and 18 more variables:
-&gt; #   peak_name_Manaslu &lt;dbl&gt;, peak_name_other &lt;dbl&gt;,
-&gt; #   season_Spring &lt;dbl&gt;, season_Summer &lt;dbl&gt;, season_Winter &lt;dbl&gt;,
-&gt; #   sex_M &lt;dbl&gt;, citizenship_Japan &lt;dbl&gt;, citizenship_Nepal &lt;dbl&gt;,
-&gt; #   citizenship_UK &lt;dbl&gt;, citizenship_USA &lt;dbl&gt;,
-&gt; #   citizenship_other &lt;dbl&gt;, expedition_role_H.A.Worker &lt;dbl&gt;,
-&gt; #   expedition_role_Leader &lt;dbl&gt;, expedition_role_other &lt;dbl&gt;,
-&gt; #   hired_TRUE. &lt;dbl&gt;, solo_TRUE. &lt;dbl&gt;, oxygen_used_TRUE. &lt;dbl&gt;,
-&gt; #   success_TRUE. &lt;dbl&gt;
+&gt; #   peak_name_Manaslu &lt;dbl&gt;, peak_name_other &lt;dbl&gt;, season_Spring &lt;dbl&gt;,
+&gt; #   season_Summer &lt;dbl&gt;, season_Winter &lt;dbl&gt;, sex_M &lt;dbl&gt;,
+&gt; #   citizenship_Japan &lt;dbl&gt;, citizenship_Nepal &lt;dbl&gt;,
+&gt; #   citizenship_UK &lt;dbl&gt;, citizenship_USA &lt;dbl&gt;, citizenship_other &lt;dbl&gt;,
+&gt; #   expedition_role_H.A.Worker &lt;dbl&gt;, expedition_role_Leader &lt;dbl&gt;,
+&gt; #   expedition_role_other &lt;dbl&gt;, hired_TRUE. &lt;dbl&gt;, solo_TRUE. &lt;dbl&gt;,
+&gt; #   oxygen_used_TRUE. &lt;dbl&gt;, success_TRUE. &lt;dbl&gt;
 ```
 
 .footnote[
@@ -1419,14 +1417,13 @@ test_set %&gt;%
 
 ```
 &gt; # A tibble: 3 x 15
-&gt;   member_id peak_name season  year sex     age citizenship
-&gt;   &lt;fct&gt;     &lt;fct&gt;     &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;      
-&gt; 1 AMAD7830~ Ama Dabl~ Autumn  1978 M        34 France     
-&gt; 2 AMAD7910~ Ama Dabl~ Spring  1979 M        35 USA        
-&gt; 3 AMAD7910~ Ama Dabl~ Spring  1979 M        28 USA        
-&gt; # ... with 8 more variables: expedition_role &lt;fct&gt;, hired &lt;fct&gt;,
-&gt; #   solo &lt;fct&gt;, oxygen_used &lt;fct&gt;, success &lt;fct&gt;, died &lt;fct&gt;,
-&gt; #   .pred_FALSE &lt;dbl&gt;, .pred_TRUE &lt;dbl&gt;
+&gt;   member_id peak_name season  year sex     age citizenship expedition_role
+&gt;   &lt;fct&gt;     &lt;fct&gt;     &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt;          
+&gt; 1 AMAD7830~ Ama Dabl~ Autumn  1978 M        34 France      Climber        
+&gt; 2 AMAD7910~ Ama Dabl~ Spring  1979 M        35 USA         Climber        
+&gt; 3 AMAD7910~ Ama Dabl~ Spring  1979 M        28 USA         Kayaker        
+&gt; # ... with 7 more variables: hired &lt;fct&gt;, solo &lt;fct&gt;, oxygen_used &lt;fct&gt;,
+&gt; #   success &lt;fct&gt;, died &lt;fct&gt;, .pred_FALSE &lt;dbl&gt;, .pred_TRUE &lt;dbl&gt;
 ```
 
 --
@@ -1468,7 +1465,7 @@ layout: true
 
 ## 4.4 `workflows`: Modeling Workflows
 
-`workflows` introduces a **`workflow`** object which bundles the preprocessing recipe, the model specification and potential post-processing steps to reduce code clatter. At the same time, it acts as a single entry point to your modeling workflow (respectively pipeline).
+`workflows` introduces a `workflow` object which bundles the preprocessing recipe, the model specification and potential post-processing steps to reduce code clatter. At the same time, it acts as a single entry point to your modeling workflow (respectively pipeline).
 
 
 ```r
@@ -1669,11 +1666,14 @@ layout: false
   
   - **Log scale:**
   
-  `&gt; 1e-06 1e-05 1e-04 1e-03 1e-02 1e-01 1e+00 1e+01 1e+02 1e+03`
+  `&gt; 1e-06 1e-05 1e-04 1e-03 1e-02 1e-01 1e+00 1e+01 1e+02 1e+03 1e+04`
 
 2. For some models and hyperparameter sets, the model's accuracy is relatively insensitive to certain regions of the search space. Those models demand a large variation in order to observe any impact on the underlying performance metrics.
 
 If you have identified a promising parameter subspace, you may eventually narrow it down by further restricting the search space of your hyperparameter grid.
+
+???
+- usually models do not behave linear in the hyperparameters (i.e. some are very sensitive on low regions and some are more sensitive in high regions)
 
 ---
 
@@ -1737,21 +1737,20 @@ penalty() %&gt;%
 
 ```r
 penalty() %&gt;% 
-  value_sample(n = 6) # draw six parameter values with replacement (random line search)
+  value_sample(n = 5) # draw five parameter values with replacement (random line search)
 ```
 
 ```
 &gt; [1] 1.683871e-10 2.459808e-06 1.360500e-10 1.953627e-08 2.091953e-09
-&gt; [6] 6.307612e-10
 ```
 
 ```r
 penalty() %&gt;% 
-  value_seq(n = 6, original = F) # draw a sequence of six parameter values (line search)
+  value_seq(n = 5, original = F) # draw a sequence of five parameter values (line search)
 ```
 
 ```
-&gt; [1] -10  -8  -6  -4  -2   0
+&gt; [1] -10.0  -7.5  -5.0  -2.5   0.0
 ```
 
 ```r
@@ -1767,7 +1766,7 @@ penalty() %&gt;%
 ```
 
 .footnote[.pull-right[
-*Note: The same helper functions can be applied to qualitative hyperparameters, such as `weight_func()` in `parsnip::nearest_neighbor()`.*
+*Note: The same helper functions can be applied to qualitative hyperparameters, such as `weight_func()` in `nearest_neighbor()`.*
 ]]
 
 ???
@@ -1817,18 +1816,18 @@ grid_random(
 
 ```
 &gt; # A tibble: 25 x 2
-&gt;    mixture  penalty
-&gt;      &lt;dbl&gt;    &lt;dbl&gt;
-&gt;  1 0.971   5.63e- 6
-&gt;  2 0.00513 1.20e- 1
-&gt;  3 0.283   3.66e- 6
-&gt;  4 0.864   1.16e- 5
-&gt;  5 0.948   1.63e- 7
-&gt;  6 0.337   3.39e- 5
-&gt;  7 0.507   9.26e- 4
-&gt;  8 0.417   9.69e- 4
-&gt;  9 0.533   1.79e- 1
-&gt; 10 0.819   3.01e-10
+&gt;    mixture      penalty
+&gt;      &lt;dbl&gt;        &lt;dbl&gt;
+&gt;  1 0.0800  0.0000000153
+&gt;  2 0.971   0.00000563  
+&gt;  3 0.00513 0.120       
+&gt;  4 0.283   0.00000366  
+&gt;  5 0.864   0.0000116   
+&gt;  6 0.948   0.000000163 
+&gt;  7 0.337   0.0000339   
+&gt;  8 0.507   0.000926    
+&gt;  9 0.417   0.000969    
+&gt; 10 0.533   0.179       
 &gt; # ... with 15 more rows
 ```
 ]
@@ -1865,6 +1864,7 @@ grid_regular(
 ???
 - there are other, more advanced search procedures, e.g., Tree Parzen or Bayesian Optimization
 - generally, grid search is a brute-force like method which is not really efficient (usually it makes more sense to refer to Bayesian techniques while specifying reasonable priors)
+- use adaptve resampling (or racing)
 
 ---
 
@@ -1884,7 +1884,7 @@ layout: true
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-The `tune` package unites the previous steps in the context of hyperparameter tuning with the **`tune_grid()`** function being the primary modeling workhorse.
+The `tune` package unites the previous steps in the context of hyperparameter tuning with the `tune_grid()` function being the primary modeling workhorse.
 
 ```r
 tune_grid(
@@ -1911,7 +1911,7 @@ tune_grid(
 ```
 **Keyword arguments:**
 - `grid`: the number of candidate hyperparameter combinations to be tried (defaults to `10` draws from a [Latin hypercube](https://en.wikipedia.org/wiki/Latin_hypercube_sampling)) respectively a pre-defined parameter grid
-- `metrics`: a set of performance metrics (defaults to *RMSE* and *R&lt;sup&gt;2&lt;/sup&gt;* for regression and *ROC-AUC* and *accuracy* for classification tasks) computed for each resample (customize via `yardstick::metric_set()`) 
+- `metrics`: a set of performance metrics (defaults to `\(RMSE\)` and `\(R^2\)` for regression and `\(AUC\)` and *accuracy* for classification tasks) computed for each resample (customize via `yardstick::metric_set()`) 
 - `control`: additional options to control the tuning process (e.g., `save_pred = T` to retain the predictions for each fold or `verbose = T` to print the log)
 
 .footnote[
@@ -1958,7 +1958,7 @@ Third, we create a grid of hyperparameter candidates for performing a random gri
 We can either define the grid by providing the `grid_*()` function with one or several `param` objects.
 
 ```r
-param_grid &lt;- grid_regular(penalty(), mixture(), levels = c(10,10))
+param_grid &lt;- grid_regular(penalty(), mixture(), levels = c(10, 10))
 param_grid %&gt;% 
   tibble::glimpse()
 ```
@@ -1966,19 +1966,20 @@ param_grid %&gt;%
 ```
 &gt; Rows: 100
 &gt; Columns: 2
-&gt; $ penalty &lt;dbl&gt; 1.000000e-10, 1.291550e-09, 1.668101e-08, 2.154...
-&gt; $ mixture &lt;dbl&gt; 0.0000000, 0.0000000, 0.0000000, 0.0000000, 0.0...
+&gt; $ penalty &lt;dbl&gt; 1.000000e-10, 1.291550e-09, 1.668101e-08, 2.154435e-07...
+&gt; $ mixture &lt;dbl&gt; 0.0000000, 0.0000000, 0.0000000, 0.0000000, 0.0000000,...
 ```
 Or we extract `param` objects (i.e. hyperparameter flagged with `tune()`) from an already defined preprocessing recipe, model specification or modeling workflow using `parameters()`.
 
 ```r
 param_grid &lt;- cls_wf %&gt;% 
   parameters() %&gt;% 
-  grid_regular(levels = c(10,10))
+  grid_regular(levels = c(10, 10))
 ```
 
 ???
 - hyperparameters cannot only be inherent to models, but also to preprocessing steps (e.g., the number of neighbors in `themis::step_smote()`)
+- s. 40
 
 ---
 
@@ -2014,11 +2015,14 @@ ___
 *Eventually, the process of hyperparameter tuning can take several minutes, hours or even days - depending on your resample size, the richness of your candidate grid, the model's complexity and your hardware.*
 ]
 
+???
+- if i use an ensemble approach like bagging or RF, this number (1,000) is to be multiplied by the number trees
+
 ---
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-**Parallel processing:** Under the hood, `tune` is equipped distributed computing capabilities (which stem from an integration of the [`foreach` package](https://cran.r-project.org/web/packages/foreach/vignettes/foreach.html)). Since the models created during CV are indepedent of each other, it allows to parallelize the grid search algorithm and CV approach across multiple cores.
+**Parallel processing:** Under the hood, `tune` is equipped with distributed computing capabilities (which stem from an integration of the [`foreach` package](https://cran.r-project.org/web/packages/foreach/vignettes/foreach.html)). Since the models created during CV are indepedent of each other, it allows to parallelize the grid search algorithm and CV approach across multiple cores.
 
 First, let's detect the number of physical and/or logical cores available for computations using the base `R` `parallel` package.
 
@@ -2045,20 +2049,22 @@ comp_cluster
 - **Physical cores** are number of physical cores, actual hardware components.
 - **Logical cores** are the number of physical cores times the number of threads that can run on each core through the use of hyper-threading (number of possible parallel simultaneous processes).
 
-- in the background:
+in the background:
   - `tune` divides your data (e.g., resamples) and allocates it across clusters
   - it can be viewed as multiple `R` session running in parallel
   
-- tip: its generally a good idea to not use all available clusters
+tip: its generally a good idea to not use all available clusters
   - oftentimes, performance increases are not linear but you get a rate of diminishing returns
   - the memory load is proportional as copies of your data are transferred to every core
   - you still want to be able to work on your computer while the computations are executed
+
+there are scenarios in which parallel computing can even be detrimental
 
 ---
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-Third, we register a backend for parallel computing (here the `doParallel` package), which defines how parallelization is executed, and re-run our tuning procedure - this time with the 250 models being trained on 6 different cores.
+Third, we register a backend for parallel computing (here the `doParallel` package), which defines how parallelization is executed, and re-run our tuning procedure.
 
 &lt;img src="https://tenor.com/view/yay-traffic-car-race-gif-14739892.gif" width="35%" height="35%" style="float:right; padding: 30px" /&gt;
 
@@ -2106,20 +2112,20 @@ cls_wf_tuned
 &gt; # Tuning results
 &gt; # 10-fold cross-validation using stratification 
 &gt; # A tibble: 10 x 5
-&gt;    splits         id     .metrics      .notes      .predictions     
-&gt;    &lt;list&gt;         &lt;chr&gt;  &lt;list&gt;        &lt;list&gt;      &lt;list&gt;           
-&gt;  1 &lt;split [55.1K~ Fold01 &lt;tibble [400~ &lt;tibble [0~ &lt;tibble [611,800~
-&gt;  2 &lt;split [55.1K~ Fold02 &lt;tibble [400~ &lt;tibble [0~ &lt;tibble [611,800~
-&gt;  3 &lt;split [55.1K~ Fold03 &lt;tibble [400~ &lt;tibble [0~ &lt;tibble [611,800~
-&gt;  4 &lt;split [55.1K~ Fold04 &lt;tibble [400~ &lt;tibble [0~ &lt;tibble [611,800~
-&gt;  5 &lt;split [55.1K~ Fold05 &lt;tibble [400~ &lt;tibble [0~ &lt;tibble [611,800~
-&gt;  6 &lt;split [55.1K~ Fold06 &lt;tibble [400~ &lt;tibble [0~ &lt;tibble [611,800~
-&gt;  7 &lt;split [55.1K~ Fold07 &lt;tibble [400~ &lt;tibble [0~ &lt;tibble [611,800~
-&gt;  8 &lt;split [55.1K~ Fold08 &lt;tibble [400~ &lt;tibble [0~ &lt;tibble [611,700~
-&gt;  9 &lt;split [55.1K~ Fold09 &lt;tibble [400~ &lt;tibble [0~ &lt;tibble [611,700~
-&gt; 10 &lt;split [55.1K~ Fold10 &lt;tibble [400~ &lt;tibble [0~ &lt;tibble [611,700~
+&gt;    splits           id     .metrics        .notes        .predictions      
+&gt;    &lt;list&gt;           &lt;chr&gt;  &lt;list&gt;          &lt;list&gt;        &lt;list&gt;            
+&gt;  1 &lt;split [55.1K/6~ Fold01 &lt;tibble [400 x~ &lt;tibble [0 x~ &lt;tibble [611,800 ~
+&gt;  2 &lt;split [55.1K/6~ Fold02 &lt;tibble [400 x~ &lt;tibble [0 x~ &lt;tibble [611,800 ~
+&gt;  3 &lt;split [55.1K/6~ Fold03 &lt;tibble [400 x~ &lt;tibble [0 x~ &lt;tibble [611,800 ~
+&gt;  4 &lt;split [55.1K/6~ Fold04 &lt;tibble [400 x~ &lt;tibble [0 x~ &lt;tibble [611,800 ~
+&gt;  5 &lt;split [55.1K/6~ Fold05 &lt;tibble [400 x~ &lt;tibble [0 x~ &lt;tibble [611,800 ~
+&gt;  6 &lt;split [55.1K/6~ Fold06 &lt;tibble [400 x~ &lt;tibble [0 x~ &lt;tibble [611,800 ~
+&gt;  7 &lt;split [55.1K/6~ Fold07 &lt;tibble [400 x~ &lt;tibble [0 x~ &lt;tibble [611,800 ~
+&gt;  8 &lt;split [55.1K/6~ Fold08 &lt;tibble [400 x~ &lt;tibble [0 x~ &lt;tibble [611,700 ~
+&gt;  9 &lt;split [55.1K/6~ Fold09 &lt;tibble [400 x~ &lt;tibble [0 x~ &lt;tibble [611,700 ~
+&gt; 10 &lt;split [55.1K/6~ Fold10 &lt;tibble [400 x~ &lt;tibble [0 x~ &lt;tibble [611,700 ~
 ```
-Now, there are several neat things we can do with our fitted `climbers_folds` data frame. Let's have a look at some selective functions provided by the `tune` package.
+Now, there are several neat things we can do with our fitted `climbers_folds` data frame. Let's have a look at some convenience functions provided by the `tune` package.
 
 ???
 - note that the resulting tibble does neither include the data (only the indexes) nor the fitted models, but only the performance metrics and predictions (usually we are not interested in the models themselves during resampling, but only in the optimal hyperparameter set)
@@ -2139,18 +2145,18 @@ cls_wf_tuned %&gt;%
 
 ```
 &gt; # A tibble: 400 x 6
-&gt;          penalty mixture .metric  .estimator .estimate .config 
-&gt;            &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;   
-&gt;  1 0.0000000001        0 accuracy binary         0.844 Model001
-&gt;  2 0.00000000129       0 accuracy binary         0.844 Model002
-&gt;  3 0.0000000167        0 accuracy binary         0.844 Model003
-&gt;  4 0.000000215         0 accuracy binary         0.844 Model004
-&gt;  5 0.00000278          0 accuracy binary         0.844 Model005
-&gt;  6 0.0000359           0 accuracy binary         0.844 Model006
-&gt;  7 0.000464            0 accuracy binary         0.844 Model007
-&gt;  8 0.00599             0 accuracy binary         0.844 Model008
-&gt;  9 0.0774              0 accuracy binary         0.882 Model009
-&gt; 10 1                   0 accuracy binary         0.989 Model010
+&gt;          penalty mixture .metric  .estimator .estimate .config             
+&gt;            &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
+&gt;  1 0.0000000001        0 accuracy binary         0.844 Preprocessor1_Model~
+&gt;  2 0.00000000129       0 accuracy binary         0.844 Preprocessor1_Model~
+&gt;  3 0.0000000167        0 accuracy binary         0.844 Preprocessor1_Model~
+&gt;  4 0.000000215         0 accuracy binary         0.844 Preprocessor1_Model~
+&gt;  5 0.00000278          0 accuracy binary         0.844 Preprocessor1_Model~
+&gt;  6 0.0000359           0 accuracy binary         0.844 Preprocessor1_Model~
+&gt;  7 0.000464            0 accuracy binary         0.844 Preprocessor1_Model~
+&gt;  8 0.00599             0 accuracy binary         0.844 Preprocessor1_Model~
+&gt;  9 0.0774              0 accuracy binary         0.882 Preprocessor1_Model~
+&gt; 10 1                   0 accuracy binary         0.989 Preprocessor1_Model~
 &gt; # ... with 390 more rows
 ```
 
@@ -2167,18 +2173,18 @@ cls_wf_tuned %&gt;%
 
 ```
 &gt; # A tibble: 4,000 x 7
-&gt;    id          penalty mixture .metric  .estimator .estimate .config
-&gt;    &lt;chr&gt;         &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;  
-&gt;  1 Fold01 0.0000000001       0 accuracy binary         0.844 Model0~
-&gt;  2 Fold01 0.0000000001       0 sens     binary         0.848 Model0~
-&gt;  3 Fold01 0.0000000001       0 spec     binary         0.485 Model0~
-&gt;  4 Fold01 0.0000000001       0 roc_auc  binary         0.745 Model0~
-&gt;  5 Fold02 0.0000000001       0 accuracy binary         0.842 Model0~
-&gt;  6 Fold02 0.0000000001       0 sens     binary         0.848 Model0~
-&gt;  7 Fold02 0.0000000001       0 spec     binary         0.422 Model0~
-&gt;  8 Fold02 0.0000000001       0 roc_auc  binary         0.719 Model0~
-&gt;  9 Fold03 0.0000000001       0 accuracy binary         0.842 Model0~
-&gt; 10 Fold03 0.0000000001       0 sens     binary         0.848 Model0~
+&gt;    id         penalty mixture .metric .estimator .estimate .config         
+&gt;    &lt;chr&gt;        &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;           
+&gt;  1 Fold01    1.00e-10       0 accura~ binary         0.844 Preprocessor1_M~
+&gt;  2 Fold01    1.00e-10       0 sens    binary         0.848 Preprocessor1_M~
+&gt;  3 Fold01    1.00e-10       0 spec    binary         0.485 Preprocessor1_M~
+&gt;  4 Fold01    1.00e-10       0 roc_auc binary         0.745 Preprocessor1_M~
+&gt;  5 Fold02    1.00e-10       0 accura~ binary         0.842 Preprocessor1_M~
+&gt;  6 Fold02    1.00e-10       0 sens    binary         0.848 Preprocessor1_M~
+&gt;  7 Fold02    1.00e-10       0 spec    binary         0.422 Preprocessor1_M~
+&gt;  8 Fold02    1.00e-10       0 roc_auc binary         0.719 Preprocessor1_M~
+&gt;  9 Fold03    1.00e-10       0 accura~ binary         0.842 Preprocessor1_M~
+&gt; 10 Fold03    1.00e-10       0 sens    binary         0.848 Preprocessor1_M~
 &gt; # ... with 3,990 more rows
 ```
 
@@ -2199,18 +2205,18 @@ cls_wf_tuned %&gt;%
 
 ```
 &gt; # A tibble: 400 x 8
-&gt;       penalty mixture .metric .estimator  mean     n std_err .config
-&gt;         &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;  
-&gt;  1   1.00e-10       0 accura~ binary     0.847    10 0.00135 Model0~
-&gt;  2   1.00e-10       0 roc_auc binary     0.713    10 0.00811 Model0~
-&gt;  3   1.00e-10       0 sens    binary     0.853    10 0.00146 Model0~
-&gt;  4   1.00e-10       0 spec    binary     0.428    10 0.0160  Model0~
-&gt;  5   1.29e- 9       0 accura~ binary     0.847    10 0.00135 Model0~
-&gt;  6   1.29e- 9       0 roc_auc binary     0.713    10 0.00811 Model0~
-&gt;  7   1.29e- 9       0 sens    binary     0.853    10 0.00146 Model0~
-&gt;  8   1.29e- 9       0 spec    binary     0.428    10 0.0160  Model0~
-&gt;  9   1.67e- 8       0 accura~ binary     0.847    10 0.00135 Model0~
-&gt; 10   1.67e- 8       0 roc_auc binary     0.713    10 0.00811 Model0~
+&gt;        penalty mixture .metric .estimator  mean     n std_err .config      
+&gt;          &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;        
+&gt;  1    1.00e-10       0 accura~ binary     0.847    10 0.00135 Preprocessor~
+&gt;  2    1.00e-10       0 roc_auc binary     0.713    10 0.00811 Preprocessor~
+&gt;  3    1.00e-10       0 sens    binary     0.853    10 0.00146 Preprocessor~
+&gt;  4    1.00e-10       0 spec    binary     0.428    10 0.0160  Preprocessor~
+&gt;  5    1.29e- 9       0 accura~ binary     0.847    10 0.00135 Preprocessor~
+&gt;  6    1.29e- 9       0 roc_auc binary     0.713    10 0.00811 Preprocessor~
+&gt;  7    1.29e- 9       0 sens    binary     0.853    10 0.00146 Preprocessor~
+&gt;  8    1.29e- 9       0 spec    binary     0.428    10 0.0160  Preprocessor~
+&gt;  9    1.67e- 8       0 accura~ binary     0.847    10 0.00135 Preprocessor~
+&gt; 10    1.67e- 8       0 roc_auc binary     0.713    10 0.00811 Preprocessor~
 &gt; # ... with 390 more rows
 ```
 
@@ -2230,11 +2236,11 @@ cls_wf_tuned %&gt;%
 
 ```
 &gt; # A tibble: 3 x 8
-&gt;    penalty mixture .metric .estimator  mean     n std_err .config 
-&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;   
-&gt; 1 0.00599    0.111 roc_auc binary     0.714    10 0.00825 Model018
-&gt; 2 0.000464   1     roc_auc binary     0.714    10 0.00862 Model097
-&gt; 3 0.000464   0.889 roc_auc binary     0.714    10 0.00863 Model087
+&gt;    penalty mixture .metric .estimator  mean     n std_err .config          
+&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;            
+&gt; 1 0.00599    0.111 roc_auc binary     0.714    10 0.00825 Preprocessor1_Mo~
+&gt; 2 0.000464   1     roc_auc binary     0.714    10 0.00862 Preprocessor1_Mo~
+&gt; 3 0.000464   0.889 roc_auc binary     0.714    10 0.00863 Preprocessor1_Mo~
 ```
 Extract the overall best performing model specifications based on the `\(AUC\)`.
 
@@ -2245,9 +2251,9 @@ cls_wf_tuned %&gt;%
 
 ```
 &gt; # A tibble: 1 x 3
-&gt;   penalty mixture .config 
-&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   
-&gt; 1 0.00599   0.111 Model018
+&gt;   penalty mixture .config               
+&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;                 
+&gt; 1 0.00599   0.111 Preprocessor1_Model018
 ```
 
 ???
@@ -2269,20 +2275,19 @@ cls_wf_tuned %&gt;%
 
 ```
 &gt; # A tibble: 61,177 x 9
-&gt;    id    .pred_FALSE .pred_TRUE  .row penalty mixture .pred_class
-&gt;    &lt;chr&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;fct&gt;      
-&gt;  1 Fold~       0.802     0.198     76 0.00599   0.111 FALSE      
-&gt;  2 Fold~       0.918     0.0818   146 0.00599   0.111 FALSE      
-&gt;  3 Fold~       0.705     0.295    241 0.00599   0.111 FALSE      
-&gt;  4 Fold~       0.778     0.222    309 0.00599   0.111 FALSE      
-&gt;  5 Fold~       0.655     0.345    371 0.00599   0.111 FALSE      
-&gt;  6 Fold~       0.632     0.368    476 0.00599   0.111 FALSE      
-&gt;  7 Fold~       0.820     0.180    612 0.00599   0.111 FALSE      
-&gt;  8 Fold~       0.830     0.170    672 0.00599   0.111 FALSE      
-&gt;  9 Fold~       0.833     0.167    754 0.00599   0.111 FALSE      
-&gt; 10 Fold~       0.940     0.0598   831 0.00599   0.111 FALSE      
-&gt; # ... with 61,167 more rows, and 2 more variables: died &lt;fct&gt;,
-&gt; #   .config &lt;chr&gt;
+&gt;    id    .pred_FALSE .pred_TRUE  .row penalty mixture .pred_class died 
+&gt;    &lt;chr&gt;       &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt;
+&gt;  1 Fold~       0.920     0.0795    16 0.00599   0.111 FALSE       FALSE
+&gt;  2 Fold~       0.922     0.0778    18 0.00599   0.111 FALSE       FALSE
+&gt;  3 Fold~       0.923     0.0769    19 0.00599   0.111 FALSE       FALSE
+&gt;  4 Fold~       0.799     0.201     24 0.00599   0.111 FALSE       FALSE
+&gt;  5 Fold~       0.647     0.353     37 0.00599   0.111 FALSE       FALSE
+&gt;  6 Fold~       0.766     0.234     55 0.00599   0.111 FALSE       FALSE
+&gt;  7 Fold~       0.793     0.207     56 0.00599   0.111 FALSE       FALSE
+&gt;  8 Fold~       0.802     0.198     76 0.00599   0.111 FALSE       FALSE
+&gt;  9 Fold~       0.958     0.0416    88 0.00599   0.111 FALSE       FALSE
+&gt; 10 Fold~       0.950     0.0504    90 0.00599   0.111 FALSE       FALSE
+&gt; # ... with 61,167 more rows, and 1 more variable: .config &lt;chr&gt;
 ```
 
 ---
@@ -2318,6 +2323,9 @@ Note: This approach is only reasonable if your are not supposed to tune any hype
 
 ???
 - if we have filled the `metrics` argument in `tune_grid`, we can immediately analyze model performance across the different folds and hyperparameter combinations (here averaged over all 10 folds)
+- note sens-spec-trade off
+- note that model is very insensitive towards low penalty values
+- note that accuracy is clearly a crude measure of model performance here as for higher penalty values the model does not predict the negative class any longer
 
 ---
 
@@ -2386,43 +2394,7 @@ cls_wf_final %&gt;%
 ```r
 cls_wf_results &lt;- cls_wf_final %&gt;% 
   last_fit(split = climbers_split, metrics = metric_set(roc_auc, accuracy, sens, spec))
-```
 
-```
-&gt; Warning: package 'rlang' was built under R version 4.0.3
-```
-
-```
-&gt; 
-&gt; Attaching package: 'rlang'
-```
-
-```
-&gt; The following objects are masked from 'package:purrr':
-&gt; 
-&gt;     %@%, as_function, flatten, flatten_chr, flatten_dbl,
-&gt;     flatten_int, flatten_lgl, flatten_raw, invoke,
-&gt;     list_along, modify, prepend, splice
-```
-
-```
-&gt; 
-&gt; Attaching package: 'vctrs'
-```
-
-```
-&gt; The following object is masked from 'package:dplyr':
-&gt; 
-&gt;     data_frame
-```
-
-```
-&gt; The following object is masked from 'package:tibble':
-&gt; 
-&gt;     data_frame
-```
-
-```r
 cls_wf_results
 ```
 
@@ -2430,9 +2402,9 @@ cls_wf_results
 &gt; # Resampling results
 &gt; # Manual resampling 
 &gt; # A tibble: 1 x 6
-&gt;   splits      id        .metrics   .notes   .predictions   .workflow
-&gt;   &lt;list&gt;      &lt;chr&gt;     &lt;list&gt;     &lt;list&gt;   &lt;list&gt;         &lt;list&gt;   
-&gt; 1 &lt;split [61~ train/te~ &lt;tibble [~ &lt;tibble~ &lt;tibble [15,2~ &lt;workflo~
+&gt;   splits        id         .metrics    .notes     .predictions    .workflow
+&gt;   &lt;list&gt;        &lt;chr&gt;      &lt;list&gt;      &lt;list&gt;     &lt;list&gt;          &lt;list&gt;   
+&gt; 1 &lt;split [61.2~ train/tes~ &lt;tibble [4~ &lt;tibble [~ &lt;tibble [15,29~ &lt;workflo~
 ```
 
 ---
@@ -2603,7 +2575,7 @@ layout: true
 
 ## 4.8 `yardstick`: Tidy Model Performance
 
-Similar to `broom`, `yardstick`'s endeavor is to enable model evaluation using *tidy data principles*. It ships with three types of metrics which can be distinguished by their input arguments and use case:
+Similar to `broom`, `yardstick`'s endeavor is to enable model evaluation using *tidy data principles*. It ships with three types of performance metrics which can be distinguished by their input arguments and use case.
 
 **Classification:**
 - **Class metrics** are based on the predicted class (*hard predictions*) and take two `fct` columns (`truth` and `estimate`).
@@ -2631,18 +2603,18 @@ cls_wf_results
 
 ```
 &gt; # A tibble: 15,294 x 6
-&gt;    .pred_FALSE .pred_TRUE  .row .pred_class died  .config           
-&gt;          &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt; &lt;chr&gt;             
-&gt;  1       0.674     0.326      5 FALSE       FALSE Preprocessor1_Mod~
-&gt;  2       0.792     0.208      9 FALSE       FALSE Preprocessor1_Mod~
-&gt;  3       0.860     0.140     14 FALSE       FALSE Preprocessor1_Mod~
-&gt;  4       0.924     0.0760    16 FALSE       FALSE Preprocessor1_Mod~
-&gt;  5       0.888     0.112     21 FALSE       FALSE Preprocessor1_Mod~
-&gt;  6       0.815     0.185     27 FALSE       FALSE Preprocessor1_Mod~
-&gt;  7       0.763     0.237     34 FALSE       FALSE Preprocessor1_Mod~
-&gt;  8       0.900     0.100     38 FALSE       FALSE Preprocessor1_Mod~
-&gt;  9       0.674     0.326     48 FALSE       FALSE Preprocessor1_Mod~
-&gt; 10       0.599     0.401     54 FALSE       FALSE Preprocessor1_Mod~
+&gt;    .pred_FALSE .pred_TRUE  .row .pred_class died  .config             
+&gt;          &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt; &lt;fct&gt;       &lt;fct&gt; &lt;chr&gt;               
+&gt;  1       0.674     0.326      5 FALSE       FALSE Preprocessor1_Model1
+&gt;  2       0.792     0.208      9 FALSE       FALSE Preprocessor1_Model1
+&gt;  3       0.860     0.140     14 FALSE       FALSE Preprocessor1_Model1
+&gt;  4       0.924     0.0760    16 FALSE       FALSE Preprocessor1_Model1
+&gt;  5       0.888     0.112     21 FALSE       FALSE Preprocessor1_Model1
+&gt;  6       0.815     0.185     27 FALSE       FALSE Preprocessor1_Model1
+&gt;  7       0.763     0.237     34 FALSE       FALSE Preprocessor1_Model1
+&gt;  8       0.900     0.100     38 FALSE       FALSE Preprocessor1_Model1
+&gt;  9       0.674     0.326     48 FALSE       FALSE Preprocessor1_Model1
+&gt; 10       0.599     0.401     54 FALSE       FALSE Preprocessor1_Model1
 &gt; # ... with 15,284 more rows
 ```
 
@@ -2709,6 +2681,7 @@ metrics(
 ???
 - "binary" indicates that the measures are computed for a binary classification problem
 - for multi-class problems `yardstick` has implemented generalizations of the original measures
+- you already know the metric_set from `tune_grid()` where we specified the metrics that we want to compute during our resampling approach
 
 ---
 
@@ -2720,7 +2693,7 @@ metrics(
 ```r
 cls_wf_results %&gt;% 
   roc_curve(
-    .pred_TRUE, truth = died,
+    died, .pred_TRUE,
     event_level = "second"
   )
 ```
@@ -2748,7 +2721,7 @@ cls_wf_results %&gt;%
 ```r
 cls_wf_results %&gt;% 
   roc_auc(
-    .pred_TRUE, truth = died,
+    died, .pred_TRUE,
     event_level = "second"
   )
 ```
@@ -2821,7 +2794,7 @@ Similar to the `tidyverse` ecosystem, there is already a promising supply of com
 .pull-left[
 
 - `textrecipes`: Extra recipes for text processing&lt;br&gt;&lt;br&gt;
-- `themis`: Extra recipes steps for dealing with unbalanced data&lt;br&gt;&lt;br&gt;
+- `themis`: Extra recipes steps for dealing with imbalanced data&lt;br&gt;&lt;br&gt;
 - `baguette`: Efficient model functions for bagging&lt;br&gt;&lt;br&gt;
 - `stacks`: Tidy model stacking&lt;br&gt;&lt;br&gt;
 - `probably`: Tools for post-processing class probability estimates&lt;br&gt;&lt;br&gt;
@@ -2887,8 +2860,7 @@ use_glmnet(died ~ ., data = climbers_df, verbose = F, prefix = "glmnet_mod")
 &gt;     mixture = c(0.05, 0.2, 0.4, 0.6, 0.8, 1)) 
 &gt; 
 &gt; glmnet_mod_tune &lt;- 
-&gt;   tune_grid(glmnet_mod_workflow, resamples = stop("add your rsample object"), 
-&gt;     grid = glmnet_mod_grid) 
+&gt;   tune_grid(glmnet_mod_workflow, resamples = stop("add your rsample object"), grid = glmnet_mod_grid) 
 ```
 ]
 
@@ -2903,12 +2875,12 @@ ls("package:usemodels", pattern = "use_")
 ```
 
 ```
-&gt; [1] "use_cubist"  "use_earth"   "use_glmnet"  "use_kknn"   
-&gt; [5] "use_ranger"  "use_xgboost"
+&gt; [1] "use_cubist"  "use_earth"   "use_glmnet"  "use_kknn"    "use_ranger" 
+&gt; [6] "use_xgboost"
 ```
 
 ???
-- `verbose = T` adds some additional commons for why some of the feature engineering steps are included
+- `verbose = T` adds some additional comments for why some of the feature engineering steps are included
 - recipe template contains minimal required steps
 - proposed tuning grid might not be the best for your specific use case
 - the template urges the user to manually specify the resampling method
@@ -2957,13 +2929,15 @@ name: references
 
 [3]: **Mulner, C. (2020):** Interpretable Machine Learning: A Guide for Making Black Box Models Explainable. URL: https://christophm.github.io/interpretable-ml-book/.
 
-&lt;br&gt;&lt;br&gt;
-
 ## Further Resources
 
 Learn section of tidymodels.org. ULR: https://www.tidymodels.org/learn/.
 
 TidyTuesday contributions by Julia Silge. URL: https://juliasilge.com/blog/.
+
+## Credits
+
+`tidymodels` [artworks and illustration](https://github.com/allisonhorst/stats-illustrations) are provided by Allison Horst.
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>

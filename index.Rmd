@@ -3,7 +3,7 @@ title: "Machine Learning in R:<br/>Workshop Series"
 subtitle: "Modeling Workflows with Tidymodels"
 author: "Simon Schölzel"
 institute: "*Research Team Berens*"
-date: "2020-12-07"
+date: "2020-12-14"
 
 output:
   xaringan::moon_reader:
@@ -178,7 +178,7 @@ Similar to the `tidyverse` ecosystem, there is already a promising supply of com
 .pull-left[
 
 - `textrecipes`: Extra recipes for text processing<br><br>
-- `themis`: Extra recipes steps for dealing with unbalanced data<br><br>
+- `themis`: Extra recipes steps for dealing with imbalanced data<br><br>
 - `baguette`: Efficient model functions for bagging<br><br>
 - `stacks`: Tidy model stacking<br><br>
 - `probably`: Tools for post-processing class probability estimates<br><br>
@@ -245,8 +245,7 @@ use_glmnet(died ~ ., data = climbers_df, verbose = F, prefix = "glmnet_mod")
 >     mixture = c(0.05, 0.2, 0.4, 0.6, 0.8, 1)) 
 > 
 > glmnet_mod_tune <- 
->   tune_grid(glmnet_mod_workflow, resamples = stop("add your rsample object"), 
->     grid = glmnet_mod_grid) 
+>   tune_grid(glmnet_mod_workflow, resamples = stop("add your rsample object"), grid = glmnet_mod_grid) 
 ```
 ]
 
@@ -260,7 +259,7 @@ ls("package:usemodels", pattern = "use_")
 ```
 
 ???
-- `verbose = T` adds some additional commons for why some of the feature engineering steps are included
+- `verbose = T` adds some additional comments for why some of the feature engineering steps are included
 - recipe template contains minimal required steps
 - proposed tuning grid might not be the best for your specific use case
 - the template urges the user to manually specify the resampling method
@@ -317,10 +316,12 @@ name: references
 
 [3]: **Mulner, C. (2020):** Interpretable Machine Learning: A Guide for Making Black Box Models Explainable. URL: https://christophm.github.io/interpretable-ml-book/.
 
-<br><br>
-
 ## Further Resources
 
 Learn section of tidymodels.org. ULR: https://www.tidymodels.org/learn/.
 
 TidyTuesday contributions by Julia Silge. URL: https://juliasilge.com/blog/.
+
+## Credits
+
+`tidymodels` [artworks and illustration](https://github.com/allisonhorst/stats-illustrations) are provided by Allison Horst.
