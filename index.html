@@ -1901,7 +1901,7 @@ tune_grid(
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-The `tune` package unites the previous steps in the context of hyperparameter tuning with the **`tune_grid()`** function being the primary modeling workhorse.
+The `tune` package unites the previous steps in the context of hyperparameter tuning with the `tune_grid()` function being the primary modeling workhorse.
 
 ```r
 tune_grid(
@@ -1953,7 +1953,7 @@ cls_wf &lt;- workflow() %&gt;%
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-Third, we create a grid of hyperparameter candidates for performing a random grid search. In general, `dials` offers two alternative ways for creating a set of hyperparameter candidates.
+Third, we create a grid of hyperparameter candidates for performing a grid search. In general, `dials` offers two alternative ways for creating a set of hyperparameter candidates.
 
 We can either define the grid by providing the `grid_*()` function with one or several `param` objects.
 
@@ -2017,6 +2017,13 @@ ___
 
 ???
 - if i use an ensemble approach like bagging or RF, this number (1,000) is to be multiplied by the number trees
+
+---
+
+layout: false
+class: center, middle
+
+# 5-Minute Break&lt;br&gt;&lt;br&gt;☕ 🍩
 
 ---
 
@@ -2136,34 +2143,6 @@ Now, there are several neat things we can do with our fitted `climbers_folds` da
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-Extract the performance metrics for a single fold.
-
-```r
-cls_wf_tuned %&gt;% 
-  purrr::pluck(".metrics", 1)
-```
-
-```
-&gt; # A tibble: 400 x 6
-&gt;          penalty mixture .metric  .estimator .estimate .config             
-&gt;            &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;dbl&gt; &lt;chr&gt;               
-&gt;  1 0.0000000001        0 accuracy binary         0.844 Preprocessor1_Model~
-&gt;  2 0.00000000129       0 accuracy binary         0.844 Preprocessor1_Model~
-&gt;  3 0.0000000167        0 accuracy binary         0.844 Preprocessor1_Model~
-&gt;  4 0.000000215         0 accuracy binary         0.844 Preprocessor1_Model~
-&gt;  5 0.00000278          0 accuracy binary         0.844 Preprocessor1_Model~
-&gt;  6 0.0000359           0 accuracy binary         0.844 Preprocessor1_Model~
-&gt;  7 0.000464            0 accuracy binary         0.844 Preprocessor1_Model~
-&gt;  8 0.00599             0 accuracy binary         0.844 Preprocessor1_Model~
-&gt;  9 0.0774              0 accuracy binary         0.882 Preprocessor1_Model~
-&gt; 10 1                   0 accuracy binary         0.989 Preprocessor1_Model~
-&gt; # ... with 390 more rows
-```
-
----
-
-## 4.6 `tune`: Tidy Tuning Tools
-
 Extract the performance metrics for each fold.
 
 ```r
@@ -2222,6 +2201,18 @@ cls_wf_tuned %&gt;%
 
 ???
 now also with uncertainty estimates, i.e. std_err
+
+---
+
+## 4.6 `tune`: Tidy Tuning Tools
+
+&lt;img src="index_files/figure-html/unnamed-chunk-91-1.png" style="display: block; margin: auto;" /&gt;
+
+???
+- if we have filled the `metrics` argument in `tune_grid`, we can immediately analyze model performance across the different folds and hyperparameter combinations (here averaged over all 10 folds)
+- note sens-spec-trade off
+- note that model is very insensitive towards low penalty values
+- note that accuracy is clearly a crude measure of model performance here as for higher penalty values the model does not predict the negative class any longer
 
 ---
 
@@ -2319,18 +2310,6 @@ Note: This approach is only reasonable if your are not supposed to tune any hype
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-&lt;img src="index_files/figure-html/unnamed-chunk-98-1.png" style="display: block; margin: auto;" /&gt;
-
-???
-- if we have filled the `metrics` argument in `tune_grid`, we can immediately analyze model performance across the different folds and hyperparameter combinations (here averaged over all 10 folds)
-- note sens-spec-trade off
-- note that model is very insensitive towards low penalty values
-- note that accuracy is clearly a crude measure of model performance here as for higher penalty values the model does not predict the negative class any longer
-
----
-
-## 4.6 `tune`: Tidy Tuning Tools
-
 Since we have now optimized our model for the most promising candidate hyperparameter pair of `mixture` and `penalty`, we can finalize our initial `workflow` object.
 
 ```r
@@ -2394,7 +2373,39 @@ cls_wf_final %&gt;%
 ```r
 cls_wf_results &lt;- cls_wf_final %&gt;% 
   last_fit(split = climbers_split, metrics = metric_set(roc_auc, accuracy, sens, spec))
+```
 
+```
+&gt; 
+&gt; Attaching package: 'rlang'
+```
+
+```
+&gt; The following objects are masked from 'package:purrr':
+&gt; 
+&gt;     %@%, as_function, flatten, flatten_chr, flatten_dbl,
+&gt;     flatten_int, flatten_lgl, flatten_raw, invoke, list_along,
+&gt;     modify, prepend, splice
+```
+
+```
+&gt; 
+&gt; Attaching package: 'vctrs'
+```
+
+```
+&gt; The following object is masked from 'package:dplyr':
+&gt; 
+&gt;     data_frame
+```
+
+```
+&gt; The following object is masked from 'package:tibble':
+&gt; 
+&gt;     data_frame
+```
+
+```r
 cls_wf_results
 ```
 
@@ -2432,13 +2443,6 @@ _Note: For a comprehensive overview of the topic of *interpretable ML* check out
 
 ???
 - your goal is to find the simplest possible model with reasonable performance
-
----
-
-layout: false
-class: center, middle
-
-# 5-Minute Break&lt;br&gt;&lt;br&gt;☕ 🍩
 
 ---
 
@@ -2768,7 +2772,7 @@ cls_wf_tuned %&gt;%
 ```
 ]
 .pull-right[
-&lt;img src="index_files/figure-html/unnamed-chunk-115-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-113-1.png" style="display: block; margin: auto;" /&gt;
 ]
 
 .footnote[

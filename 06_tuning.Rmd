@@ -228,7 +228,7 @@ tune_grid(
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-The `tune` package unites the previous steps in the context of hyperparameter tuning with the **`tune_grid()`** function being the primary modeling workhorse.
+The `tune` package unites the previous steps in the context of hyperparameter tuning with the `tune_grid()` function being the primary modeling workhorse.
 ```{r, eval=F}
 tune_grid(
   object, preprocessor, resamples,
@@ -277,7 +277,7 @@ cls_wf <- workflow() %>%
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-Third, we create a grid of hyperparameter candidates for performing a random grid search. In general, `dials` offers two alternative ways for creating a set of hyperparameter candidates.
+Third, we create a grid of hyperparameter candidates for performing a grid search. In general, `dials` offers two alternative ways for creating a set of hyperparameter candidates.
 
 We can either define the grid by providing the `grid_*()` function with one or several `param` objects.
 ```{r}
@@ -331,6 +331,13 @@ ___
 
 ???
 - if i use an ensemble approach like bagging or RF, this number (1,000) is to be multiplied by the number trees
+
+---
+
+layout: false
+class: center, middle
+
+# 5-Minute Break<br><br>`r emo::ji("coffee")` `r emo::ji("doughnut")`
 
 ---
 
@@ -424,16 +431,6 @@ Now, there are several neat things we can do with our fitted `climbers_folds` da
 
 ## 4.6 `tune`: Tidy Tuning Tools
 
-Extract the performance metrics for a single fold.
-```{r}
-cls_wf_tuned %>% 
-  purrr::pluck(".metrics", 1)
-```
-
----
-
-## 4.6 `tune`: Tidy Tuning Tools
-
 Extract the performance metrics for each fold.
 ```{r}
 cls_wf_tuned %>% 
@@ -456,6 +453,27 @@ cls_wf_tuned %>%
 
 ???
 now also with uncertainty estimates, i.e. std_err
+
+---
+
+## 4.6 `tune`: Tidy Tuning Tools
+
+```{r, echo=F, fig.width = 10, fig.asp = 0.618, fig.align='center'}
+cls_wf_tuned %>% 
+  collect_metrics(summarize = T) %>%
+  ggplot2::ggplot(aes(x = penalty, y = mean, group = mixture, color = mixture)) +
+    geom_point() +
+    geom_line() +
+    scale_x_log10() +
+    facet_wrap(~ .metric, scales = "free") +
+    theme_light()
+```
+
+???
+- if we have filled the `metrics` argument in `tune_grid`, we can immediately analyze model performance across the different folds and hyperparameter combinations (here averaged over all 10 folds)
+- note sens-spec-trade off
+- note that model is very insensitive towards low penalty values
+- note that accuracy is clearly a crude measure of model performance here as for higher penalty values the model does not predict the negative class any longer
 
 ---
 
@@ -510,27 +528,6 @@ cls_wf %>%
 
 ???
 Note: This approach is only reasonable if your are not supposed to tune any hyperparameters!
-
----
-
-## 4.6 `tune`: Tidy Tuning Tools
-
-```{r, echo=F, fig.width = 10, fig.asp = 0.618, fig.align='center'}
-cls_wf_tuned %>% 
-  collect_metrics(summarize = T) %>%
-  ggplot2::ggplot(aes(x = penalty, y = mean, group = mixture, color = mixture)) +
-    geom_point() +
-    geom_line() +
-    scale_x_log10() +
-    facet_wrap(~ .metric, scales = "free") +
-    theme_light()
-```
-
-???
-- if we have filled the `metrics` argument in `tune_grid`, we can immediately analyze model performance across the different folds and hyperparameter combinations (here averaged over all 10 folds)
-- note sens-spec-trade off
-- note that model is very insensitive towards low penalty values
-- note that accuracy is clearly a crude measure of model performance here as for higher penalty values the model does not predict the negative class any longer
 
 ---
 

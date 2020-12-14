@@ -167,13 +167,6 @@ class: center, middle
 
 ---
 
-layout: false
-class: center, middle
-
-# 5-Minute Break<br><br>`r emo::ji("coffee")` `r emo::ji("doughnut")`
-
----
-
 ```{r child='./07_model_evaluation.Rmd', eval=T}
 ```
 
