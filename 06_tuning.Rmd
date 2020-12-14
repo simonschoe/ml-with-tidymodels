@@ -570,8 +570,8 @@ cls_wf_final
 > Logistic Regression Model Specification (classification)
 > 
 > Main Arguments:
->   penalty = 0.00274383239650675
->   mixture = 0.0604883791296743
+>   penalty = 0.00599484250318942
+>   mixture = 0.111111111111111
 > 
 > Engine-Specific Arguments:
 >   family = binomial
