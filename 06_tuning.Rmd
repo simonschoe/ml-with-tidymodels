@@ -590,7 +590,7 @@ cls_wf_final %>%
 --
 
 `tune` streamlines this step and introduces the `last_fit()` function which employs the initial `split` object we generated in [chapter 4.1](#data-split) as input. More precisely, it fits the finalized workflow on the training set, predicts the unseen cases in the test set and evaluates the model's performance by benchmarking predictions against the actual response.
-```{r, warning=F}
+```{r, warning=F, message=F}
 cls_wf_results <- cls_wf_final %>% 
   last_fit(split = climbers_split, metrics = metric_set(roc_auc, accuracy, sens, spec))
 

@@ -2373,39 +2373,7 @@ cls_wf_final %&gt;%
 ```r
 cls_wf_results &lt;- cls_wf_final %&gt;% 
   last_fit(split = climbers_split, metrics = metric_set(roc_auc, accuracy, sens, spec))
-```
 
-```
-&gt; 
-&gt; Attaching package: 'rlang'
-```
-
-```
-&gt; The following objects are masked from 'package:purrr':
-&gt; 
-&gt;     %@%, as_function, flatten, flatten_chr, flatten_dbl,
-&gt;     flatten_int, flatten_lgl, flatten_raw, invoke, list_along,
-&gt;     modify, prepend, splice
-```
-
-```
-&gt; 
-&gt; Attaching package: 'vctrs'
-```
-
-```
-&gt; The following object is masked from 'package:dplyr':
-&gt; 
-&gt;     data_frame
-```
-
-```
-&gt; The following object is masked from 'package:tibble':
-&gt; 
-&gt;     data_frame
-```
-
-```r
 cls_wf_results
 ```
 
