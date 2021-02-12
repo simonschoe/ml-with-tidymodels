@@ -19,7 +19,6 @@ output:
 ---
 
 ```{r setup, include=F}
-
 # knitr options
 knitr::opts_chunk$set(
   comment = ">",
@@ -60,7 +59,7 @@ metathis::meta() %>%
     title = "Modeling Workflows with Tidymodels",
     description = "4 hour workshop on tidymodels, a unified framework towards modeling and machine learning in R using tidy data principles.",
     url = "https://simonschoe.github.io/ml-with-tidymodels",
-    image = "",
+    image = "https://simonschoe.github.io/ml-with-tidymodels/img/share-card.png",
     image_alt = "Title slide for Modeling Workflows with Tidymodels",
     og_type = "website",
     og_author = "Simon Schölzel",
@@ -128,7 +127,7 @@ More specifically, after this workshop you will
 
 ---
 
-```{r child='./02_resampling.Rmd', eval=T}
+```{r child='./02_resampling.Rmd', eval=F}
 ```
 
 ---
@@ -140,12 +139,12 @@ class: center, middle
 
 ---
 
-```{r child='./03_preprocessing.Rmd', eval=T}
+```{r child='./03_preprocessing.Rmd', eval=F}
 ```
 
 ---
 
-```{r child='./04_model_building.Rmd', eval=T}
+```{r child='./04_model_building.Rmd', eval=F}
 ```
 
 ---
@@ -157,17 +156,17 @@ class: center, middle
 
 ---
 
-```{r child='./05_workflows.Rmd', eval=T}
+```{r child='./05_workflows.Rmd', eval=F}
 ```
 
 ---
 
-```{r child='./06_tuning.Rmd', eval=T}
+```{r child='./06_tuning.Rmd', eval=F}
 ```
 
 ---
 
-```{r child='./07_model_evaluation.Rmd', eval=T}
+```{r child='./07_model_evaluation.Rmd', eval=F}
 ```
 
 ---

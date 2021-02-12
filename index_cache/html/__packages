@@ -36,3 +36,11 @@ usemodels
 rlang
 vctrs
 metathis
+renv
+countdown
+magrittr
+glue
+plotly
+patchwork
+ggforce
+palmerpenguins

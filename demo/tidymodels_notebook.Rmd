@@ -1,0 +1,452 @@
+---
+title: "Machine Learning in R: Workshop Series"
+subtitle: "Modeling Workflows with Tidymodels"
+author: "Simon Schölzel"
+institute: "*Research Team Berens*"
+date: "2020-11-09 (updated: `r Sys.Date()`)"
+output: pdf_document
+---
+
+This notebook complements the "**Modeling Workflows with Tidymodels**" workshop which is part of the "Machine Learning in `R`" graduate course held at University of Münster, School of Business and Economics (winter term 2020/21).
+
+For the purpose of reproducibility, it contains all examples and use cases discussed during the workshop sessions.
+
+
+## Package Management
+
+```{r}
+# check if pacman is installed (install if evaluates to FALSE)
+if (!require(pacman) == T) install.packages("pacman")
+# load (or install if pacman cannot find an existing installation) the relevant packages
+pacman::p_load(tidyverse, tidymodels, tidytuesdayR, skimr, glmnet, doParallel)
+```
+
+
+## Himalayan Climbing Expeditions Data Data Set
+
+Download data set using the `tidytuesdayR` package:
+```{r}
+tt_data <- tidytuesdayR::tt_load(2020, week = 39)
+```
+
+Exploratory data analysis (EDA):
+```{r}
+tt_data$members %>% 
+  skimr::skim() 
+```
+
+Some preliminary data cleaning:
+```{r}
+climbers_df <- tt_data$members %>% 
+  select(
+    member_id, peak_name, season, year,sex, age, citizenship,
+    expedition_role, hired, solo, oxygen_used, success, died) %>% 
+  filter(!is.na(sex), !is.na(citizenship), !is.na(peak_name), !is.na(expedition_role)) %>% 
+  mutate(across(where(~ is.character(.) || is.logical(.)), as.factor))
+
+climbers_df
+```
+
+
+## `rsample`: General Resampling Infrastructure
+
+Data partitioning:
+```{r}
+set.seed(2020)
+climbers_split <- initial_split(climbers_df, prop = 0.8, strata = died)
+
+climbers_split
+```
+
+Extracting training and testing set from the `rsplit` object:
+```{r}
+train_set <- training(climbers_split)
+train_set
+
+test_set <- testing(climbers_split)
+test_set
+```
+
+Set up 10-fold CV resampling scheme:
+```{r}
+set.seed(2020)
+climbers_folds <- train_set %>% 
+  vfold_cv(v = 10, repeats = 1, strata = died) 
+
+climbers_folds
+```
+
+Inspect training and validation set within the first resample ("Fold01"):
+To extract the training and validation data, we can use `analysis()` and `assessment()`.
+```{r}
+climbers_folds %>%
+  pluck("splits", 1) %>%
+  analysis()
+
+climbers_folds %>%
+  pluck("splits", 1) %>%
+  assessment()
+```
+
+
+## `recipes`: Preprocessing Tools to Create Design Matrices
+
+Create feature engineering recipe by including the following steps:
+1. Assign `member_id` a custom role called "id".
+2. Use median-imputation to replace missing values in `age`.
+3. Use $z$-normalization to scale numerical data to zero mean and unit standard deviation.
+4. Pool infrequent factor levels to prevent near-zero variance predictors (e.g., `peak_name`, `citizenship` or `expedition_role`).
+5. One-hot encode categorical predictors into dummies.
+6. Use SMOTE to tackle class imbalance.
+
+```{r}
+mod_recipe <- recipe(formula = died ~ ., data = train_set) %>% 
+  update_role(member_id, new_role = "id") %>% 
+  step_medianimpute(age) %>% 
+  step_normalize(all_numeric()) %>% 
+  step_other(peak_name, citizenship, expedition_role, threshold = 0.05) %>% 
+  step_dummy(all_predictors(), -all_numeric()) %>% 
+  themis::step_smote(died, over_ratio = 0.6, neighbors = 5, seed = 2020, skip = T)
+
+mod_recipe
+```
+
+Fit the specified recipe on the training set and estimate the unknown quantities:
+```{r}
+mod_recipe_fitted <- prep(mod_recipe, retain = T)
+mod_recipe_fitted
+```
+
+Apply the fitted recipe to transform the training and test set (i.e. perform feature engineering):
+```{r}
+# transform the training set
+train_set_new <- bake(mod_recipe_fitted, new_data = NULL)
+train_set_new
+
+# transform the test set
+test_set_new <- bake(mod_recipe_fitted, new_data = test_set)
+test_set_new
+```
+
+
+## `parsnip`: A Common API to Modeling and Analysis Functions
+
+Construct a logistic classifier:
+```{r}
+log_cls <- logistic_reg() %>% 
+  set_engine("glm") %>% 
+  set_mode("classification")
+
+log_cls
+```
+
+Construct a regularized logistic classifier:
+```{r}
+lasso_cls <- logistic_reg() %>%
+  set_args(penalty = 0.1, mixture = 1) %>% 
+  set_mode("classification") %>% 
+  set_engine("glmnet", family = "binomial")
+
+lasso_cls
+```
+
+Construct a decision tree classifier:
+```{r}
+dt_cls <- decision_tree() %>% 
+  set_args(cost_complexity = 0.01, tree_depth = 30, min_n = 20) %>% 
+  set_mode("classification") %>% 
+  set_engine("rpart")
+
+dt_cls
+```
+
+Construct a tree bagging classifier:
+```{r}
+bag_cls <- rand_forest() %>% 
+  set_args(trees = 1000) %>% 
+  set_mode("classification") %>% 
+  set_engine("randomForest")
+
+bag_cls
+```
+
+Construct a random forest classifier:
+```{r}
+rf_cls <- rand_forest() %>%
+  set_args(trees = 1000, mtry = .cols()) %>% 
+  set_mode("classification") %>% 
+  set_engine("randomForest")
+
+rf_cls
+```
+
+Construct a k-NN classifier:
+```{r}
+knn_cls <- nearest_neighbor() %>% 
+  set_args(neighbors = 5, dist_power = 2) %>% 
+  set_mode("classification") %>% 
+  set_engine("kknn")
+
+knn_cls
+```
+
+Construct a SVM classifier:
+```{r}
+svm_cls <- svm_rbf() %>% 
+  set_args(cost = tune(), rbf_sigma = tune()) %>% 
+  set_mode("classification") %>% 
+  set_engine("kernlab")
+
+svm_cls
+```
+
+Fit model on the engineered training set (here decision tree):
+```{r}
+dt_cls_fit <- dt_cls %>%
+  fit(formula = died ~ ., data = train_set_new %>% select(-member_id))
+
+dt_cls_fit
+```
+
+Predict unseen cases in the test set:
+```{r}
+dt_cls_fit %>% 
+  predict(new_data = test_set_new, type = "prob")
+```
+
+Attach predictions to the test set:
+```{r}
+bind_cols(
+  test_set_new,
+  predict(dt_cls_fit, new_data = test_set_new, type = "prob")
+)
+```
+
+
+## `workflows`: Modeling Workflows
+
+Bundle feature engineering recipe and model specification (here regularized logit classifier) in a `workflow` object:
+```{r}
+cls_wf <- workflow() %>% 
+  add_recipe(mod_recipe) %>% 
+  add_model(lasso_cls)
+
+cls_wf
+```
+
+Fit the workflow on the initial training data (*note: here you must use the untransformed training set since `fit(workflow)` is performing `prep()` and `bake()` under the hood for you!*):
+```{r}
+cls_wf_fitted <- cls_wf %>% 
+  fit(train_set)
+
+cls_wf_fitted
+```
+
+
+## `dials`: Creating Hyperparameter Values & `tune`: Tidy Tuning Tools
+
+Now, we would like to tune a regularized logit model (i.e. optimize for the optimal `penalty` and `mixture` instead of defining it ourselves).
+
+Inspect the two hyperparameters:
+```{r}
+penalty()
+```
+```{r}
+mixture()
+```
+
+Customize the range for the regularization penalty:
+```{r}
+penalty(range = c(-10, 10)) # equivalent to penalty() %>% range_set(c(-10, 10))
+```
+
+Create a hyperparameter grid with 100 candidate hyperparameter combinations:
+```{r}
+param_grid <- grid_regular(penalty(range = c(-10, 10)), mixture(), levels = c(10, 10))
+param_grid
+```
+
+Specify regularized logit model that is to be optimized (*note: a regularized linear model that allows for the Ridge as well as for the Lasso penalty via the `mixture` hyperparameter is also referred to as an elastic net model.*):
+```{r}
+elnet_cls <- logistic_reg() %>%
+  set_args(penalty = tune(), mixture = tune()) %>% 
+  set_mode("classification") %>% 
+  set_engine("glmnet", family = "binomial")
+```
+
+Bundle feature engineering recipe and model specification in a `workflow` object:
+```{r}
+cls_wf <- workflow() %>% 
+  add_recipe(mod_recipe) %>% 
+  add_model(elnet_cls)
+```
+
+Specify a local computer cluster using your computer's cores:
+```{r}
+all_cores <- parallel::detectCores(logical = F)
+all_cores
+
+comp_cluster <- parallel::makeCluster(all_cores - 1)
+comp_cluster
+```
+
+Perform hyperparameter tuning:
+```{r}
+doParallel::registerDoParallel(comp_cluster)
+
+start <- Sys.time()
+
+cls_wf_tuned <- tune_grid(
+  cls_wf, climbers_folds, grid = param_grid,
+  metrics = metric_set(roc_auc, accuracy, sens, spec),
+  control = control_grid(save_pred = T, verbose = T, pkgs = c('themis'))
+)
+
+Sys.time() - start
+```
+```{r}
+cls_wf_tuned
+```
+
+Extract the performance metrics for each fold:
+```{r}
+cls_wf_tuned %>% 
+  collect_metrics(summarize = F)
+```
+
+Extract the average performance metrics for all folds:
+```{r}
+cls_wf_tuned %>% 
+  collect_metrics(summarize = T)
+```
+
+Explore the model's performance:
+```{r, echo=F, fig.width = 10, fig.asp = 0.618, fig.align='center'}
+cls_wf_tuned %>% 
+  collect_metrics(summarize = T) %>%
+  ggplot2::ggplot(aes(x = penalty, y = mean, group = mixture, color = mixture)) +
+    geom_point() +
+    geom_line() +
+    scale_x_log10() +
+    facet_wrap(~ .metric, scales = "free") +
+    theme_light()
+```
+
+Extract the `n` best performing model specifications based on the $AUC$:
+```{r}
+cls_wf_tuned %>% 
+  show_best(metric = "roc_auc", n = 5)
+```
+
+Extract the overall best performing model specifications based on the $AUC$:
+```{r}
+cls_wf_tuned %>% 
+  select_best(metric = "roc_auc")
+```
+
+Extract the best model specifications that still satisfies the 1-se-rule based on the $AUC$ (*note: higher `penalty` corresponds to more regularization and hence to a simpler mode.*):
+```{r}
+cls_wf_tuned %>% 
+  select_by_one_std_err(desc(penalty), metric = "roc_auc")
+```
+
+Extract the validation set predictions for each fold and the optimal model specification:
+```{r}
+cls_wf_tuned %>% 
+  collect_predictions(
+    summarize = F, parameters = select_best(cls_wf_tuned, metric = "roc_auc")
+  )
+```
+
+Finalize the model workflow based on the optimal hyperparameter choice:
+```{r}
+opt_hyper <- cls_wf_tuned %>% 
+  select_best(metric = "roc_auc")
+
+cls_wf <- cls_wf %>% 
+  finalize_workflow(opt_hyper)
+
+cls_wf
+```
+
+Retrain the finalized workflow on the whole training set and predict unseen cases in the test set:
+```{r}
+cls_wf_results <- cls_wf %>% 
+  last_fit(split = climbers_split, metrics = metric_set(roc_auc, accuracy, sens, spec))
+
+cls_wf_results
+```
+
+
+## `broom`: Tidy Model Outputs
+
+Extract the final model from the `last_fit` object:
+```{r}
+elnet_cls <- cls_wf_results %>% 
+  pluck(".workflow", 1) %>% 
+  pull_workflow_fit()
+```
+
+Tidy output of model components:
+```{r}
+tidy(elnet_cls)
+```
+
+Tidy output of model diagnostics:
+```{r}
+glance(elnet_cls)
+```
+
+
+## `yardstick`: Tidy Characterizations of Model Performance
+
+Extract the test set predictions from the `last_fit` object:
+```{r}
+predictions <- cls_wf_results %>% 
+  pluck(".predictions", 1)
+
+predictions
+```
+
+Calculate the confusion matrix:
+```{r}
+predictions %>% 
+  conf_mat(died, estimate = .pred_class)
+```
+
+Calculate the sensitivity:
+```{r}
+predictions %>% 
+  sens(died, estimate = .pred_class)
+```
+
+Calculate the specificity:
+```{r}
+predictions %>% 
+  spec(died, estimate = .pred_class)
+```
+
+Calculate the accuracy:
+```{r}
+predictions %>% 
+  accuracy(died, estimate = .pred_class)
+```
+
+Calculate them all at once using a `metric_set`:
+```{r}
+metrics <- metric_set(accuracy, sens, spec)
+
+metrics(predictions, died, estimate = .pred_class)
+```
+
+Calculate the $ROC$-curve:
+```{r}
+predictions %>% 
+  roc_curve(died, .pred_TRUE, event_level = "second")
+```
+
+Calculate the $ROC-AUC$:
+```{r}
+predictions %>% 
+  roc_auc(died, .pred_TRUE, event_level = "second")
+```

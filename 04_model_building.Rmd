@@ -105,7 +105,7 @@ log_cls
 
 ## 4.3 `parsnip`: A Unified Modeling API
 
-**Logistic Lasso classifier:**
+**Regularized logistic classifier:**
 ```{r}
 lasso_cls <- logistic_reg() %>%
   set_args(penalty = 0.1, mixture = 1) %>% 
