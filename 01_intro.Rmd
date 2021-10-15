@@ -10,8 +10,8 @@ class: middle, center, inverse
 ---
 
 background-image: url(https://www.tidymodels.org/images/tidymodels.png)
-background-position: 97.5% 5%
-background-size: 7%
+background-position: 97.5% 2.5%
+background-size: 7.5%
 layout: true
 
 ---
@@ -31,14 +31,14 @@ Official `tidymodels` [Hex Sticker](https://github.com/rstudio/hex-stickers)
 .pull-right[
 .pull-left[
 ```{r, echo=F, out.width='80%', out.height='80%'}
-knitr::include_graphics("https://pbs.twimg.com/profile_images/905186381995147264/7zKAG5sY.jpg")
+knitr::include_graphics("https://avatars.githubusercontent.com/u/12505835?v=4")
 ```
 
-**Hadley Wickham** - Chief Scientist @ RStudio 
+**Julia Silge** - Software Engineer @ RStudio 
 ]
 .pull-right[
 ```{r, echo=F, out.width='80%', out.height='80%'}
-knitr::include_graphics("https://avatars3.githubusercontent.com/u/5731043?s=460&u=814e99b02976f8bcb9b15047777742d268648d35&v=4")
+knitr::include_graphics("https://avatars.githubusercontent.com/u/5731043?v=4")
 ```
 
 **Max Kuhn** - Software Engineer @ RStudio 
@@ -46,7 +46,7 @@ knitr::include_graphics("https://avatars3.githubusercontent.com/u/5731043?s=460&
 
 --
 
-> Whenever possible, the software should be able to protect users from committing mistakes. Software should make it easy for users to do the right thing. ~ [Kuhn/Silge (2020), ch. 1](#references)
+> Whenever possible, the software should be able to protect users from committing mistakes. Software should make it easy for users to do the right thing. ~ [Kuhn/Silge (2021)](https://www.tmwr.org/software-modeling.html#software-modeling)
 
 ???
 - a framework for modeling (guardrails) using using tidy data principles
@@ -60,7 +60,7 @@ knitr::include_graphics("https://avatars3.githubusercontent.com/u/5731043?s=460&
 > The tidymodels framework is a **collection of packages** for modeling and machine learning using tidyverse principles. ~ [tidymodels.org](https://www.tidymodels.org/)
 
 .pull-left[
-**`tidymodels` core packages along the generic machine learning pipeline:**
+**`tidymodels` core packages:**
 - `rsample`: general methods for resampling
 - `recipes`: unified interface to data preprocessing
 - `parsnip`: unified interface to modeling
@@ -93,29 +93,32 @@ install.packages("tidymodels")
 library(tidymodels)
 ```
 ```
--- Attaching packages ----------------------------- tidymodels 0.1.1 --
-v broom     0.7.2      v recipes   0.1.14
-v dials     0.0.9      v rsample   0.0.8 
-v dplyr     1.0.2      v tibble    3.0.4 
-v ggplot2   3.3.2      v tidyr     1.1.2 
-v infer     0.5.3      v tune      0.1.1 
-v modeldata 0.1.0      v workflows 0.2.1 
-v parsnip   0.1.4      v yardstick 0.0.7 
-v purrr     0.3.4      
+-- Attaching packages ----------------------------- tidymodels 0.1.4 --
+v broom        0.7.9      v recipes      0.1.17
+v dials        0.0.10     v rsample      0.1.0 
+v dplyr        1.0.7      v tibble       3.1.4 
+v ggplot2      3.3.5      v tidyr        1.1.4 
+v infer        1.0.0      v tune         0.1.6 
+v modeldata    0.1.1      v workflows    0.2.3 
+v parsnip      0.1.7      v workflowsets 0.1.0 
+v purrr        0.3.4      v yardstick    0.0.8 
 
 -- Conflicts ------------------------------- tidymodels_conflicts() --
 x purrr::discard() masks scales::discard()
 x dplyr::filter()  masks stats::filter()
 x dplyr::lag()     masks stats::lag()
 x recipes::step()  masks stats::step()
+
+* Use suppressPackageStartupMessages() to eliminate package startup messages
 ```
 
 ???
 Explain:
 - very similar when you load the whole tidyverse
-- as you can see tidymodels loads also some of the tidyverse packages (however, usually you would load both at the beginning of your R session)
+- as you can see tidymodels loads also some of the tidyverse packages (however, usually you would load both at the beginning of your R session) -> this means that some tidymodels functions also use dplyr, purrr and ggplot2 functionality
 - again we have some conflicts here, so these functions override functions by the base `R` `stats` package
-- `tidymodels v0.1.1`: relatively new package ecosystem, it is not unlikely that some of the functionalities or interfaces will change slightly in the future
+- `tidymodels v0.1.4`: relatively new package ecosystem, it is not unlikely that some of the features or function interfaces will change slightly in the future
+
 
 ---
 
@@ -128,17 +131,16 @@ knitr::include_graphics("https://www.tmwr.org/premade/data-science-model.svg")
 ```
 
 .footnote[
-*Source: [[1, ch. 1.3](#references)]*
+*Source: [Kuhn/Silge (2021), ch. 1.3](https://www.tmwr.org/software-modeling.html#model-phases)*
 ]
-???
-src: https://d33wubrfki0l68.cloudfront.net/571b056757d68e6df81a3e3853f54d3c76ad6efc/32d37/diagrams/data-science.png
+
 
 ---
 
 layout: false
 class: middle, center, inverse
 
-# 3 Himalayan Climbing Expeditions Data
+# 3 Himalayan Climbing<br>Expeditions Data
 
 ---
 
@@ -165,6 +167,7 @@ tt_data <- tidytuesdayR::tt_load(2020, week = 39)
 ???
 - Tidytuesday: social project to motivate the R online community to learn working with tools like ggplot2, dplyr and tidyr and applying them to real-world data
 - around 50 different data sets right now
+- this dataset consists of three different csv files
 
 ---
 
@@ -172,36 +175,32 @@ tt_data <- tidytuesdayR::tt_load(2020, week = 39)
 
 The data set contains a large record of data spanning the 1905-2019 period about
 - `r emo::ji("mountain_snow")` the several **peaks** of the mountain range,
-- `r emo::ji("paw_prints")` **expeditions** during this period, and
+- `r emo::ji("paw_prints")` the conducted **expeditions** during this period, and
 - `r emo::ji("woman_climbing")` the **members** of each expedition.
 
 --
 
-In this workshop, we will try to predict the likelihood of an expedition coming to a lethal end. This, in turn, may then help us to derive drivers for a successful expedition and eventually reduce death rates.
+<br>
+
+**Task:** Predict the likelihood of an expedition coming to a lethal end (i.e. *binary classification task*).
 
 ```{r, eval=F}
 tt_data$members %>% 
-  skimr::skim() 
+  skimr::skim()
 ```
 
 ???
+- Motivations for the task: derive drivers for a successful expedition and eventually reduce death rates.
 - use `skimr` package to get a high-level view of the data and most important descriptives
 
 ---
-
-```{r echo=FALSE}
-xaringanExtra::style_panelset_tabs(
-  active_foreground = "#0051BA",
-  hover_foreground = "#d22",
-)
-```
 
 ## 3 Himalayan Climbing Expeditions Data
 
 .panelset[
 
 .panel[
-.panel-name[Output Pt. 1]
+.panel-name[Data Summary]
 ```
 > -- Data Summary ------------------------
 >                            Values    
@@ -219,7 +218,7 @@ xaringanExtra::style_panelset_tabs(
 ]
 
 .panel[
-.panel-name[Output Pt. 2]
+.panel-name[Character Vars]
 ```
 > -- Variable type: character ---------------------------------------------------------------------------
 > # A tibble: 10 x 8
@@ -239,7 +238,7 @@ xaringanExtra::style_panelset_tabs(
 ]
 
 .panel[
-.panel-name[Output Pt. 3]
+.panel-name[Logical Vars]
 ```
 > -- Variable type: logical -----------------------------------------------------------------------------
 > # A tibble: 6 x 5
@@ -255,7 +254,7 @@ xaringanExtra::style_panelset_tabs(
 ]
 
 .panel[
-.panel-name[Output Pt. 4]
+.panel-name[Numeric Vars]
 ```
 > -- Variable type: numeric -----------------------------------------------------------------------------
 > # A tibble: 5 x 11
@@ -309,11 +308,10 @@ usually, you would do a lot more EDA right now:
 
 ```{r}
 climbers_df <- tt_data$members %>% 
-  select(
-    member_id, peak_name, season, year,sex, age, citizenship,
-    expedition_role, hired, solo, oxygen_used, success, died) %>% 
-  filter(!is.na(sex), !is.na(citizenship), !is.na(peak_name), !is.na(expedition_role)) %>% 
-  mutate(across(where(~ is.character(.) || is.logical(.)), as.factor))
+  select(member_id, peak_name, season, year,sex, age, citizenship,
+         expedition_role, hired, solo, oxygen_used, success, died) %>% 
+  filter((!is.na(sex) & !is.na(citizenship) & !is.na(peak_name) & !is.na(expedition_role)) == T) %>% 
+  mutate(across(where(~ is.character(.) | is.logical(.)), as.factor))
 
 climbers_df
 ```

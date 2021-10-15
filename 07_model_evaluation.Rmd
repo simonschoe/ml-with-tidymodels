@@ -11,7 +11,7 @@ class: middle, center, inverse
 ---
 
 background-image: url(https://www.tidymodels.org/images/broom.png)
-background-position: 97.5% 5%
+background-position: 97.5% 2.5%
 background-size: 7%
 layout: true
 
@@ -19,17 +19,18 @@ layout: true
 
 ## 4.7 `broom`: Tidy Model Outputs
 
-`broom` provides three useful functions for converting model objects (e.g., `lm`, `glm`, `rpart`) into tidy `tibbles`:
+`broom` provides three useful functions for converting `parsnip` objects (e.g., `lm`, `glm`, `rpart`) into tidy `tibbles`:
 - `tidy()`: produces a tidy output of model components (e.g., coefficients, weights, clusters)
-- `glance()`: produces a tidy output of model summaries (e.g., goodness-of-fit, $F$-statistics)
+- `glance()`: produces a tidy output of model summaries (e.g., goodness-of-fit, $F$ - statistics)
 - `augment()`: adds additional information about observations (e.g., fitted values, residuals)
 
 ```{r, echo=F, out.width='60%', fig.align='center'}
-knitr::include_graphics("https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/rstats-artwork/broom_package.png")
+knitr::include_graphics(
+  "https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/rstats-artwork/broom_package.png"
+)
 ```
 
 ???
-- most of the columns `tidymodels` creates have the "." prefix in order to not override initial columns
 - difference to `tidyr`: these functions tidy model objects, `tidyr` is all about tidying and transforming data frames
 
 ---
@@ -37,60 +38,29 @@ knitr::include_graphics("https://raw.githubusercontent.com/allisonhorst/stats-il
 ## 4.7 `broom`: Tidy Model Outputs
 
 In order to illustrate the convenience of the three `broom` functions, let us first extract our optimal model from `cls_wf_results`.
+
 ```{r, results='hide'}
-elnet_cls_final <- cls_wf_results %>% 
-  pluck(".workflow", 1) %>% 
-  pull_workflow_fit()
-
-elnet_cls_final
-```
-```
-> parsnip model object
-> 
-> Fit time:  4.8s 
-> 
-> Call:  glmnet::glmnet(x = maybe_matrix(x), y = y, family = ~"binomial", alpha = > ~0.111111111111111) 
-> 
->    Df  %Dev  Lambda
-> 1   0  0.00 1.09200
-> 2   1  0.17 0.99480
-> 3   1  0.36 0.90640
-> 4   2  0.56 0.82590
-> 5   2  0.86 0.75250
-> 6   2  1.16 0.68560
-> ...
+reg_log_cls_fit <- cls_wf_last_fit %>% extract_fit_parsnip()
 ```
 
-???
-- we see the `call`, i.e. how `tune` has translated our workflow into the original engines
-- alpha is set to 0.1111 according to our hyperparameter tuning procedure
-- non-tidy output:
-  - `Df`: number of non-zero coefs
-  - `%Dev`: a measure for the explained variation
-  - `lambda`: `penalty` hyperparameter
-
----
-
-## 4.7 `broom`: Tidy Model Outputs
-
-.pull-left[
-**`tidy()`:** produces a tidy output of model components (e.g., coefficients, weights, clusters)
-```{r, eval=F}
-tidy(elnet_cls_final)
-```
-```{r, echo=F}
-print(tidy(elnet_cls_final), n = 8)
+.panelset[
+.panel[.panel-name[tidy()]
+**`tidy()`** produces a tidy output of model components (e.g., coefficients, weights, clusters)
+```{r}
+tidy(reg_log_cls_fit) %>% glimpse
 ```
 ]
-.pull-right[
-**`glance()`:** produces a tidy output of model diagnostics (e.g., goodness-of-fit, F-statistics)
+.panel[.panel-name[glance()]
+**`glance()`** produces a tidy output of model diagnostics (e.g., goodness-of-fit, F-statistics)
 ```{r}
-glance(elnet_cls_final)
+glance(reg_log_cls_fit) %>% glimpse
 ```
-
-**`augment()`:** adds additional information about observations (e.g., fitted values, residuals)
+]
+.panel[.panel-name[augment()]
+**`augment()`** adds additional information about observations (e.g., fitted values, residuals)
 
 Unfortunately, `augment()` is not supported for `glmnet` models (check [available methods](https://broom.tidymodels.org/articles/available-methods.html)).
+]
 ]
 
 .footnote[
@@ -99,9 +69,14 @@ Unfortunately, `augment()` is not supported for `glmnet` models (check [availabl
 
 ???
 - `tidy`: useful for creating visualizations or preparing model tables for a paper
-- `glance`: useful for investigating overall model performance, identify misspecifications or compare models
+- `glance`:
+  - useful for investigating overall model performance
+  - identify mis-specifications
+  - compare models in general
+  
 - these functions are implemented with the need of data scientist in mind, i.e. what are the statistics the modeler is most likely interested in?
 - they also work with techniques from classical statistics such as t-tests
+
 
 ---
 
@@ -113,7 +88,7 @@ class: middle, center, inverse
 ---
 
 background-image: url(https://www.tidymodels.org/images/yardstick.png)
-background-position: 97.5% 5%
+background-position: 97.5% 2.5%
 background-size: 7%
 layout: true
 
@@ -121,68 +96,55 @@ layout: true
 
 ## 4.8 `yardstick`: Tidy Model Performance
 
-Similar to `broom`, `yardstick`'s endeavor is to enable model evaluation using *tidy data principles*. It ships with three types of performance metrics which can be distinguished by their input arguments and use case.
+Similar to `broom`, `yardstick`'s endeavor is to enable model evaluation using *tidy data principles*. It provides various performance metrics for both, classification and regression problems.
 
-**Classification:**
-- **Class metrics** are based on the predicted class (*hard predictions*) and take two `fct` columns (`truth` and `estimate`).
-- **Class probability metrics** are based on the predicted probabilities (*soft predictions*) and take one `fct` column (`truth`) and one/multiple `dbl` columns containing the class probabilities (`estimate`).
-
-**Regression:**
-- **Numeric metrics** are based on a numerical prediction and take two `dbl` columns (`truth` and `estimate`).
+- **Class metrics for classification:** Metrics that are computed based on the predicted classes (*hard predictions*) and take two `fct` columns (`truth` and `estimate`) as input.<br><br>
+- **Class probability metrics for classification:** Metrics that are computed based on the predicted class probabilities (*soft predictions*) and take one `fct` column (`truth`) and one/multiple `dbl` columns (`estimate`) as input.<br><br>
+- **Numeric metrics for regression:** Metrics that are computed based on a numerical prediction and take two `dbl` columns (`truth` and `estimate`) as input.
 
 .footnote[
-*Note: Find all available metrics grouped by their type on [tidymodels.org](https://yardstick.tidymodels.org/articles/metric-types.html#metrics).*
+*Note: Find all available metrics grouped by their type on [tidymodels.org](https://yardstick.tidymodels.org/articles/metric-types.html#metrics) or learn more about the `yardstick` package, e.g., about features for multi-class learning problems, in [Kuhn/Silge (2021)](https://www.tmwr.org/performance.html).*
 ]
 
 ---
 
 ## 4.8 `yardstick`: Tidy Model Performance
 
-In order to compute various *class* and *class probability metrics* for our regularized logistic classifier, we must first extract the `.predictions` from our optimal fitted model.
+**Class Metrics**
+
+.panelset[
+.panel[.panel-name[Confusion Matrix]
 ```{r}
-cls_wf_results <- cls_wf_results %>% 
-  purrr::pluck(".predictions", 1) 
-
-cls_wf_results
-```
-
----
-
-## 4.8 `yardstick`: Tidy Model Performance
-
-.pull-left[
-**Class metrics:** `conf_mat()`
-```{r}
-cls_wf_results %>% 
+collect_predictions(cls_wf_last_fit) %>% 
   conf_mat(died, estimate = .pred_class)
 ```
-**Class metrics:** `sens()` (sensitivity)
-```{r, eval=F}
-cls_wf_results %>% 
+]
+.panel[.panel-name[Sensitivity]
+```{r}
+collect_predictions(cls_wf_last_fit) %>% 
   sens(died, estimate = .pred_class)
 ```
-**Class metrics:** `spec()` (specificity)
-```{r, eval=F}
-cls_wf_results %>% 
+]
+.panel[.panel-name[Specificity]
+```{r}
+collect_predictions(cls_wf_last_fit) %>% 
   spec(died, estimate = .pred_class)
 ```
 ]
-.pull-right[
-**Class metrics:** `accuracy()`
-```{r, eval=F}
-cls_wf_results %>% 
+.panel[.panel-name[Accuracy]
+```{r}
+collect_predictions(cls_wf_last_fit) %>% 
   accuracy(died, estimate = .pred_class)
 ```
-
-Finally, you may also create a `metric_set` to compute multiple performance metrics at once.
+]
+.panel[.panel-name[Metric Set]
 ```{r}
 metrics <- metric_set(accuracy, sens, spec)
 
-metrics(
-  cls_wf_results, 
-  died, estimate = .pred_class
-)
+collect_predictions(cls_wf_last_fit) %>% 
+  metrics(died, estimate = .pred_class)
 ```
+]
 ]
 
 ???
@@ -194,44 +156,30 @@ metrics(
 
 ## 4.8 `yardstick`: Tidy Model Performance
 
-.pull-left[
-**Class probability metrics:** `roc_curve()`
-```{r}
-cls_wf_results %>% 
-  roc_curve(
-    died, .pred_TRUE,
-    event_level = "second"
-  )
-```
-]
-.pull-right[
-**Class probability metrics:** `roc_auc()`
-```{r}
-cls_wf_results %>% 
-  roc_auc(
-    died, .pred_TRUE,
-    event_level = "second"
-  )
-```
-]
+**Class Probability Metrics**
 
-.footnote[.pull-right[
+.panelset[
+.panel[.panel-name[ROC Curve]
+```{r}
+collect_predictions(cls_wf_last_fit) %>%
+  roc_curve(died, .pred_TRUE, event_level = "second")
+```
+]
+.panel[.panel-name[ROC-AUC]
+```{r}
+collect_predictions(cls_wf_last_fit) %>%
+  roc_auc(died, .pred_TRUE, event_level = "second")
+```
+<br><br><br>
+.footnote[
 *Note: By default, `yardstick` views the first factor level as the positive class. If your outcome is one-hot encoded (e.g., `0`/`1` or `FALSE`/`TRUE`) and the event of interest relates to the second factor level, you have to make the `event_level` explicit.*
-]]
-
-???
-- class probability metrics: we provide the probability column for the event of interest
-
----
-
-## 4.8 `yardstick`: Tidy Model Performance
-
-The individual functions are not only applicable to our final test set predictions for the optimal model, but work equally well on a `tibble` of predictions, grouped by resample.
-
+]
+]
+.panel[.panel-name[Multiple ROC Curves]
 .pull-left[
+The individual functions can easily applied to our tuning results as well.
 ```{r roc_curves, eval=F}
-cls_wf_tuned %>% 
-  collect_predictions() %>% 
+collect_predictions(cls_wf_fit) %>% 
   group_by(id) %>% 
   roc_curve(
     died, .pred_TRUE,
@@ -244,12 +192,15 @@ cls_wf_tuned %>%
 ```{r, ref.label='roc_curves', echo=F, fig.width = 10, fig.asp = 0.618, fig.align='center'}
 ```
 ]
-
-.footnote[
-*Note: Learn more about the `yardstick` package, e.g., about features for multi-class learning problems, in Kuhn/Silge (2020). [[1, ch. 9](#references)]*
+]
 ]
 
+
+
 ???
+class probability metrics: we provide the probability column for the event of interest
+
+Multiple Roc-Curves:
 - yardsticks functions have a consistent API that allows to easily operate on grouped data
 - ideally you would not only want to compare the model performance for different folds but also across models -> this is straightforward with `yardstick` as well
 

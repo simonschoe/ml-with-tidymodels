@@ -1,9 +1,9 @@
 ---
-title: "Machine Learning in R:<br/>Workshop Series"
+title: "Machine Learning in R"
 subtitle: "Modeling Workflows with Tidymodels"
 author: "Simon Schölzel"
 institute: "*Research Team Berens*"
-date: "2020-12-14"
+date: "Winter Term 2021/2022"
 
 output:
   xaringan::moon_reader:
@@ -13,12 +13,12 @@ output:
     nature:
       titleSlideClass: [left, middle, inverse]
       highlightStyle: github
-      highlightLines: true
       countIncrementalSlides: false
       ratio: '16:9'
 ---
 
 ```{r setup, include=F}
+
 # knitr options
 knitr::opts_chunk$set(
   comment = ">",
@@ -29,9 +29,9 @@ knitr::opts_chunk$set(
 if (!require("pacman")) install.packages("pacman")
 pacman::p_load(
   xaringanthemer, xaringanExtra, metathis,
-  tidyverse, tidymodels, showtext, glmnet, doParallel, usemodels
+  tidyverse, tidymodels, tidytuesdayR, skimr, themis, glmnet, doParallel, usemodels
 )
-pacman::p_load_gh("hadley/emo")
+pacman::p_load_gh("hadley/emo", "gadenbuie/xaringanExtra")
 
 # xaringan custom setup
 xaringanthemer::style_mono_accent(
@@ -47,6 +47,7 @@ xaringanthemer::style_mono_accent(
 )
 
 xaringanExtra::use_panelset()
+xaringanExtra::use_webcam()
 
 xaringanExtra::use_extra_styles(
   hover_code_line = T,
@@ -57,7 +58,7 @@ metathis::meta() %>%
   meta_name("github-repo" = "simonschoe/ml-with-tidymodels") %>% 
   meta_social(
     title = "Modeling Workflows with Tidymodels",
-    description = "4 hour workshop on tidymodels, a unified framework towards modeling and machine learning in R using tidy data principles.",
+    description = "Video series on tidymodels, a unified framework towards modeling and machine learning in R using tidy data principles.",
     url = "https://simonschoe.github.io/ml-with-tidymodels",
     image = "https://simonschoe.github.io/ml-with-tidymodels/img/share-card.png",
     image_alt = "Title slide for Modeling Workflows with Tidymodels",
@@ -127,46 +128,32 @@ More specifically, after this workshop you will
 
 ---
 
-```{r child='./02_resampling.Rmd', eval=F}
+```{r child='./02_resampling.Rmd', eval=T}
 ```
 
 ---
 
-layout: false
-class: center, middle
-
-# 5-Minute Break<br><br>`r emo::ji("coffee")` `r emo::ji("doughnut")`
-
----
-
-```{r child='./03_preprocessing.Rmd', eval=F}
+```{r child='./03_preprocessing.Rmd', eval=T}
 ```
 
 ---
 
-```{r child='./04_model_building.Rmd', eval=F}
+```{r child='./04_model_building.Rmd', eval=T}
 ```
 
 ---
 
-layout: false
-class: center, middle
-
-# 5-Minute Break<br><br>`r emo::ji("coffee")` `r emo::ji("doughnut")`
-
----
-
-```{r child='./05_workflows.Rmd', eval=F}
+```{r child='./05_workflows.Rmd', eval=T}
 ```
 
 ---
 
-```{r child='./06_tuning.Rmd', eval=F}
+```{r child='./06_tuning.Rmd', eval=T}
 ```
 
 ---
 
-```{r child='./07_model_evaluation.Rmd', eval=F}
+```{r child='./07_model_evaluation.Rmd', eval=T}
 ```
 
 ---
@@ -174,87 +161,52 @@ class: center, middle
 ## 5 Additions to the `tidymodels` Ecosystem
 
 Similar to the `tidyverse` ecosystem, there is already a promising supply of complementary packages that further improve the capabilities of `tidymodels`, e.g.:
-.pull-left[
 
-- `textrecipes`: Extra recipes for text processing<br><br>
-- `themis`: Extra recipes steps for dealing with imbalanced data<br><br>
-- `baguette`: Efficient model functions for bagging<br><br>
-- `stacks`: Tidy model stacking<br><br>
-- `probably`: Tools for post-processing class probability estimates<br><br>
-- `usemodels`: Boilerplate code for `tidymodels` analyses<br><br>
-]
-.pull-right[
-```{r, echo=F, fig.align='center'}
+```{r, echo=F, out.height='40%', out.width='40%', out.extra='style="float:right; padding: 30px"'}
 knitr::include_graphics("https://tenor.com/view/shocked-po-kung-fu-panda-gif-4255877.gif")
 ```
-]
+
+- `textrecipes`: Extra recipes for text processing
+- `baguette`: Efficient model functions for bagging
+- `stacks`: Tidy model stacking
+- `probably`: Tools for post-processing class probability estimates
+- `infer`: Statistical inference and hypothesis testing using tidy data principles
+- `finetune`: Implementation of additional search algorithms
+- `usemodels`: Boilerplate code for `tidymodels` analyses
+
 
 ???
 - textrecipes as extension to the recipes package for natural language processing
 - baguette as add-on to the parsnip package
-- probably enables the identification of optimal probability thresholds and equivocal zones (uncertain probability regions)
-- themis extends recipes package
-- vip provides interpretability techniques, e.g., importance weights, PDP, SHAPley-values
 - stacking: ensemble technique to integrate the predictions of multiple models into a meta-model
+- probably enables the identification of optimal probability thresholds and equivocal zones (uncertain probability regions)
+- infer: 
 
 ---
 
 ## 5 Additions to the `tidymodels` Ecosystem
 
-```{r, results='hide'}
+**`usemodels`:** Boilerplate code for `tidymodels` analyses
+
+```{r}
 library(usemodels)
+ls("package:usemodels", pattern = "use_")
+```
+<br>
+
+For example, `use_glmnet` generates a code blueprint for a regularized logistic classifier.
+```{r, eval=F}
 use_glmnet(died ~ ., data = climbers_df, verbose = F, prefix = "glmnet_mod")
 ```
+```
+>  Output on next slide
+```
+---
 
-.panelset[
+## 5 Additions to the `tidymodels` Ecosystem
 
-.panel[
-.panel-name[Recipe Template]
-```
-> glmnet_mod_recipe <- 
->   recipe(formula = died ~ ., data = climbers_df) %>% 
->   step_novel(all_nominal(), -all_outcomes()) %>% 
->   step_dummy(all_nominal(), -all_outcomes()) %>% 
->   step_zv(all_predictors()) %>% 
->   step_normalize(all_predictors(), -all_nominal()) 
-```
-]
-.panel[
-.panel-name[Model Spec Template]
-```
-> glmnet_mod_spec <- 
->   logistic_reg(penalty = tune(), mixture = tune()) %>% 
->   set_mode("classification") %>% 
->   set_engine("glmnet") 
-```
-]
-.panel[
-.panel-name[Workflow Template]
-```
-> glmnet_mod_workflow <- 
->   workflow() %>% 
->   add_recipe(glmnet_mod_recipe) %>% 
->   add_model(glmnet_mod_spec) 
-```
-]
-.panel[
-.panel-name[Tuning Template]
-```
-> glmnet_mod_grid <- tidyr::crossing(penalty = 10^seq(-6, -1, length.out = 20), 
->     mixture = c(0.05, 0.2, 0.4, 0.6, 0.8, 1)) 
-> 
-> glmnet_mod_tune <- 
->   tune_grid(glmnet_mod_workflow, resamples = stop("add your rsample object"), grid = glmnet_mod_grid) 
-```
-]
-
-]
-
---
-
-**Supported model types:**
-```{r}
-ls("package:usemodels", pattern = "use_")
+```{r,echo=F}
+use_glmnet(died ~ ., data = climbers_df, verbose = F, prefix = "glmnet_mod")
 ```
 
 ???
@@ -262,17 +214,6 @@ ls("package:usemodels", pattern = "use_")
 - recipe template contains minimal required steps
 - proposed tuning grid might not be the best for your specific use case
 - the template urges the user to manually specify the resampling method
-
----
-
-## 5 Additions to the `tidymodels` Ecosystem
-
-```{r, echo=F, out.height='60%', out.width='60%', fig.align='center'}
-knitr::include_graphics("./img/tidymodels-priorities.PNG")
-```
-
-.footnote[*Source: [RStudio blog](https://connect.rstudioservices.com/tidymodels-priorities-survey/README.html)*
-]
 
 ---
 
@@ -293,33 +234,13 @@ knitr::include_graphics("https://tenor.com/view/homer-gif-10571731.gif")
 
 ---
 
-## Thank You!
-
-```{r, echo=F, out.width='55%', out.height='55%', fig.align='center'}
-knitr::include_graphics("./img/ai-meme.jpg")
-```
-
-.footnote[
-*Source: [deeplearning.ai](https://www.linkedin.com/posts/deeplearningai_aifun-activity-6602264745171136512-QIwE)*
-]
-
----
-
-name: references
-
-## References
-
-[1]: **Kuhn, M./Silge, J. (2020):** Tidy Modeling in R. URL: https://www.tmwr.org (work-in-progress).
-
-[2]: **Kuhn, M./Johnson, K. (2013):** Applied Predictive Modeling. Chapter 3 (Data Pre-processing). Springer: New York 2013.
-
-[3]: **Mulner, C. (2020):** Interpretable Machine Learning: A Guide for Making Black Box Models Explainable. URL: https://christophm.github.io/interpretable-ml-book/.
-
 ## Further Resources
 
-Learn section of tidymodels.org. ULR: https://www.tidymodels.org/learn/.
+**Kuhn, M./Silge, J. (2021):** Tidy Modeling in R. URL: https://www.tmwr.org (work-in-progress).
 
-TidyTuesday contributions by Julia Silge. URL: https://juliasilge.com/blog/.
+[Learn section](https://www.tidymodels.org/learn/) of tidymodels.org.
+
+[TidyTuesday contributions](https://juliasilge.com/blog/) by Julia Silge.
 
 ## Credits
 

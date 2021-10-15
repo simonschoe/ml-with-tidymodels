@@ -11,7 +11,7 @@ class: middle, center, inverse
 ---
 
 background-image: url(https://www.tidymodels.org/images/workflows.png)
-background-position: 97.5% 5%
+background-position: 97.5% 2.5%
 background-size: 7%
 layout: true
 
@@ -19,30 +19,16 @@ layout: true
 
 ## 4.4 `workflows`: Modeling Workflows
 
-`workflows` introduces a `workflow` object which bundles the preprocessing recipe, the model specification and potential post-processing steps to reduce code clatter. At the same time, it acts as a single entry point to your modeling workflow (respectively pipeline).
+`workflows` introduces a `workflow` object which bundles the preprocessing recipe and model specification to reduce code clatter. At the same time, it acts as a single entry point to your modeling pipeline.
 
-```{r, results='hide'}
-cls_wf <- workflow() %>% 
-  add_recipe(mod_recipe) %>% 
-  add_model(log_cls)
-
+```{r}
+cls_wf <- workflow(preprocessor = mod_recipe, spec = log_cls)
 cls_wf
 ```
-```
-> == Workflow ===================================================================================
-> Preprocessor: Recipe
-> Model: logistic_reg()
-> 
-> -- Preprocessor -------------------------------------------------------------------------------
-> 5 Recipe Steps
-> * step_medianimpute()   * step_dummy()
-> * step_normalize()      * step_smote()
-> * step_other()
-> 
-> -- Model --------------------------------------------------------------------------------------
-> Logistic Regression Model Specification (classification)
-> Computational engine: glm 
-```
+
+.pull-right[.pull-right[.footnote[
+*Note: You may even bundle (and later explore) various different combinations of preprocessing recipes and model specifications using the `workflowsets` package.*
+]]]
 
 ???
 - if no preprocessing is required (because the data is already perfect) `add_formula()` could be used (but you can only ever use one of the two)
@@ -54,31 +40,19 @@ cls_wf
 
 When calling `fit()` on a `workflow` object, `tidymodels` performs the following steps for us:
 1. It fits the `recipe` object to the training set and produces the in-sample estimates (`prep()`).
-2. It applies the fitted recipe to the training set to engineer the predictors (`bake()`).
+2. It applies the fitted recipe to the training set to process the predictors (`bake()`).
 3. It trains the specified model on the transformed training set (`fit()`/`fit_xy()`).
 
 ```{r, results='hide'}
-cls_wf_fitted <- cls_wf %>% 
+cls_wf_fit <- cls_wf %>% 
   fit(train_set)
 
-cls_wf_fitted
+cls_wf_fit
 ```
 ```
 > Output on next slide
 
 ```
-
---
-
-Again, after having fitted the workflow, we can proceed to predicting the response in the test data.
-```{r, eval=F}
-cls_wf_fitted %>% 
-  predict(new_data = test_set, type = "prob")
-```
-
-.footnote[
-*Note: Call `pull_workflow_fit()` or `pull_workflow_prepped_recipe()` to extract the fitted `parsnip` model or the estimated `recipe` object from the workflow.*
-]
 
 ???
 - workflows abstract away the need for `prep` and `bake`
@@ -117,3 +91,70 @@ cls_wf_fitted %>%
 
 ???
 output abbreviated
+
+---
+
+## 4.4 `workflows`: Modeling Workflows
+
+Again, after having fitted the workflow, we can proceed to predicting the response in the test data.
+```{r}
+cls_wf_fit %>% 
+  predict(new_data = test_set, type = "prob") %>% 
+  glimpse
+```
+
+.footnote[
+*Note: Call `extract_fit_engine()` or `extract_recipe()` to extract the fitted model or the estimated `recipe` object from the workflow.*
+]
+
+---
+
+name: example-no-resampling
+
+## Tidymodels: A Complete Example
+
+**Step 1:** Split data into training and test set using `rsample`.
+```{r}
+set.seed(2021)
+climbers_split <- initial_split(climbers_df, prop = 0.8, strata = died)
+```
+
+**Step 2:** Define the relevant preprocessing steps using `recipe`.
+```{r}
+rec <- recipe(formula = died ~ ., data = train_set) %>%
+  update_role(member_id, new_role = "id") %>%
+  step_impute_median(age) %>%
+  step_normalize(all_numeric_predictors()) %>%
+  step_other(peak_name, citizenship, expedition_role, threshold = 0.05) %>%
+  step_dummy(all_predictors(), -all_numeric(), one_hot = F) %>%
+  themis::step_upsample(died, over_ratio = 0.2, seed = 2021, skip = T)
+```
+
+**Step 3:** Specify the desired machine learning model using `parsnip`.
+```{r}
+log_cls <- logistic_reg() %>% 
+  set_engine("glm") %>% 
+  set_mode("classification")
+```
+
+---
+
+## Tidymodels: A Complete Example
+
+**Step 4:** Bring everything together using `workflows`.
+```{r}
+cls_wf <- workflow() %>%
+  add_recipe(rec) %>%
+  add_model(log_cls)
+```
+
+**Step 5:** Train the model and use it for predictions.
+```{r}
+cls_wf_fit <- cls_wf %>%
+  fit(train_set)
+
+cls_wf_fit %>% 
+  predict(new_data = test_set, type = "prob") %>% 
+  glimpse
+```
+

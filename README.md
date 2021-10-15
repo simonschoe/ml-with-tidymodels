@@ -1,9 +1,6 @@
 # Modeling Workflows with Tidymodels
-*This workshop is part of the "Machine Learning in R" graduate course held at University of Münster, School of Business and Economics (winter term 2020/21).* :mortar_board:
+*This lecture is part of the "Machine Learning in R" graduate course held at University of Münster, School of Business and Economics (winter term 2021/22).* :mortar_board:
 
-**Time:** Monday, 2020-12-07 (Pt. 1) & Monday, 2020-12-14 (Pt. 2), 16.00-18.00  
-**Location:** Zoom  
-**Presenter:** Simon Schölzel, M.Sc.  
 **Slides:** https://simonschoe.github.io/ml-with-tidymodels/
 
 <a href="https://www.wiwi.uni-muenster.de/"><img src="https://www.wiwi.uni-muenster.de/fakultaet/sites/all/themes/wwucd/assets/images/logos/secondary_wiwi_aacsb_german.jpg" alt="fb4-logo" height="45"></a> <a href="https://www.wiwi.uni-muenster.de/ctrl/aktuelles"><img src="https://www.wiwi.uni-muenster.de/ctrl/sites/all/themes/wwucd/assets/images/logos/berenslogo5.jpg" alt="ftb-logo" height="45"></a> <a href="https://www.wiwi.uni-muenster.de/iff2/de/news"><img src="https://www.wiwi.uni-muenster.de/iff2/sites/all/themes/wwucd/assets/images/logos/logo_iff2_en2.jpg" alt="ipb-logo" height="45"></a>
@@ -11,13 +8,13 @@
 
 ## Contents
 
-This 4 hour workshop gives a deep insight into `tidymodels`, a unified framework towards modeling and machine learning in `R` using tidy data principles. Participants will get to know tools that facilitate every step of the machine learning workflow, from resampling, over feature engineering and model building, to model tuning and performance evaluation.
+This lecture gives a deep insight into `tidymodels`, a unified framework towards modeling and machine learning in `R` using tidy data principles. It introduces and motivates tools that facilitate every step of the machine learning workflow, from resampling, over preprocessing and model building, to model tuning and performance evaluation.
 
-More specifically, after this workshop the participants will
+More specifically, after this lecture you will
 - be familiar with the core packages of the `tidymodels` ecosystem and hopefully realize the value of a unified modeling framework,
 - know how to design a full-fledged machine learning pipeline for a particular prediction task,
-- broaden their technical skill set by learning about declarative programming, hyperparameter scales and parallel processing, and
-- most importantly, be capable of conducting their own machine learning projects in `R`.
+- broaden your technical skills by learning about declarative programming, hyperparameter scales and parallel processing, and
+- most importantly, be capable of conducting your own machine learning projects in `R`.
 
 
 ## Agenda
