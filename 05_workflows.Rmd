@@ -96,7 +96,10 @@ output abbreviated
 
 ## 4.4 `workflows`: Modeling Workflows
 
-Again, after having fitted the workflow, we can proceed to predicting the response in the test data.
+Again, after having fitted the workflow, we can proceed to predicting the response in the test data. When calling `predict()` on a `workflow` object, `tidymodels` performs the following steps for us:
+1. It applies the fitted recipe to the test set to process the predictors (`bake()`).
+2. It applies the trained model to the preprocessed test set predictors to generate predictions (`predict()`).
+
 ```{r}
 cls_wf_fit %>% 
   predict(new_data = test_set, type = "prob") %>% 

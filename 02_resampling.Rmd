@@ -21,7 +21,7 @@ name: data-split
 
 ## 4.1 `rsample`: Resampling Infrastructure
 
-`rsample` provides methods for data partitioning (i.e. splitting the data into training and test set) and resampling (i.e. drawing repeated samples from the training set to obtain the sampling distribution of a given statistic).
+`rsample` provides methods for data partitioning (i.e. splitting the data into training and test set) and resampling (i.e. drawing repeated samples from the training set to obtain the sampling distributions).
 
 <br>
 
@@ -37,7 +37,7 @@ climbers_split
 
 ???
 - for imbalanced samples, random sample can lead to catastrophic model
-- strata: conduct a stratified split -> keep proportions (i.e. imbalance) in training as well as in test set -> since sampling is random it might otherwise be case that sampling creates an even severer or slighter imbalance
+- strata: conduct a stratified split -> keep proportions (i.e. imbalance) in training as well as in test set (1.5% death cases) -> since sampling is random it might otherwise be case that sampling creates an even severer or slighter imbalance
 - with regression problems, stratified samples can be drawn based on a binned outcome (e.g., quartiles)
 - indexing is more memory efficient
 
@@ -70,7 +70,7 @@ test_set
 **Resampling**: Training predictive models which involve hyperparameters requires a three-way data split:
 - The *Training Set*, which is used for model training (i.e. estimating model coefficients).
 - The *Validation Set*, which is used for parameter tuning (i.e. finding optimal hyperparameters).
-- The *Test Set*, which is used for computing a robust estimate of model performance.
+- The *Test Set*, which is used for computing an unbiased estimate of model performance.
 
 --
 
@@ -144,13 +144,13 @@ climbers_folds %>% purrr::pluck("splits", 1) %>% testing()
 ]
 
 ???
-- usually, you don't use `analysis()` and `assessment()` as you let higher level functions access the individual resamples during hyperparameter tuning
+- usually, you don't use `training()` and `testing()` as you let higher level functions access the individual resamples during hyperparameter tuning
 
 ---
 
 ## 4.1 `rsample`: Resampling Infrastructure
 
-**Alternative resampling approaches:** In conjunction to $k$-fold CV, `rsample` enables various alternative resampling schemes for producing an unbiased estimate of model performance.
+**Alternative resampling approaches:** In conjunction to $k$-fold CV, `rsample` enables various alternative resampling schemes for producing a more robust estimate of model performance.
 
 .panelset[
 .panel[.panel-name[Repeated k-fold CV]
@@ -172,7 +172,7 @@ train_set %>%
 ```
 ]
 .panel[.panel-name[Monte Carlo CV (MCCV)]
-`mc_cv()` lies somewhere in between $k$-fold CV and the bootstraps since it enables partly overlapping assessment sets (i.e. folds consist of bootstrapped samples).
+`mc_cv()` lies somewhere in between $k$-fold CV and the bootstraps since it enables partly overlapping assessment sets by generating each resample anew.
 ```{r, eval=F}
 set.seed(2021)
 
@@ -196,13 +196,14 @@ For example, use `initial_time_split()` to conduct a non-random early-late-split
 ]
 
 .footnote[
-*Note: Find more information about the resampling approaches implemented in `rsample` in [Kuhn/Silge (2021), ch. 11](https://www.tmwr.org/compare.html).*
+*Note: Find more information about the resampling approaches implemented in `rsample` in [Kuhn/Silge (2021), ch. 10](https://www.tmwr.org/resampling.html#resampling-methods).*
 ]
 
 ???
 - repeated CV: reduces validation set error independent of the way the folds were resampled -> increases computational demand -> i have simply more estimates for the validation set error that I can average
-- MC CV: creates 25 bootsrapped folds with 90% training and 10% test data, whereby test sets can overlap due to sampling with replacement
+- MC CV: 
+  - create one resample by sampling 90% as training and 10% as validation set data
+  - create another resample by reperforming the previous step
+  - perform again 10 resamples are created
 - with time-dependent data, random sampling can lead to disastrous models
-- data partitioning and resampling should always be implemented by accounting for the future use of the trained model (how is the newly arriving data distributed?)
-
 

@@ -113,9 +113,9 @@ name: agenda
 
 ## 1 Learning Objectives `r emo::ji("idea")`
 
-This workshop introduces `tidymodels`, a unified framework towards modeling and machine learning in `R` using tidy data principles. You will get to know tools that facilitate every step of your machine learning workflow, from resampling, over feature engineering and model building, to model tuning and performance evaluation.
+This workshop introduces `tidymodels`, a unified framework towards modeling and machine learning in `R` using tidy data principles. You will get to know tools that facilitate every step of your machine learning workflow, from resampling, over preprocessing and model building, to model tuning and performance evaluation.
 
-More specifically, after this workshop you will
+More specifically, after this lecture you will
 - be familiar with the core packages of the `tidymodels` ecosystem and hopefully realize the value of a unified modeling framework,<br><br>
 - know how to design a full-fledged machine learning pipeline for a particular prediction task,<br><br>
 - broaden your technical skill set by learning about declarative programming, hyperparameter scales and parallel processing, and<br><br>

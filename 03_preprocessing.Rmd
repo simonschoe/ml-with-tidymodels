@@ -48,7 +48,7 @@ name: recipe-call
 
 ## 4.2 `recipes`: Preprocessing Tools
 
-The `recipes` package provides functions for defining a **blueprint for data preprocessing** (aka *feature engineering*). Each `recipe` is constructed by chaining multiple preprocessing steps.
+The `recipes` package provides functions for defining a blueprint for data preprocessing (aka *feature engineering*). Each `recipe` is constructed by chaining multiple preprocessing steps.
 
 --
 
@@ -122,7 +122,7 @@ mod_recipe
 
 Second, we add new preprocessing steps to the recipe (using the family of `step_*()` functions):
 
-- Use `step_other()` to lump together rarely occurring factor levels. `peak_name`, `citizenship` and `expedition_role` all have several 100 factor levels and hence a high risk of being near-zero variance features. All factor levels with a relative frequency below 5% are pooled into `"other"`.
+- Use `step_other()` to lump together rarely occurring factor levels. `peak_name`, `citizenship` and `expedition_role` all have several 100 factor levels and hence a high risk of being near-zero variance predictors. All factor levels with a relative frequency below 5% are pooled into `"other"`.
 
 ```{r}
 mod_recipe <- mod_recipe %>% step_other(peak_name, citizenship, expedition_role, threshold = 0.05)
@@ -130,7 +130,7 @@ mod_recipe
 ```
 
 .pull-right[.pull-right[.footnote[
-*Note: You should always take care of the order of your steps. For example, you should first lump together factor levels and then create dummies. Otherwise the `recipe` would generate a large amount of near-zero variance dummies.*
+*Note: You should always take care of the order of your steps. For example, you should first lump together factor levels and then create dummies.*
 ]]]
 
 ---
@@ -172,8 +172,6 @@ mod_recipe
 
 ???
 - Usually, you would want to chain the steps together instead of defining each step separately (here its only done for presentation purposes)
-- s. 84
-
 
 ---
 
@@ -185,7 +183,7 @@ Up to this point, you have not performed any actual preprocessing respectively t
 
 The difference between instantly executing a command and declaring it, in case it is prospectively needed, relates to two important programming paradigms:
 - **Imperative programming:** A command is entered and immediately executed (what you are likely used to do in `R` so far).<br><br>
-- **Declarative programming:** A command is specified, along with some important constraints, however, the execution of the code occurs at later point in time, either specified by the user or the program (which you have to get used to when working with machine learning tools, e.g., `tidymodels`).
+- **Declarative programming:** A command is specified, along with some important constraints, however, the execution of the code occurs at a later point in time, either specified by the user or the program (which you have to get used to when working with machine learning tools, e.g., `tidymodels`).
 
 ---
 
@@ -259,7 +257,7 @@ knitr::include_graphics("./img/leakage-meme.jpg")
 1. Compute the mean and standard deviation of a predictor over the training set.
 2. Use the results to bring the training set observations into a standard normal distribution.
 3. Fit a model on the training set.
-4. Evaluate the model on the test by using the same mean and standard deviation computed in the first step to normalize test set observations. 
+4. Evaluate the model on the test set by using the same mean and standard deviation computed in the first step to normalize test set observations. 
 ]
 ]
 .panel[.panel-name[Imputation]
@@ -300,7 +298,8 @@ _**Rule-of-thumb:** Do not train your model on information which were never actu
 ]
 
 ???
-Practical example from fastbook ch. 9: 
+Practical example from fastbook ch. 9:
+
 A real-life business intelligence project at IBM where potential customers for certain products were identified, among other things, based on keywords found on their websites. This turned out to be leakage since the website content used for training had been sampled at the point in time where the potential customer has already become a customer, and where the website contained traces of the IBM products purchased, such as the word 'Websphere' (e.g., in a press release about the purchase or a specific product feature the client uses).
 -> often induced by data collection, aggregation and preparation procedures
 
@@ -329,7 +328,7 @@ bake(mod_recipe_prepped, new_data = NULL)
 Note:
 - dummy encodings worked
 - encoding `other` category worked
-- smote worked (72,369 vs. 61,177 samples in the original train_set)
+- upsampling worked (72,369 vs. 61,177 samples in the original train_set)
 - up to this point we have never used the test set, i.e. we can be sure that data leakage is absent
 - when `new_data = test_set` is does not re-estimate the quantities (e.g., mean, median) since they are drawn from the recipe that is estimated on the training data
 

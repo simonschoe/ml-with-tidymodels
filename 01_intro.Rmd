@@ -130,7 +130,7 @@ Remember, modeling is one of the main steps in our day-2-day data science workfl
 knitr::include_graphics("https://www.tmwr.org/premade/data-science-model.svg")
 ```
 
-.footnote[
+.center[
 *Source: [Kuhn/Silge (2021), ch. 1.3](https://www.tmwr.org/software-modeling.html#model-phases)*
 ]
 
@@ -187,6 +187,9 @@ The data set contains a large record of data spanning the 1905-2019 period about
 ```{r, eval=F}
 tt_data$members %>% 
   skimr::skim()
+```
+```
+>  Output on next slide
 ```
 
 ???
@@ -308,7 +311,7 @@ usually, you would do a lot more EDA right now:
 
 ```{r}
 climbers_df <- tt_data$members %>% 
-  select(member_id, peak_name, season, year,sex, age, citizenship,
+  select(member_id, peak_name, season, year, sex, age, citizenship,
          expedition_role, hired, solo, oxygen_used, success, died) %>% 
   filter((!is.na(sex) & !is.na(citizenship) & !is.na(peak_name) & !is.na(expedition_role)) == T) %>% 
   mutate(across(where(~ is.character(.) | is.logical(.)), as.factor))
