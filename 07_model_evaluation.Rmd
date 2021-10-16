@@ -216,4 +216,4 @@ layout: false
 - **Interpretability:** Are predictions explainable? Can the relationship between a predictor and the outcome be extracted from the model?<br><br>
 - **Fairness & Compliance:** Does the model systematically discriminate against certain sub-populations or ethical groups? Does it comply with prevalent law in a given domain?<br><br>
 - **Justifiability:** Are the predictions in line with well-known business rules? Are the most important predictors consistent with prior beliefs?<br><br>
-- **Causality:** Does the model allow causal inference? If no, does it enable the user to generate hypotheses that can be tested using alternative statistical approaches?<br><br>
+- **Causality:** Does the model enable causal inference? If not, does it enable the user to generate hypotheses that can be tested using alternative statistical approaches?<br><br>

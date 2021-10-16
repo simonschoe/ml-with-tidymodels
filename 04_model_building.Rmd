@@ -246,8 +246,8 @@ dt_cls_fit$spec %>%
 `r emo::ji("warning")` **Notice that we did not apply any of our predefined preprocessing steps yet!** `r emo::ji("warning")`
 
 - The code will throw an error if we try to fit any of our logit models due to the absence of dummies.  
-- Besides, the Lasso model would perform poorly due to the differently scaled predictors.  
-- Likewise, the tree model will always predict the negative class due to the severe class imbalance.
+- The Lasso model would likely perform poorly due to the differently scaled predictors.  
+- Our models will likely always predict the negative class due to the severe class imbalance.
 ]
 ]
 

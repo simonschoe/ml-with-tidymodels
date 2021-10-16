@@ -21,23 +21,19 @@ name: data-split
 
 ## 4.1 `rsample`: Resampling Infrastructure
 
-`rsample` provides a set of methods for **data partitioning** (i.e. splitting the data into training and test set) and **resampling** (i.e. drawing repeated samples from the training set to obtain the sampling distribution of a given statistic).
+`rsample` provides methods for data partitioning (i.e. splitting the data into training and test set) and resampling (i.e. drawing repeated samples from the training set to obtain the sampling distribution of a given statistic).
 
 <br>
 
 --
 
-First, let's partition our data into a training and test set via `initial_split()`. The resulting `rsplit` object indexes the original data points according to their data set membership.
+**Data Partitioning:** First, let's divide our data into a training and test set via `initial_split()`. The resulting `rsplit` object indexes the original data points according to their data set membership.
 ```{r}
 set.seed(2021)
 climbers_split <- initial_split(climbers_df, prop = 0.8, strata = died)
 
 climbers_split
 ```
-
-.footnote[
-*Note: A __resample__ is viewed as the outcome of a resampling method, e.g., the $k$ folds resulting from $k$-fold cross-validation or a bootstrapped and hold-out sample resulting from sampling with replacement. In general, resampling is conducted subsequent to data partitioning and only on the training set.*
-]
 
 ???
 - for imbalanced samples, random sample can lead to catastrophic model
@@ -54,14 +50,14 @@ To extract the training and test data, we can use the `training()` and `testing(
 .panelset[
 .panel[.panel-name[Train Set]
 ```{r}
-train_set <- training(climbers_split)  # alternatively: analysis()
+train_set <- training(climbers_split)
 train_set
 ```
 
 ]
 .panel[.panel-name[Test Set]
 ```{r}
-test_set <- testing(climbers_split)    # alternatively: assessment()
+test_set <- testing(climbers_split)
 test_set
 ```
 ]
@@ -71,10 +67,10 @@ test_set
 
 ## 4.1 `rsample`: Resampling Infrastructure
 
-Since we want to implement classifiers that contain hyperparameters we require a three-way data split:
-- The **Training Set**, which is used for model training (i.e. estimating model coefficients).
-- The **Validation Set**, which is used for parameter tuning (i.e. finding optimal hyperparameters).
-- The **Test Set**, which is used for computing a robust estimate of model performance.
+**Resampling**: Training predictive models which involve hyperparameters requires a three-way data split:
+- The *Training Set*, which is used for model training (i.e. estimating model coefficients).
+- The *Validation Set*, which is used for parameter tuning (i.e. finding optimal hyperparameters).
+- The *Test Set*, which is used for computing a robust estimate of model performance.
 
 --
 
@@ -95,7 +91,7 @@ knitr::include_graphics("https://www.tmwr.org/premade/validation-alt.svg")
 .pull-left[
 **Resampling:** Use a resampling approach, such as cross-validation (CV) or the bootstrap, to create resamples from our initial training set.
 
-You may increase the number of folds as your sample size decreases to retain more datapoints for model training.
+A **resample** is the outcome of a resampling method, e.g., a fold resulting from $k$-fold cross-validation or a bootstrapped and out-of-bag sample resulting from The Bootstrap.
 ]
 .pull-right[
 ```{r, echo=F, out.width='70%', out.height='70%', fig.align='center'}
@@ -112,7 +108,8 @@ Data sets:
 - i prefer the terms training and validation instead of analysis and assessment set in the context of resampling (often test, validation and hold-out set are used interchangeably)
 
 CV vs. train-test-split:
-- we usually prefer the latter as we would like to generate a distribution of our error measure and to account for uncertainty in the estimate
+- we usually prefer the former as we would like to generate a distribution of our error measure and to account for uncertainty in the estimate
+- You may increase the number of folds as your sample size decreases to retain more datapoints for model training.
 
 ---
 
@@ -136,12 +133,12 @@ To extract the training and validation data, we can again use `training()` and `
 .panelset[
 .panel[.panel-name[Train Set]
 ```{r}
-climbers_folds %>% pluck("splits", 1) %>% training()  # alternatively: analysis()
+climbers_folds %>% purrr::pluck("splits", 1) %>% training()
 ```
 ]
 .panel[.panel-name[Test Set]
 ```{r}
-climbers_folds %>% pluck("splits", 1) %>% testing()  # alternatively: assessment()
+climbers_folds %>% purrr::pluck("splits", 1) %>% testing()
 ```
 ]
 ]

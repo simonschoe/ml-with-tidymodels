@@ -404,20 +404,20 @@ climbers_df
 
 ```
 &gt; # A tibble: 76,471 x 13
-&gt;    member_id    peak_name  season  year sex     age citizenship expedition_role hired
-&gt;    &lt;fct&gt;        &lt;fct&gt;      &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt;           &lt;fct&gt;
-&gt;  1 AMAD78301-01 Ama Dablam Autumn  1978 M        40 France      Leader          FALSE
-&gt;  2 AMAD78301-02 Ama Dablam Autumn  1978 M        41 France      Deputy Leader   FALSE
-&gt;  3 AMAD78301-03 Ama Dablam Autumn  1978 M        27 France      Climber         FALSE
-&gt;  4 AMAD78301-04 Ama Dablam Autumn  1978 M        40 France      Exp Doctor      FALSE
-&gt;  5 AMAD78301-05 Ama Dablam Autumn  1978 M        34 France      Climber         FALSE
-&gt;  6 AMAD78301-06 Ama Dablam Autumn  1978 M        25 France      Climber         FALSE
-&gt;  7 AMAD78301-07 Ama Dablam Autumn  1978 M        41 France      Climber         FALSE
-&gt;  8 AMAD78301-08 Ama Dablam Autumn  1978 M        29 France      Climber         FALSE
-&gt;  9 AMAD79101-03 Ama Dablam Spring  1979 M        35 USA         Climber         FALSE
-&gt; 10 AMAD79101-04 Ama Dablam Spring  1979 M        37 W Germany   Climber         FALSE
-&gt; # ... with 76,461 more rows, and 4 more variables: solo &lt;fct&gt;, oxygen_used &lt;fct&gt;,
-&gt; #   success &lt;fct&gt;, died &lt;fct&gt;
+&gt;    member_id    peak_name  season  year sex     age citizenship expedition_role
+&gt;    &lt;fct&gt;        &lt;fct&gt;      &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt;          
+&gt;  1 AMAD78301-01 Ama Dablam Autumn  1978 M        40 France      Leader         
+&gt;  2 AMAD78301-02 Ama Dablam Autumn  1978 M        41 France      Deputy Leader  
+&gt;  3 AMAD78301-03 Ama Dablam Autumn  1978 M        27 France      Climber        
+&gt;  4 AMAD78301-04 Ama Dablam Autumn  1978 M        40 France      Exp Doctor     
+&gt;  5 AMAD78301-05 Ama Dablam Autumn  1978 M        34 France      Climber        
+&gt;  6 AMAD78301-06 Ama Dablam Autumn  1978 M        25 France      Climber        
+&gt;  7 AMAD78301-07 Ama Dablam Autumn  1978 M        41 France      Climber        
+&gt;  8 AMAD78301-08 Ama Dablam Autumn  1978 M        29 France      Climber        
+&gt;  9 AMAD79101-03 Ama Dablam Spring  1979 M        35 USA         Climber        
+&gt; 10 AMAD79101-04 Ama Dablam Spring  1979 M        37 W Germany   Climber        
+&gt; # ... with 76,461 more rows, and 5 more variables: hired &lt;fct&gt;, solo &lt;fct&gt;,
+&gt; #   oxygen_used &lt;fct&gt;, success &lt;fct&gt;, died &lt;fct&gt;
 ```
 
 
@@ -450,13 +450,13 @@ name: data-split
 
 ## 4.1 `rsample`: Resampling Infrastructure
 
-`rsample` provides a set of methods for **data partitioning** (i.e. splitting the data into training and test set) and **resampling** (i.e. drawing repeated samples from the training set to obtain the sampling distribution of a given statistic).
+`rsample` provides methods for data partitioning (i.e. splitting the data into training and test set) and resampling (i.e. drawing repeated samples from the training set to obtain the sampling distribution of a given statistic).
 
 &lt;br&gt;
 
 --
 
-First, let's partition our data into a training and test set via `initial_split()`. The resulting `rsplit` object indexes the original data points according to their data set membership.
+**Data Partitioning:** First, let's divide our data into a training and test set via `initial_split()`. The resulting `rsplit` object indexes the original data points according to their data set membership.
 
 ```r
 set.seed(2021)
@@ -469,10 +469,6 @@ climbers_split
 &gt; &lt;Analysis/Assess/Total&gt;
 &gt; &lt;61176/15295/76471&gt;
 ```
-
-.footnote[
-*Note: A __resample__ is viewed as the outcome of a resampling method, e.g., the `\(k\)` folds resulting from `\(k\)`-fold cross-validation or a bootstrapped and hold-out sample resulting from sampling with replacement. In general, resampling is conducted subsequent to data partitioning and only on the training set.*
-]
 
 ???
 - for imbalanced samples, random sample can lead to catastrophic model
@@ -490,52 +486,52 @@ To extract the training and test data, we can use the `training()` and `testing(
 .panel[.panel-name[Train Set]
 
 ```r
-train_set &lt;- training(climbers_split)  # alternatively: analysis()
+train_set &lt;- training(climbers_split)
 train_set
 ```
 
 ```
 &gt; # A tibble: 61,176 x 13
-&gt;    member_id    peak_name  season  year sex     age citizenship expedition_role  hired
-&gt;    &lt;fct&gt;        &lt;fct&gt;      &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt;            &lt;fct&gt;
-&gt;  1 AMAD78301-01 Ama Dablam Autumn  1978 M        40 France      Leader           FALSE
-&gt;  2 AMAD78301-02 Ama Dablam Autumn  1978 M        41 France      Deputy Leader    FALSE
-&gt;  3 AMAD78301-04 Ama Dablam Autumn  1978 M        40 France      Exp Doctor       FALSE
-&gt;  4 AMAD78301-06 Ama Dablam Autumn  1978 M        25 France      Climber          FALSE
-&gt;  5 AMAD78301-08 Ama Dablam Autumn  1978 M        29 France      Climber          FALSE
-&gt;  6 AMAD79101-03 Ama Dablam Spring  1979 M        35 USA         Climber          FALSE
-&gt;  7 AMAD79101-04 Ama Dablam Spring  1979 M        37 W Germany   Climber          FALSE
-&gt;  8 AMAD79101-05 Ama Dablam Spring  1979 M        23 USA         Climber          FALSE
-&gt;  9 AMAD79101-01 Ama Dablam Spring  1979 M        44 USA         Leader/Film Team FALSE
-&gt; 10 AMAD79101-06 Ama Dablam Spring  1979 M        25 USA         Film Team        FALSE
-&gt; # ... with 61,166 more rows, and 4 more variables: solo &lt;fct&gt;, oxygen_used &lt;fct&gt;,
-&gt; #   success &lt;fct&gt;, died &lt;fct&gt;
+&gt;    member_id    peak_name  season  year sex     age citizenship expedition_role
+&gt;    &lt;fct&gt;        &lt;fct&gt;      &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt;          
+&gt;  1 AMAD78301-01 Ama Dablam Autumn  1978 M        40 France      Leader         
+&gt;  2 AMAD78301-02 Ama Dablam Autumn  1978 M        41 France      Deputy Leader  
+&gt;  3 AMAD78301-04 Ama Dablam Autumn  1978 M        40 France      Exp Doctor     
+&gt;  4 AMAD78301-06 Ama Dablam Autumn  1978 M        25 France      Climber        
+&gt;  5 AMAD78301-08 Ama Dablam Autumn  1978 M        29 France      Climber        
+&gt;  6 AMAD79101-03 Ama Dablam Spring  1979 M        35 USA         Climber        
+&gt;  7 AMAD79101-04 Ama Dablam Spring  1979 M        37 W Germany   Climber        
+&gt;  8 AMAD79101-05 Ama Dablam Spring  1979 M        23 USA         Climber        
+&gt;  9 AMAD79101-01 Ama Dablam Spring  1979 M        44 USA         Leader/Film Te~
+&gt; 10 AMAD79101-06 Ama Dablam Spring  1979 M        25 USA         Film Team      
+&gt; # ... with 61,166 more rows, and 5 more variables: hired &lt;fct&gt;, solo &lt;fct&gt;,
+&gt; #   oxygen_used &lt;fct&gt;, success &lt;fct&gt;, died &lt;fct&gt;
 ```
 
 ]
 .panel[.panel-name[Test Set]
 
 ```r
-test_set &lt;- testing(climbers_split)    # alternatively: assessment()
+test_set &lt;- testing(climbers_split)
 test_set
 ```
 
 ```
 &gt; # A tibble: 15,295 x 13
-&gt;    member_id    peak_name  season  year sex     age citizenship expedition_role hired
-&gt;    &lt;fct&gt;        &lt;fct&gt;      &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt;           &lt;fct&gt;
-&gt;  1 AMAD78301-03 Ama Dablam Autumn  1978 M        27 France      Climber         FALSE
-&gt;  2 AMAD78301-05 Ama Dablam Autumn  1978 M        34 France      Climber         FALSE
-&gt;  3 AMAD78301-07 Ama Dablam Autumn  1978 M        41 France      Climber         FALSE
-&gt;  4 AMAD79101-10 Ama Dablam Spring  1979 M        30 USA         Film Team       FALSE
-&gt;  5 AMAD79101-15 Ama Dablam Spring  1979 M        29 USA         Climber/Kayaker FALSE
-&gt;  6 AMAD79101-18 Ama Dablam Spring  1979 M        23 Nepal       H-A Worker      TRUE 
-&gt;  7 AMAD79301-03 Ama Dablam Autumn  1979 F        33 France      Member          FALSE
-&gt;  8 AMAD79301-13 Ama Dablam Autumn  1979 M        31 France      Climber         FALSE
-&gt;  9 AMAD79301-14 Ama Dablam Autumn  1979 M        28 France      Climber         FALSE
-&gt; 10 AMAD79301-22 Ama Dablam Autumn  1979 M        31 France      Climber         FALSE
-&gt; # ... with 15,285 more rows, and 4 more variables: solo &lt;fct&gt;, oxygen_used &lt;fct&gt;,
-&gt; #   success &lt;fct&gt;, died &lt;fct&gt;
+&gt;    member_id    peak_name  season  year sex     age citizenship expedition_role
+&gt;    &lt;fct&gt;        &lt;fct&gt;      &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt;          
+&gt;  1 AMAD78301-03 Ama Dablam Autumn  1978 M        27 France      Climber        
+&gt;  2 AMAD78301-05 Ama Dablam Autumn  1978 M        34 France      Climber        
+&gt;  3 AMAD78301-07 Ama Dablam Autumn  1978 M        41 France      Climber        
+&gt;  4 AMAD79101-10 Ama Dablam Spring  1979 M        30 USA         Film Team      
+&gt;  5 AMAD79101-15 Ama Dablam Spring  1979 M        29 USA         Climber/Kayaker
+&gt;  6 AMAD79101-18 Ama Dablam Spring  1979 M        23 Nepal       H-A Worker     
+&gt;  7 AMAD79301-03 Ama Dablam Autumn  1979 F        33 France      Member         
+&gt;  8 AMAD79301-13 Ama Dablam Autumn  1979 M        31 France      Climber        
+&gt;  9 AMAD79301-14 Ama Dablam Autumn  1979 M        28 France      Climber        
+&gt; 10 AMAD79301-22 Ama Dablam Autumn  1979 M        31 France      Climber        
+&gt; # ... with 15,285 more rows, and 5 more variables: hired &lt;fct&gt;, solo &lt;fct&gt;,
+&gt; #   oxygen_used &lt;fct&gt;, success &lt;fct&gt;, died &lt;fct&gt;
 ```
 ]
 ]
@@ -544,10 +540,10 @@ test_set
 
 ## 4.1 `rsample`: Resampling Infrastructure
 
-Since we want to implement classifiers that contain hyperparameters we require a three-way data split:
-- The **Training Set**, which is used for model training (i.e. estimating model coefficients).
-- The **Validation Set**, which is used for parameter tuning (i.e. finding optimal hyperparameters).
-- The **Test Set**, which is used for computing a robust estimate of model performance.
+**Resampling**: Training predictive models which involve hyperparameters requires a three-way data split:
+- The *Training Set*, which is used for model training (i.e. estimating model coefficients).
+- The *Validation Set*, which is used for parameter tuning (i.e. finding optimal hyperparameters).
+- The *Test Set*, which is used for computing a robust estimate of model performance.
 
 --
 
@@ -566,7 +562,7 @@ Since we want to implement classifiers that contain hyperparameters we require a
 .pull-left[
 **Resampling:** Use a resampling approach, such as cross-validation (CV) or the bootstrap, to create resamples from our initial training set.
 
-You may increase the number of folds as your sample size decreases to retain more datapoints for model training.
+A **resample** is the outcome of a resampling method, e.g., a fold resulting from `\(k\)`-fold cross-validation or a bootstrapped and out-of-bag sample resulting from The Bootstrap.
 ]
 .pull-right[
 &lt;img src="https://www.tmwr.org/premade/resampling.svg" width="70%" height="70%" style="display: block; margin: auto;" /&gt;
@@ -581,7 +577,8 @@ Data sets:
 - i prefer the terms training and validation instead of analysis and assessment set in the context of resampling (often test, validation and hold-out set are used interchangeably)
 
 CV vs. train-test-split:
-- we usually prefer the latter as we would like to generate a distribution of our error measure and to account for uncertainty in the estimate
+- we usually prefer the former as we would like to generate a distribution of our error measure and to account for uncertainty in the estimate
+- You may increase the number of folds as your sample size decreases to retain more datapoints for model training.
 
 ---
 
@@ -624,49 +621,49 @@ To extract the training and validation data, we can again use `training()` and `
 .panel[.panel-name[Train Set]
 
 ```r
-climbers_folds %&gt;% pluck("splits", 1) %&gt;% training()  # alternatively: analysis()
+climbers_folds %&gt;% purrr::pluck("splits", 1) %&gt;% training()
 ```
 
 ```
 &gt; # A tibble: 55,058 x 13
-&gt;    member_id    peak_name  season  year sex     age citizenship expedition_role  hired
-&gt;    &lt;fct&gt;        &lt;fct&gt;      &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt;            &lt;fct&gt;
-&gt;  1 AMAD78301-01 Ama Dablam Autumn  1978 M        40 France      Leader           FALSE
-&gt;  2 AMAD78301-02 Ama Dablam Autumn  1978 M        41 France      Deputy Leader    FALSE
-&gt;  3 AMAD78301-04 Ama Dablam Autumn  1978 M        40 France      Exp Doctor       FALSE
-&gt;  4 AMAD78301-06 Ama Dablam Autumn  1978 M        25 France      Climber          FALSE
-&gt;  5 AMAD78301-08 Ama Dablam Autumn  1978 M        29 France      Climber          FALSE
-&gt;  6 AMAD79101-04 Ama Dablam Spring  1979 M        37 W Germany   Climber          FALSE
-&gt;  7 AMAD79101-05 Ama Dablam Spring  1979 M        23 USA         Climber          FALSE
-&gt;  8 AMAD79101-01 Ama Dablam Spring  1979 M        44 USA         Leader/Film Team FALSE
-&gt;  9 AMAD79101-06 Ama Dablam Spring  1979 M        25 USA         Film Team        FALSE
-&gt; 10 AMAD79101-08 Ama Dablam Spring  1979 M        32 USA         Exp Doctor/Kaya~ FALSE
-&gt; # ... with 55,048 more rows, and 4 more variables: solo &lt;fct&gt;, oxygen_used &lt;fct&gt;,
-&gt; #   success &lt;fct&gt;, died &lt;fct&gt;
+&gt;    member_id    peak_name  season  year sex     age citizenship expedition_role
+&gt;    &lt;fct&gt;        &lt;fct&gt;      &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt;          
+&gt;  1 AMAD78301-01 Ama Dablam Autumn  1978 M        40 France      Leader         
+&gt;  2 AMAD78301-02 Ama Dablam Autumn  1978 M        41 France      Deputy Leader  
+&gt;  3 AMAD78301-04 Ama Dablam Autumn  1978 M        40 France      Exp Doctor     
+&gt;  4 AMAD78301-06 Ama Dablam Autumn  1978 M        25 France      Climber        
+&gt;  5 AMAD78301-08 Ama Dablam Autumn  1978 M        29 France      Climber        
+&gt;  6 AMAD79101-04 Ama Dablam Spring  1979 M        37 W Germany   Climber        
+&gt;  7 AMAD79101-05 Ama Dablam Spring  1979 M        23 USA         Climber        
+&gt;  8 AMAD79101-01 Ama Dablam Spring  1979 M        44 USA         Leader/Film Te~
+&gt;  9 AMAD79101-06 Ama Dablam Spring  1979 M        25 USA         Film Team      
+&gt; 10 AMAD79101-08 Ama Dablam Spring  1979 M        32 USA         Exp Doctor/Kay~
+&gt; # ... with 55,048 more rows, and 5 more variables: hired &lt;fct&gt;, solo &lt;fct&gt;,
+&gt; #   oxygen_used &lt;fct&gt;, success &lt;fct&gt;, died &lt;fct&gt;
 ```
 ]
 .panel[.panel-name[Test Set]
 
 ```r
-climbers_folds %&gt;% pluck("splits", 1) %&gt;% testing()  # alternatively: assessment()
+climbers_folds %&gt;% purrr::pluck("splits", 1) %&gt;% testing()
 ```
 
 ```
 &gt; # A tibble: 6,118 x 13
-&gt;    member_id    peak_name  season  year sex     age citizenship expedition_role hired
-&gt;    &lt;fct&gt;        &lt;fct&gt;      &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt;           &lt;fct&gt;
-&gt;  1 AMAD79101-03 Ama Dablam Spring  1979 M        35 USA         Climber         FALSE
-&gt;  2 AMAD79101-07 Ama Dablam Spring  1979 M        28 USA         Kayaker         FALSE
-&gt;  3 AMAD79301-09 Ama Dablam Autumn  1979 M        25 France      Climber         FALSE
-&gt;  4 AMAD79301-26 Ama Dablam Autumn  1979 M        NA Nepal       H-A Worker      TRUE 
-&gt;  5 AMAD79301-24 Ama Dablam Autumn  1979 M        NA Nepal       H-A Worker      TRUE 
-&gt;  6 AMAD79302-03 Ama Dablam Autumn  1979 M        27 New Zealand Climber         FALSE
-&gt;  7 AMAD79303-05 Ama Dablam Autumn  1979 M        36 Austria     Climber         FALSE
-&gt;  8 AMAD80302-05 Ama Dablam Autumn  1980 M        24 Japan       Climber         FALSE
-&gt;  9 AMAD81102-01 Ama Dablam Spring  1981 M        21 Australia   Leader          FALSE
-&gt; 10 AMAD81301-05 Ama Dablam Autumn  1981 M        28 USA         Climber         FALSE
-&gt; # ... with 6,108 more rows, and 4 more variables: solo &lt;fct&gt;, oxygen_used &lt;fct&gt;,
-&gt; #   success &lt;fct&gt;, died &lt;fct&gt;
+&gt;    member_id    peak_name  season  year sex     age citizenship expedition_role
+&gt;    &lt;fct&gt;        &lt;fct&gt;      &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt;          
+&gt;  1 AMAD79101-03 Ama Dablam Spring  1979 M        35 USA         Climber        
+&gt;  2 AMAD79101-07 Ama Dablam Spring  1979 M        28 USA         Kayaker        
+&gt;  3 AMAD79301-09 Ama Dablam Autumn  1979 M        25 France      Climber        
+&gt;  4 AMAD79301-26 Ama Dablam Autumn  1979 M        NA Nepal       H-A Worker     
+&gt;  5 AMAD79301-24 Ama Dablam Autumn  1979 M        NA Nepal       H-A Worker     
+&gt;  6 AMAD79302-03 Ama Dablam Autumn  1979 M        27 New Zealand Climber        
+&gt;  7 AMAD79303-05 Ama Dablam Autumn  1979 M        36 Austria     Climber        
+&gt;  8 AMAD80302-05 Ama Dablam Autumn  1980 M        24 Japan       Climber        
+&gt;  9 AMAD81102-01 Ama Dablam Spring  1981 M        21 Australia   Leader         
+&gt; 10 AMAD81301-05 Ama Dablam Autumn  1981 M        28 USA         Climber        
+&gt; # ... with 6,108 more rows, and 5 more variables: hired &lt;fct&gt;, solo &lt;fct&gt;,
+&gt; #   oxygen_used &lt;fct&gt;, success &lt;fct&gt;, died &lt;fct&gt;
 ```
 ]
 ]
@@ -877,6 +874,7 @@ mod_recipe
 ???
 - essence of recipes: the steps are only declared and not directly executed!
 - we are constructing a blueprint which we can later apply in one go to our data
+- median imputation is just one way of replacing missing values -&gt; median more robust towards outlier
 
 ---
 
@@ -1076,7 +1074,7 @@ mod_recipe_prepped
 &gt; Median Imputation for age [trained]
 &gt; Centering and scaling for year, age [trained]
 &gt; Collapsing factor levels for peak_name, citizenship, expedition_role [trained]
-&gt; Dummy variables from peak_name, season, sex, citizenship, expedition_role, hired, so... [trained]
+&gt; Dummy variables from peak_name, season, sex, citizenship, expedition_role,... [trained]
 &gt; Up-sampling based on died [trained]
 ```
 
@@ -1197,24 +1195,25 @@ bake(mod_recipe_prepped, new_data = NULL)
 
 ```
 &gt; # A tibble: 72,369 x 24
-&gt;    member_id      year    age died  peak_name_Cho.O~ peak_name_Evere~ peak_name_Manas~
-&gt;    &lt;fct&gt;         &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;
-&gt;  1 NILS15301-01  0.989 -0.616 FALSE                0                0                0
-&gt;  2 LHOT02101-16  0.110 -1.40  FALSE                0                0                0
-&gt;  3 MAKA12105-02  0.786 -1.70  FALSE                0                0                0
-&gt;  4 KAG162101-01 -2.60   1.95  FALSE                0                0                0
-&gt;  5 EVER17157-14  1.12  -1.60  FALSE                0                1                0
-&gt;  6 AMAD08343-01  0.516  0.567 FALSE                0                0                0
-&gt;  7 SAIP92101-05 -0.567 -0.715 FALSE                0                0                0
-&gt;  8 EVER18122-03  1.19   0.370 FALSE                0                1                0
-&gt;  9 LHOT08106-03  0.516 -0.813 FALSE                0                0                0
-&gt; 10 RATH64301-15 -2.46  -0.813 FALSE                0                0                0
-&gt; # ... with 72,359 more rows, and 17 more variables: peak_name_other &lt;dbl&gt;,
-&gt; #   season_Spring &lt;dbl&gt;, season_Summer &lt;dbl&gt;, season_Winter &lt;dbl&gt;, sex_M &lt;dbl&gt;,
+&gt;    member_id      year    age died  peak_name_Cho.Oyu peak_name_Everest
+&gt;    &lt;fct&gt;         &lt;dbl&gt;  &lt;dbl&gt; &lt;fct&gt;             &lt;dbl&gt;             &lt;dbl&gt;
+&gt;  1 NILS15301-01  0.989 -0.616 FALSE                 0                 0
+&gt;  2 LHOT02101-16  0.110 -1.40  FALSE                 0                 0
+&gt;  3 MAKA12105-02  0.786 -1.70  FALSE                 0                 0
+&gt;  4 KAG162101-01 -2.60   1.95  FALSE                 0                 0
+&gt;  5 EVER17157-14  1.12  -1.60  FALSE                 0                 1
+&gt;  6 AMAD08343-01  0.516  0.567 FALSE                 0                 0
+&gt;  7 SAIP92101-05 -0.567 -0.715 FALSE                 0                 0
+&gt;  8 EVER18122-03  1.19   0.370 FALSE                 0                 1
+&gt;  9 LHOT08106-03  0.516 -0.813 FALSE                 0                 0
+&gt; 10 RATH64301-15 -2.46  -0.813 FALSE                 0                 0
+&gt; # ... with 72,359 more rows, and 18 more variables:
+&gt; #   peak_name_Manaslu &lt;dbl&gt;, peak_name_other &lt;dbl&gt;, season_Spring &lt;dbl&gt;,
+&gt; #   season_Summer &lt;dbl&gt;, season_Winter &lt;dbl&gt;, sex_M &lt;dbl&gt;,
 &gt; #   citizenship_Japan &lt;dbl&gt;, citizenship_Nepal &lt;dbl&gt;, citizenship_UK &lt;dbl&gt;,
-&gt; #   citizenship_USA &lt;dbl&gt;, citizenship_other &lt;dbl&gt;, expedition_role_H.A.Worker &lt;dbl&gt;,
-&gt; #   expedition_role_Leader &lt;dbl&gt;, expedition_role_other &lt;dbl&gt;, hired_TRUE. &lt;dbl&gt;,
-&gt; #   solo_TRUE. &lt;dbl&gt;, oxygen_used_TRUE. &lt;dbl&gt;, success_TRUE. &lt;dbl&gt;
+&gt; #   citizenship_USA &lt;dbl&gt;, citizenship_other &lt;dbl&gt;,
+&gt; #   expedition_role_H.A.Worker &lt;dbl&gt;, expedition_role_Leader &lt;dbl&gt;,
+&gt; #   expedition_role_other &lt;dbl&gt;, hired_TRUE. &lt;dbl&gt;, solo_TRUE. &lt;dbl&gt;, ...
 ```
 
 .pull-right[.pull-right[.footnote[
@@ -1263,8 +1262,9 @@ Altogether, the `recipes` package offers a variety of built-in preprocessing ste
 In addition, you may also include checks in your pipeline to test for a specific condition of your variables:
 
 ```
-&gt; [1] "check_class"      "check_cols"       "check_missing"    "check_name"      
-&gt; [5] "check_new_values" "check_range"      "check_type"
+&gt; [1] "check_class"      "check_cols"       "check_missing"   
+&gt; [4] "check_name"       "check_new_values" "check_range"     
+&gt; [7] "check_type"
 ```
 
 .footnote[
@@ -1626,8 +1626,8 @@ dt_cls_fit$spec %&gt;%
 ⚠️ **Notice that we did not apply any of our predefined preprocessing steps yet!** ⚠️
 
 - The code will throw an error if we try to fit any of our logit models due to the absence of dummies.  
-- Besides, the Lasso model would perform poorly due to the differently scaled predictors.  
-- Likewise, the tree model will always predict the negative class due to the severe class imbalance.
+- The Lasso model would likely perform poorly due to the differently scaled predictors.  
+- Our models will likely always predict the negative class due to the severe class imbalance.
 ]
 ]
 
@@ -1653,8 +1653,8 @@ dt_cls_fit %&gt;%
 ```
 &gt; Rows: 15,295
 &gt; Columns: 2
-&gt; $ .pred_FALSE &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1~
-&gt; $ .pred_TRUE  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0~
+&gt; $ .pred_FALSE &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ~
+&gt; $ .pred_TRUE  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~
 ```
 
 --
@@ -1680,20 +1680,21 @@ test_set %&gt;% bind_cols(predict(dt_cls_fit, new_data = ., type = "prob"))
 
 ```
 &gt; # A tibble: 15,295 x 15
-&gt;    member_id    peak_name  season  year sex     age citizenship expedition_role hired
-&gt;    &lt;fct&gt;        &lt;fct&gt;      &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt;           &lt;fct&gt;
-&gt;  1 AMAD78301-03 Ama Dablam Autumn  1978 M        27 France      Climber         FALSE
-&gt;  2 AMAD78301-05 Ama Dablam Autumn  1978 M        34 France      Climber         FALSE
-&gt;  3 AMAD78301-07 Ama Dablam Autumn  1978 M        41 France      Climber         FALSE
-&gt;  4 AMAD79101-10 Ama Dablam Spring  1979 M        30 USA         Film Team       FALSE
-&gt;  5 AMAD79101-15 Ama Dablam Spring  1979 M        29 USA         Climber/Kayaker FALSE
-&gt;  6 AMAD79101-18 Ama Dablam Spring  1979 M        23 Nepal       H-A Worker      TRUE 
-&gt;  7 AMAD79301-03 Ama Dablam Autumn  1979 F        33 France      Member          FALSE
-&gt;  8 AMAD79301-13 Ama Dablam Autumn  1979 M        31 France      Climber         FALSE
-&gt;  9 AMAD79301-14 Ama Dablam Autumn  1979 M        28 France      Climber         FALSE
-&gt; 10 AMAD79301-22 Ama Dablam Autumn  1979 M        31 France      Climber         FALSE
-&gt; # ... with 15,285 more rows, and 6 more variables: solo &lt;fct&gt;, oxygen_used &lt;fct&gt;,
-&gt; #   success &lt;fct&gt;, died &lt;fct&gt;, .pred_FALSE &lt;dbl&gt;, .pred_TRUE &lt;dbl&gt;
+&gt;    member_id    peak_name  season  year sex     age citizenship expedition_role
+&gt;    &lt;fct&gt;        &lt;fct&gt;      &lt;fct&gt;  &lt;dbl&gt; &lt;fct&gt; &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt;          
+&gt;  1 AMAD78301-03 Ama Dablam Autumn  1978 M        27 France      Climber        
+&gt;  2 AMAD78301-05 Ama Dablam Autumn  1978 M        34 France      Climber        
+&gt;  3 AMAD78301-07 Ama Dablam Autumn  1978 M        41 France      Climber        
+&gt;  4 AMAD79101-10 Ama Dablam Spring  1979 M        30 USA         Film Team      
+&gt;  5 AMAD79101-15 Ama Dablam Spring  1979 M        29 USA         Climber/Kayaker
+&gt;  6 AMAD79101-18 Ama Dablam Spring  1979 M        23 Nepal       H-A Worker     
+&gt;  7 AMAD79301-03 Ama Dablam Autumn  1979 F        33 France      Member         
+&gt;  8 AMAD79301-13 Ama Dablam Autumn  1979 M        31 France      Climber        
+&gt;  9 AMAD79301-14 Ama Dablam Autumn  1979 M        28 France      Climber        
+&gt; 10 AMAD79301-22 Ama Dablam Autumn  1979 M        31 France      Climber        
+&gt; # ... with 15,285 more rows, and 7 more variables: hired &lt;fct&gt;, solo &lt;fct&gt;,
+&gt; #   oxygen_used &lt;fct&gt;, success &lt;fct&gt;, died &lt;fct&gt;, .pred_FALSE &lt;dbl&gt;,
+&gt; #   .pred_TRUE &lt;dbl&gt;
 ```
 
 
@@ -1730,11 +1731,11 @@ cls_wf
 ```
 
 ```
-&gt; == Workflow ==========================================================================
+&gt; == Workflow ================================================================
 &gt; Preprocessor: Recipe
 &gt; Model: logistic_reg()
 &gt; 
-&gt; -- Preprocessor ----------------------------------------------------------------------
+&gt; -- Preprocessor ------------------------------------------------------------
 &gt; 5 Recipe Steps
 &gt; 
 &gt; * step_impute_median()
@@ -1743,7 +1744,7 @@ cls_wf
 &gt; * step_dummy()
 &gt; * step_upsample()
 &gt; 
-&gt; -- Model -----------------------------------------------------------------------------
+&gt; -- Model -------------------------------------------------------------------
 &gt; Logistic Regression Model Specification (classification)
 &gt; 
 &gt; Computational engine: glm
@@ -1831,8 +1832,8 @@ cls_wf_fit %&gt;%
 ```
 &gt; Rows: 15,295
 &gt; Columns: 2
-&gt; $ .pred_FALSE &lt;dbl&gt; 0.8887624, 0.8877419, 0.8867132, 0.9784852, 0.9785161, 0.9201633~
-&gt; $ .pred_TRUE  &lt;dbl&gt; 0.11123760, 0.11225812, 0.11328682, 0.02151477, 0.02148388, 0.07~
+&gt; $ .pred_FALSE &lt;dbl&gt; 0.8887624, 0.8877419, 0.8867132, 0.9784852, 0.9785161,~
+&gt; $ .pred_TRUE  &lt;dbl&gt; 0.11123760, 0.11225812, 0.11328682, 0.02151477, 0.0214~
 ```
 
 .footnote[
@@ -1898,8 +1899,8 @@ cls_wf_fit %&gt;%
 ```
 &gt; Rows: 15,295
 &gt; Columns: 2
-&gt; $ .pred_FALSE &lt;dbl&gt; 0.8887624, 0.8877419, 0.8867132, 0.9784852, 0.9785161, 0.9201633~
-&gt; $ .pred_TRUE  &lt;dbl&gt; 0.11123760, 0.11225812, 0.11328682, 0.02151477, 0.02148388, 0.07~
+&gt; $ .pred_FALSE &lt;dbl&gt; 0.8887624, 0.8877419, 0.8867132, 0.9784852, 0.9785161,~
+&gt; $ .pred_TRUE  &lt;dbl&gt; 0.11123760, 0.11225812, 0.11328682, 0.02151477, 0.0214~
 ```
 
 
@@ -2007,7 +2008,7 @@ layout: false
 
 ## Excursus: Hyperparameter Scales
 
-In practice, you will find that hyperparameters are often defined on the log instead of the original linear scale, as for example seen on the previous slide:
+In practice, you will find that hyperparameters are often defined on the log instead of the linear scale, as for example seen on the previous slide:
 - **`mixture()`:** `\(0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0\)`
 - **`penalty()`:** `\(1e^{-10}, 1e^{-9}, 1e^{-8}, 1e^{-7}, 1e^{-6}, 1e^{-5}, 1e^{-4}, 1e^{-3}, 1e^{-2}, 1e^{-1}, 1e^{0}\)`
 
@@ -2015,7 +2016,7 @@ In practice, you will find that hyperparameters are often defined on the log ins
 
 **Considerations for using the Log-Scale:**
 
-1. If you have no clue regarding the optimal parameter value, you are inclined to evaluate a broad search space with relatively small but also relatively large candidate values (e.g., from `\(1e^{-10}\)` to `\(1\)`). On a linear scale, this approach would ignore a large proportion of the relatively small search space. For example the region `\([0, 0.1]\)` on the linear scale includes all most all candidates from the log-scale.
+1. If you have no clue regarding the optimal parameter value, you are inclined to evaluate a broad search space with relatively small but also relatively large candidate values (e.g., from `\(1e^{-10}\)` to `\(1\)`). On a linear scale, this approach would ignore a large proportion of the relatively small search space. For example the region `\([0, 0.1]\)` on the linear scale includes almost all candidates from the log-scale.
 2. For some models and hyperparameter sets, the model's accuracy is relatively insensitive to certain regions of the search space. Those models demand a large variation in order to observe any impact on the underlying performance metrics.
 
 --
@@ -2155,8 +2156,8 @@ grid_regular(
 ```
 &gt; Rows: 25
 &gt; Columns: 2
-&gt; $ mixture &lt;dbl&gt; 0.00, 0.25, 0.50, 0.75, 1.00, 0.00, 0.25, 0.50, 0.75, 1.00, 0.00, 0.~
-&gt; $ penalty &lt;dbl&gt; 1.000000e-10, 1.000000e-10, 1.000000e-10, 1.000000e-10, 1.000000e-10~
+&gt; $ mixture &lt;dbl&gt; 0.00, 0.25, 0.50, 0.75, 1.00, 0.00, 0.25, 0.50, 0.75, 1.00~
+&gt; $ penalty &lt;dbl&gt; 1.000000e-10, 1.000000e-10, 1.000000e-10, 1.000000e-10, 1.~
 ```
 *Source: [Bergstra/Bengio (2012)](https://www.jmlr.org/papers/volume13/bergstra12a/bergstra12a)*
 ]
@@ -2174,8 +2175,8 @@ grid_random(
 ```
 &gt; Rows: 25
 &gt; Columns: 2
-&gt; $ mixture &lt;dbl&gt; 0.92267752, 0.69740576, 0.67183790, 0.38385219, 0.48721096, 0.476501~
-&gt; $ penalty &lt;dbl&gt; 9.274587e-08, 5.580510e-05, 2.833908e-09, 5.785956e-10, 2.887324e-08~
+&gt; $ mixture &lt;dbl&gt; 0.92267752, 0.69740576, 0.67183790, 0.38385219, 0.48721096~
+&gt; $ penalty &lt;dbl&gt; 9.274587e-08, 5.580510e-05, 2.833908e-09, 5.785956e-10, 2.~
 ```
 *Source: [Bergstra/Bengio (2012)](https://www.jmlr.org/papers/volume13/bergstra12a/bergstra12a)*
 
@@ -2229,16 +2230,18 @@ tune_grid(
 ```
 
 .panelset[
-.panel[.panel-name[Positional Args]
+.panel[.panel-name[Positional Arguments]
 - `object`: either a `workflow` or a `model` object
 - `preprocessor`: an additional preprocessing recipe or formula expression (only required in case a `model` object is provided)
 - `resamples`: a `resamples` object (e.g., our `climbers_folds`)
 ]
-.panel[.panel-name[Keyword Args]
+.panel[.panel-name[Keyword Arguments]
 - `grid`: the number of candidate hyperparameter combinations to be tried (defaults to `10` draws from a [Latin hypercube](https://en.wikipedia.org/wiki/Latin_hypercube_sampling)) respectively a pre-defined parameter grid
 - `metrics`: a set of performance metrics (defaults to `\(RMSE\)` and `\(R^2\)` for regression and `\(AUC\)` and *accuracy* for classification tasks) computed for each resample (customize via `yardstick::metric_set()`) 
 - `control`: additional options to control the tuning process (e.g., `save_pred = T` to retain the predictions for each fold or `verbose = T` to print the log)
-&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
+&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;
+
 .footnote[
 *Note: Retaining the predictions for each fold can impose a heavy burden on your machine's memory which may become unwieldy if your data set and/or the number of resamples is large.*
 ]
@@ -2310,8 +2313,8 @@ param_grid %&gt;%
 ```
 &gt; Rows: 100
 &gt; Columns: 2
-&gt; $ penalty &lt;dbl&gt; 1.000000e-10, 1.291550e-09, 1.668101e-08, 2.154435e-07, 2.782559e-06~
-&gt; $ mixture &lt;dbl&gt; 0.0000000, 0.0000000, 0.0000000, 0.0000000, 0.0000000, 0.0000000, 0.~
+&gt; $ penalty &lt;dbl&gt; 1.000000e-10, 1.291550e-09, 1.668101e-08, 2.154435e-07, 2.~
+&gt; $ mixture &lt;dbl&gt; 0.0000000, 0.0000000, 0.0000000, 0.0000000, 0.0000000, 0.0~
 ```
 
 ---
@@ -2457,18 +2460,18 @@ cls_wf_fit
 &gt; # Tuning results
 &gt; # 10-fold cross-validation using stratification 
 &gt; # A tibble: 10 x 5
-&gt;    splits               id     .metrics           .notes           .predictions       
-&gt;    &lt;list&gt;               &lt;chr&gt;  &lt;list&gt;             &lt;list&gt;           &lt;list&gt;             
-&gt;  1 &lt;split [55059/6118]&gt; Fold01 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [611,800 x~
-&gt;  2 &lt;split [55059/6118]&gt; Fold02 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [611,800 x~
-&gt;  3 &lt;split [55059/6118]&gt; Fold03 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [611,800 x~
-&gt;  4 &lt;split [55059/6118]&gt; Fold04 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [611,800 x~
-&gt;  5 &lt;split [55059/6118]&gt; Fold05 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [611,800 x~
-&gt;  6 &lt;split [55059/6118]&gt; Fold06 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [611,800 x~
-&gt;  7 &lt;split [55059/6118]&gt; Fold07 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [611,800 x~
-&gt;  8 &lt;split [55060/6117]&gt; Fold08 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [611,700 x~
-&gt;  9 &lt;split [55060/6117]&gt; Fold09 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [611,700 x~
-&gt; 10 &lt;split [55060/6117]&gt; Fold10 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [611,700 x~
+&gt;    splits               id     .metrics           .notes           .predictions
+&gt;    &lt;list&gt;               &lt;chr&gt;  &lt;list&gt;             &lt;list&gt;           &lt;list&gt;      
+&gt;  1 &lt;split [55059/6118]&gt; Fold01 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [61~
+&gt;  2 &lt;split [55059/6118]&gt; Fold02 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [61~
+&gt;  3 &lt;split [55059/6118]&gt; Fold03 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [61~
+&gt;  4 &lt;split [55059/6118]&gt; Fold04 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [61~
+&gt;  5 &lt;split [55059/6118]&gt; Fold05 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [61~
+&gt;  6 &lt;split [55059/6118]&gt; Fold06 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [61~
+&gt;  7 &lt;split [55059/6118]&gt; Fold07 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [61~
+&gt;  8 &lt;split [55060/6117]&gt; Fold08 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [61~
+&gt;  9 &lt;split [55060/6117]&gt; Fold09 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [61~
+&gt; 10 &lt;split [55060/6117]&gt; Fold10 &lt;tibble [400 x 6]&gt; &lt;tibble [0 x 1]&gt; &lt;tibble [61~
 ```
 
 Now, there are several neat things we can do with our fitted `climbers_folds` data frame. Let's have a look at some convenience functions provided by the `tune` package.
@@ -2492,18 +2495,18 @@ cls_wf_fit %&gt;% collect_metrics(summarize = T)
 
 ```
 &gt; # A tibble: 400 x 8
-&gt;          penalty mixture .metric  .estimator  mean     n std_err .config              
-&gt;            &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                
-&gt;  1 0.0000000001        0 accuracy binary     0.847    10 0.00135 Preprocessor1_Model0~
-&gt;  2 0.0000000001        0 roc_auc  binary     0.713    10 0.00811 Preprocessor1_Model0~
-&gt;  3 0.0000000001        0 sens     binary     0.853    10 0.00146 Preprocessor1_Model0~
-&gt;  4 0.0000000001        0 spec     binary     0.428    10 0.0160  Preprocessor1_Model0~
-&gt;  5 0.00000000129       0 accuracy binary     0.847    10 0.00135 Preprocessor1_Model0~
-&gt;  6 0.00000000129       0 roc_auc  binary     0.713    10 0.00811 Preprocessor1_Model0~
-&gt;  7 0.00000000129       0 sens     binary     0.853    10 0.00146 Preprocessor1_Model0~
-&gt;  8 0.00000000129       0 spec     binary     0.428    10 0.0160  Preprocessor1_Model0~
-&gt;  9 0.0000000167        0 accuracy binary     0.847    10 0.00135 Preprocessor1_Model0~
-&gt; 10 0.0000000167        0 roc_auc  binary     0.713    10 0.00811 Preprocessor1_Model0~
+&gt;          penalty mixture .metric  .estimator  mean     n std_err .config    
+&gt;            &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;      
+&gt;  1 0.0000000001        0 accuracy binary     0.847    10 0.00135 Preprocess~
+&gt;  2 0.0000000001        0 roc_auc  binary     0.713    10 0.00811 Preprocess~
+&gt;  3 0.0000000001        0 sens     binary     0.853    10 0.00146 Preprocess~
+&gt;  4 0.0000000001        0 spec     binary     0.428    10 0.0160  Preprocess~
+&gt;  5 0.00000000129       0 accuracy binary     0.847    10 0.00135 Preprocess~
+&gt;  6 0.00000000129       0 roc_auc  binary     0.713    10 0.00811 Preprocess~
+&gt;  7 0.00000000129       0 sens     binary     0.853    10 0.00146 Preprocess~
+&gt;  8 0.00000000129       0 spec     binary     0.428    10 0.0160  Preprocess~
+&gt;  9 0.0000000167        0 accuracy binary     0.847    10 0.00135 Preprocess~
+&gt; 10 0.0000000167        0 roc_auc  binary     0.713    10 0.00811 Preprocess~
 &gt; # ... with 390 more rows
 ```
 ]
@@ -2516,11 +2519,11 @@ cls_wf_fit %&gt;% show_best(metric = "roc_auc", n = 3)
 
 ```
 &gt; # A tibble: 3 x 8
-&gt;    penalty mixture .metric .estimator  mean     n std_err .config               
-&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;                 
-&gt; 1 0.00599    0.111 roc_auc binary     0.714    10 0.00825 Preprocessor1_Model018
-&gt; 2 0.000464   1     roc_auc binary     0.714    10 0.00862 Preprocessor1_Model097
-&gt; 3 0.000464   0.889 roc_auc binary     0.714    10 0.00863 Preprocessor1_Model087
+&gt;    penalty mixture .metric .estimator  mean     n std_err .config           
+&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;             
+&gt; 1 0.00599    0.111 roc_auc binary     0.714    10 0.00825 Preprocessor1_Mod~
+&gt; 2 0.000464   1     roc_auc binary     0.714    10 0.00862 Preprocessor1_Mod~
+&gt; 3 0.000464   0.889 roc_auc binary     0.714    10 0.00863 Preprocessor1_Mod~
 ```
 ]
 .panel[.panel-name[select_best()]
@@ -2550,19 +2553,19 @@ cls_wf_fit %&gt;%
 
 ```
 &gt; # A tibble: 61,177 x 9
-&gt;    id     .pred_FALSE .pred_TRUE  .row penalty mixture .pred_class died  .config      
-&gt;    &lt;chr&gt;        &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt; &lt;chr&gt;        
-&gt;  1 Fold01       0.920     0.0795    16 0.00599   0.111 FALSE       FALSE Preprocessor~
-&gt;  2 Fold01       0.922     0.0778    18 0.00599   0.111 FALSE       FALSE Preprocessor~
-&gt;  3 Fold01       0.923     0.0769    19 0.00599   0.111 FALSE       FALSE Preprocessor~
-&gt;  4 Fold01       0.799     0.201     24 0.00599   0.111 FALSE       FALSE Preprocessor~
-&gt;  5 Fold01       0.647     0.353     37 0.00599   0.111 FALSE       FALSE Preprocessor~
-&gt;  6 Fold01       0.766     0.234     55 0.00599   0.111 FALSE       FALSE Preprocessor~
-&gt;  7 Fold01       0.793     0.207     56 0.00599   0.111 FALSE       FALSE Preprocessor~
-&gt;  8 Fold01       0.802     0.198     76 0.00599   0.111 FALSE       FALSE Preprocessor~
-&gt;  9 Fold01       0.958     0.0416    88 0.00599   0.111 FALSE       FALSE Preprocessor~
-&gt; 10 Fold01       0.950     0.0504    90 0.00599   0.111 FALSE       FALSE Preprocessor~
-&gt; # ... with 61,167 more rows
+&gt;    id     .pred_FALSE .pred_TRUE  .row penalty mixture .pred_class died 
+&gt;    &lt;chr&gt;        &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;fct&gt;       &lt;fct&gt;
+&gt;  1 Fold01       0.920     0.0795    16 0.00599   0.111 FALSE       FALSE
+&gt;  2 Fold01       0.922     0.0778    18 0.00599   0.111 FALSE       FALSE
+&gt;  3 Fold01       0.923     0.0769    19 0.00599   0.111 FALSE       FALSE
+&gt;  4 Fold01       0.799     0.201     24 0.00599   0.111 FALSE       FALSE
+&gt;  5 Fold01       0.647     0.353     37 0.00599   0.111 FALSE       FALSE
+&gt;  6 Fold01       0.766     0.234     55 0.00599   0.111 FALSE       FALSE
+&gt;  7 Fold01       0.793     0.207     56 0.00599   0.111 FALSE       FALSE
+&gt;  8 Fold01       0.802     0.198     76 0.00599   0.111 FALSE       FALSE
+&gt;  9 Fold01       0.958     0.0416    88 0.00599   0.111 FALSE       FALSE
+&gt; 10 Fold01       0.950     0.0504    90 0.00599   0.111 FALSE       FALSE
+&gt; # ... with 61,167 more rows, and 1 more variable: .config &lt;chr&gt;
 ```
 ]
 ]
@@ -2663,9 +2666,9 @@ cls_wf_last_fit
 &gt; # Resampling results
 &gt; # Manual resampling 
 &gt; # A tibble: 1 x 6
-&gt;   splits                id               .metrics         .notes .predictions .workflow
-&gt;   &lt;list&gt;                &lt;chr&gt;            &lt;list&gt;           &lt;list&gt; &lt;list&gt;       &lt;list&gt;   
-&gt; 1 &lt;split [61176/15295]&gt; train/test split &lt;tibble [4 x 4]&gt; &lt;tibb~ &lt;tibble [15~ &lt;workflo~
+&gt;   splits                id               .metrics .notes .predictions .workflow
+&gt;   &lt;list&gt;                &lt;chr&gt;            &lt;list&gt;   &lt;list&gt; &lt;list&gt;       &lt;list&gt;   
+&gt; 1 &lt;split [61176/15295]&gt; train/test split &lt;tibble~ &lt;tibb~ &lt;tibble [15~ &lt;workflo~
 ```
 
 ---
@@ -2746,9 +2749,9 @@ tidy(reg_log_cls_fit) %&gt;% glimpse
 ```
 &gt; Rows: 23
 &gt; Columns: 3
-&gt; $ term     &lt;chr&gt; "(Intercept)", "year", "age", "peak_name_Cho.Oyu", "peak_name_Evere~
-&gt; $ estimate &lt;dbl&gt; -2.71947017, -0.38858862, 0.00000000, -0.12357574, 0.51995445, 0.78~
-&gt; $ penalty  &lt;dbl&gt; 0.005994843, 0.005994843, 0.005994843, 0.005994843, 0.005994843, 0.~
+&gt; $ term     &lt;chr&gt; "(Intercept)", "year", "age", "peak_name_Cho.Oyu", "peak_~
+&gt; $ estimate &lt;dbl&gt; -2.71947017, -0.38858862, 0.00000000, -0.12357574, 0.5199~
+&gt; $ penalty  &lt;dbl&gt; 0.005994843, 0.005994843, 0.005994843, 0.005994843, 0.005~
 ```
 ]
 .panel[.panel-name[glance()]
@@ -2994,7 +2997,7 @@ layout: false
 - **Interpretability:** Are predictions explainable? Can the relationship between a predictor and the outcome be extracted from the model?&lt;br&gt;&lt;br&gt;
 - **Fairness &amp; Compliance:** Does the model systematically discriminate against certain sub-populations or ethical groups? Does it comply with prevalent law in a given domain?&lt;br&gt;&lt;br&gt;
 - **Justifiability:** Are the predictions in line with well-known business rules? Are the most important predictors consistent with prior beliefs?&lt;br&gt;&lt;br&gt;
-- **Causality:** Does the model allow causal inference? If no, does it enable the user to generate hypotheses that can be tested using alternative statistical approaches?&lt;br&gt;&lt;br&gt;
+- **Causality:** Does the model enable causal inference? If not, does it enable the user to generate hypotheses that can be tested using alternative statistical approaches?&lt;br&gt;&lt;br&gt;
 
 ---
 

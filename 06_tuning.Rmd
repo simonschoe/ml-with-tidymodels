@@ -79,7 +79,7 @@ layout: false
 
 ## Excursus: Hyperparameter Scales
 
-In practice, you will find that hyperparameters are often defined on the log instead of the original linear scale, as for example seen on the previous slide:
+In practice, you will find that hyperparameters are often defined on the log instead of the linear scale, as for example seen on the previous slide:
 - **`mixture()`:** $0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0$
 - **`penalty()`:** $1e^{-10}, 1e^{-9}, 1e^{-8}, 1e^{-7}, 1e^{-6}, 1e^{-5}, 1e^{-4}, 1e^{-3}, 1e^{-2}, 1e^{-1}, 1e^{0}$
 
@@ -87,7 +87,7 @@ In practice, you will find that hyperparameters are often defined on the log ins
 
 **Considerations for using the Log-Scale:**
 
-1. If you have no clue regarding the optimal parameter value, you are inclined to evaluate a broad search space with relatively small but also relatively large candidate values (e.g., from $1e^{-10}$ to $1$). On a linear scale, this approach would ignore a large proportion of the relatively small search space. For example the region $[0, 0.1]$ on the linear scale includes all most all candidates from the log-scale.
+1. If you have no clue regarding the optimal parameter value, you are inclined to evaluate a broad search space with relatively small but also relatively large candidate values (e.g., from $1e^{-10}$ to $1$). On a linear scale, this approach would ignore a large proportion of the relatively small search space. For example the region $[0, 0.1]$ on the linear scale includes almost all candidates from the log-scale.
 2. For some models and hyperparameter sets, the model's accuracy is relatively insensitive to certain regions of the search space. Those models demand a large variation in order to observe any impact on the underlying performance metrics.
 
 --
@@ -243,16 +243,18 @@ tune_grid(
 ```
 
 .panelset[
-.panel[.panel-name[Positional Args]
+.panel[.panel-name[Positional Arguments]
 - `object`: either a `workflow` or a `model` object
 - `preprocessor`: an additional preprocessing recipe or formula expression (only required in case a `model` object is provided)
 - `resamples`: a `resamples` object (e.g., our `climbers_folds`)
 ]
-.panel[.panel-name[Keyword Args]
+.panel[.panel-name[Keyword Arguments]
 - `grid`: the number of candidate hyperparameter combinations to be tried (defaults to `10` draws from a [Latin hypercube](https://en.wikipedia.org/wiki/Latin_hypercube_sampling)) respectively a pre-defined parameter grid
 - `metrics`: a set of performance metrics (defaults to $RMSE$ and $R^2$ for regression and $AUC$ and *accuracy* for classification tasks) computed for each resample (customize via `yardstick::metric_set()`) 
 - `control`: additional options to control the tuning process (e.g., `save_pred = T` to retain the predictions for each fold or `verbose = T` to print the log)
-<br><br><br>
+
+<br><br><br><br><br>
+
 .footnote[
 *Note: Retaining the predictions for each fold can impose a heavy burden on your machine's memory which may become unwieldy if your data set and/or the number of resamples is large.*
 ]

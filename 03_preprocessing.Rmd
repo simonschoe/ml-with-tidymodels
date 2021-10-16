@@ -97,6 +97,7 @@ mod_recipe
 ???
 - essence of recipes: the steps are only declared and not directly executed!
 - we are constructing a blueprint which we can later apply in one go to our data
+- median imputation is just one way of replacing missing values -> median more robust towards outlier
 
 ---
 
