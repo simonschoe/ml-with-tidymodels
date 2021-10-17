@@ -184,39 +184,6 @@ knitr::include_graphics("https://tenor.com/view/shocked-po-kung-fu-panda-gif-425
 
 ---
 
-## 5 Additions to the `tidymodels` Ecosystem
-
-**`usemodels`:** Boilerplate code for `tidymodels` analyses
-
-```{r}
-library(usemodels)
-ls("package:usemodels", pattern = "use_")
-```
-<br>
-
-For example, `use_glmnet` generates a code blueprint for a regularized logistic classifier.
-```{r, eval=F}
-use_glmnet(died ~ ., data = climbers_df, verbose = F, prefix = "glmnet_mod")
-```
-```
->  Output on next slide
-```
----
-
-## 5 Additions to the `tidymodels` Ecosystem
-
-```{r,echo=F}
-use_glmnet(died ~ ., data = climbers_df, verbose = F, prefix = "glmnet_mod")
-```
-
-???
-- `verbose = T` adds some additional comments for why some of the feature engineering steps are included
-- recipe template contains minimal required steps
-- proposed tuning grid might not be the best for your specific use case
-- the template urges the user to manually specify the resampling method
-
----
-
 ## Thank You!
 
 .pull-left[

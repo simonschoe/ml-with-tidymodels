@@ -37,7 +37,7 @@ knitr::include_graphics(
 
 ## 4.7 `broom`: Tidy Model Outputs
 
-In order to illustrate the convenience of the three `broom` functions, let us first extract our optimal model from `cls_wf_results`.
+In order to illustrate the convenience of the three `broom` functions, let us first extract our optimal model.
 
 ```{r, results='hide'}
 reg_log_cls_fit <- cls_wf_last_fit %>% extract_fit_parsnip()
@@ -177,7 +177,7 @@ collect_predictions(cls_wf_last_fit) %>%
 ]
 .panel[.panel-name[Multiple ROC Curves]
 .pull-left[
-The individual functions can easily applied to our tuning results as well.
+The individual functions can be easily applied to our tuning results as well.
 ```{r roc_curves, eval=F}
 collect_predictions(cls_wf_fit) %>% 
   group_by(id) %>% 
@@ -211,7 +211,7 @@ layout: false
 ## Excursus: Alternative Evaluation Dimensions
 
 - **Scalability:** How well does the model scale to larger data sets? Is the speed of model re-training and prediction adversely affected in a real-time scenario?<br><br>
-- **Robustness**: Is the model robust against perturbations (e.g., missing values or outliers) in the unseen data? Does the performance deteriorate rapidly in the context of data drift?<br><br>
+- **Robustness**: Is the model robust against perturbations (e.g., missing values or outliers) in the unseen data? Does the performance deteriorate rapidly in the context of [data drift](https://read.deeplearning.ai/the-batch/developing-ai-products-part-5-data-drift-concept-drift-and-other-maintenance-issues/)?<br><br>
 - **Transferability:** Can the model be applied to related tasks without substantial re-training of the model and without a substantial loss of predictive accuracy?<br><br>
 - **Interpretability:** Are predictions explainable? Can the relationship between a predictor and the outcome be extracted from the model?<br><br>
 - **Fairness & Compliance:** Does the model systematically discriminate against certain sub-populations or ethical groups? Does it comply with prevalent law in a given domain?<br><br>

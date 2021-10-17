@@ -249,7 +249,7 @@ tune_grid(
 - `resamples`: a `resamples` object (e.g., our `climbers_folds`)
 ]
 .panel[.panel-name[Keyword Arguments]
-- `grid`: the number of candidate hyperparameter combinations to be tried (defaults to `10` draws from a [Latin hypercube](https://en.wikipedia.org/wiki/Latin_hypercube_sampling)) respectively a pre-defined parameter grid
+- `grid`: the number of candidate hyperparameter combinations to be tried (defaults to `10` draws from a [Latin hypercube](https://en.wikipedia.org/wiki/Latin_hypercube_sampling)) respectively a predefined parameter grid
 - `metrics`: a set of performance metrics (defaults to $RMSE$ and $R^2$ for regression and $AUC$ and *accuracy* for classification tasks) computed for each resample (customize via `yardstick::metric_set()`) 
 - `control`: additional options to control the tuning process (e.g., `save_pred = T` to retain the predictions for each fold or `verbose = T` to print the log)
 
@@ -400,6 +400,9 @@ tip: its generally a good idea to not use all available clusters
 doParallel::registerDoParallel(comp_cluster)
 ```
 
+???
+- there are different backends packages that you can use for parallel processing. They start with `do` and vary in the way of how they enable parallel processing.
+
 ---
 
 ## Excursus: Parallel Processing
@@ -434,7 +437,6 @@ Sys.time() - start
 ]
 
 ???
-- there are different backends packages that you can use for parallel processing. They start with `do` and vary in the way of how they enable parallel processing.
 - as you can see the speed-up is not proportional but diminishing in the number of cores (also somewhat depending on what you are doing in the background)
 
 ---
@@ -480,13 +482,12 @@ Extract the overall best performing candidate pair. Use `select_by_one_std_err(m
 cls_wf_fit %>% select_best(metric = "roc_auc")
 ```
 ]
-.panel[.panel-name[select_best()]
-Extract the validation set predictions for each fold (only applicable if `control = control_grid(save_pred = TRUE)`).
+.panel[.panel-name[collect_predictions()]
+Extract the validation set predictions for each fold (only applicable if `save_pred = T` in the controls).
 ```{r}
 cls_wf_fit %>% 
   collect_predictions(
-    summarize = F,
-    parameters = select_best(cls_wf_fit, metric = "roc_auc")
+    summarize = F, parameters = select_best(cls_wf_fit, metric = "roc_auc")
   )
 ```
 ]
@@ -570,7 +571,9 @@ cls_wf_final %>%
 
 --
 
-**Shortcut:** Step 8 and 9 can be abbreviated by simply using the `last_fit()`. It fits the finalized workflow on the training set, predicts the unseen cases in the test set and evaluates the model's performance by benchmarking predictions against the actual response.
+<br>
+
+**Shortcut:** Step 8 and 9 can be abbreviated by using `last_fit()`. It fits the finalized workflow on the training set, predicts the unseen cases in the test set and evaluates the model's test set performance.
 ```{r, warning=F, message=F}
 cls_wf_last_fit <- cls_wf_final %>% 
   last_fit(split = climbers_split, metrics = metric_set(roc_auc, accuracy, sens, spec))

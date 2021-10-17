@@ -1893,7 +1893,7 @@ cls_wf &lt;- workflow() %&gt;%
   add_model(log_cls)
 ```
 
-**Step 5:** Train the workflow (i.e. recipe plus model) and use it for predictions.
+**Step 5:** Train the workflow (i.e. recipe plus model) and use it for prediction.
 
 ```r
 cls_wf_fit &lt;- cls_wf %&gt;%
@@ -2244,7 +2244,7 @@ tune_grid(
 - `resamples`: a `resamples` object (e.g., our `climbers_folds`)
 ]
 .panel[.panel-name[Keyword Arguments]
-- `grid`: the number of candidate hyperparameter combinations to be tried (defaults to `10` draws from a [Latin hypercube](https://en.wikipedia.org/wiki/Latin_hypercube_sampling)) respectively a pre-defined parameter grid
+- `grid`: the number of candidate hyperparameter combinations to be tried (defaults to `10` draws from a [Latin hypercube](https://en.wikipedia.org/wiki/Latin_hypercube_sampling)) respectively a predefined parameter grid
 - `metrics`: a set of performance metrics (defaults to `\(RMSE\)` and `\(R^2\)` for regression and `\(AUC\)` and *accuracy* for classification tasks) computed for each resample (customize via `yardstick::metric_set()`) 
 - `control`: additional options to control the tuning process (e.g., `save_pred = T` to retain the predictions for each fold or `verbose = T` to print the log)
 
@@ -2416,6 +2416,9 @@ tip: its generally a good idea to not use all available clusters
 doParallel::registerDoParallel(comp_cluster)
 ```
 
+???
+- there are different backends packages that you can use for parallel processing. They start with `do` and vary in the way of how they enable parallel processing.
+
 ---
 
 ## Excursus: Parallel Processing
@@ -2449,7 +2452,6 @@ Sys.time() - start
 ]
 
 ???
-- there are different backends packages that you can use for parallel processing. They start with `do` and vary in the way of how they enable parallel processing.
 - as you can see the speed-up is not proportional but diminishing in the number of cores (also somewhat depending on what you are doing in the background)
 
 ---
@@ -2548,14 +2550,13 @@ cls_wf_fit %&gt;% select_best(metric = "roc_auc")
 &gt; 1 0.00599   0.111 Preprocessor1_Model018
 ```
 ]
-.panel[.panel-name[select_best()]
-Extract the validation set predictions for each fold (only applicable if `control = control_grid(save_pred = TRUE)`).
+.panel[.panel-name[collect_predictions()]
+Extract the validation set predictions for each fold (only applicable if `save_pred = T` in the controls).
 
 ```r
 cls_wf_fit %&gt;% 
   collect_predictions(
-    summarize = F,
-    parameters = select_best(cls_wf_fit, metric = "roc_auc")
+    summarize = F, parameters = select_best(cls_wf_fit, metric = "roc_auc")
   )
 ```
 
@@ -2593,7 +2594,7 @@ Collect Metrics:
 autoplot(cls_wf_fit)
 ```
 
-&lt;img src="index_files/figure-html/unnamed-chunk-104-1.png" width="720" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-100-1.png" width="720" style="display: block; margin: auto;" /&gt;
 
 ???
 - note sens-spec-trade off
@@ -2662,7 +2663,9 @@ cls_wf_final %&gt;%
 
 --
 
-**Shortcut:** Step 8 and 9 can be abbreviated by simply using the `last_fit()`. It fits the finalized workflow on the training set, predicts the unseen cases in the test set and evaluates the model's performance by benchmarking predictions against the actual response.
+&lt;br&gt;
+
+**Shortcut:** Step 8 and 9 can be abbreviated by using `last_fit()`. It fits the finalized workflow on the training set, predicts the unseen cases in the test set and evaluates the model's test set performance.
 
 ```r
 cls_wf_last_fit &lt;- cls_wf_final %&gt;% 
@@ -2740,7 +2743,7 @@ layout: true
 
 ## 4.7 `broom`: Tidy Model Outputs
 
-In order to illustrate the convenience of the three `broom` functions, let us first extract our optimal model from `cls_wf_results`.
+In order to illustrate the convenience of the three `broom` functions, let us first extract our optimal model.
 
 
 ```r
@@ -2967,7 +2970,7 @@ collect_predictions(cls_wf_last_fit) %&gt;%
 ]
 .panel[.panel-name[Multiple ROC Curves]
 .pull-left[
-The individual functions can easily applied to our tuning results as well.
+The individual functions can be easily applied to our tuning results as well.
 
 ```r
 collect_predictions(cls_wf_fit) %&gt;% 
@@ -2980,7 +2983,7 @@ collect_predictions(cls_wf_fit) %&gt;%
 ```
 ]
 .pull-right[
-&lt;img src="index_files/figure-html/unnamed-chunk-119-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-115-1.png" style="display: block; margin: auto;" /&gt;
 ]
 ]
 ]
@@ -3001,7 +3004,7 @@ layout: false
 ## Excursus: Alternative Evaluation Dimensions
 
 - **Scalability:** How well does the model scale to larger data sets? Is the speed of model re-training and prediction adversely affected in a real-time scenario?&lt;br&gt;&lt;br&gt;
-- **Robustness**: Is the model robust against perturbations (e.g., missing values or outliers) in the unseen data? Does the performance deteriorate rapidly in the context of data drift?&lt;br&gt;&lt;br&gt;
+- **Robustness**: Is the model robust against perturbations (e.g., missing values or outliers) in the unseen data? Does the performance deteriorate rapidly in the context of [data drift](https://read.deeplearning.ai/the-batch/developing-ai-products-part-5-data-drift-concept-drift-and-other-maintenance-issues/)?&lt;br&gt;&lt;br&gt;
 - **Transferability:** Can the model be applied to related tasks without substantial re-training of the model and without a substantial loss of predictive accuracy?&lt;br&gt;&lt;br&gt;
 - **Interpretability:** Are predictions explainable? Can the relationship between a predictor and the outcome be extracted from the model?&lt;br&gt;&lt;br&gt;
 - **Fairness &amp; Compliance:** Does the model systematically discriminate against certain sub-populations or ethical groups? Does it comply with prevalent law in a given domain?&lt;br&gt;&lt;br&gt;
@@ -3031,69 +3034,6 @@ Similar to the `tidyverse` ecosystem, there is already a promising supply of com
 - stacking: ensemble technique to integrate the predictions of multiple models into a meta-model
 - probably enables the identification of optimal probability thresholds and equivocal zones (uncertain probability regions)
 - infer: 
-
----
-
-## 5 Additions to the `tidymodels` Ecosystem
-
-**`usemodels`:** Boilerplate code for `tidymodels` analyses
-
-
-```r
-library(usemodels)
-ls("package:usemodels", pattern = "use_")
-```
-
-```
-&gt; [1] "use_cubist"  "use_earth"   "use_glmnet"  "use_kknn"   
-&gt; [5] "use_ranger"  "use_xgboost"
-```
-&lt;br&gt;
-
-For example, `use_glmnet` generates a code blueprint for a regularized logistic classifier.
-
-```r
-use_glmnet(died ~ ., data = climbers_df, verbose = F, prefix = "glmnet_mod")
-```
-```
-&gt;  Output on next slide
-```
----
-
-## 5 Additions to the `tidymodels` Ecosystem
-
-
-```
-&gt; glmnet_mod_recipe &lt;- 
-&gt;   recipe(formula = died ~ ., data = climbers_df) %&gt;% 
-&gt;   step_novel(all_nominal(), -all_outcomes()) %&gt;% 
-&gt;   step_dummy(all_nominal(), -all_outcomes()) %&gt;% 
-&gt;   step_zv(all_predictors()) %&gt;% 
-&gt;   step_normalize(all_predictors(), -all_nominal()) 
-&gt; 
-&gt; glmnet_mod_spec &lt;- 
-&gt;   logistic_reg(penalty = tune(), mixture = tune()) %&gt;% 
-&gt;   set_mode("classification") %&gt;% 
-&gt;   set_engine("glmnet") 
-&gt; 
-&gt; glmnet_mod_workflow &lt;- 
-&gt;   workflow() %&gt;% 
-&gt;   add_recipe(glmnet_mod_recipe) %&gt;% 
-&gt;   add_model(glmnet_mod_spec) 
-&gt; 
-&gt; glmnet_mod_grid &lt;- tidyr::crossing(penalty = 10^seq(-6, -1, length.out = 20), 
-&gt;     mixture = c(0.05, 0.2, 0.4, 0.6, 0.8, 1)) 
-&gt; 
-&gt; glmnet_mod_tune &lt;- 
-&gt;   tune_grid(glmnet_mod_workflow, resamples = stop("add your rsample object"), 
-&gt;     grid = glmnet_mod_grid)
-```
-
-???
-- `verbose = T` adds some additional comments for why some of the feature engineering steps are included
-- recipe template contains minimal required steps
-- proposed tuning grid might not be the best for your specific use case
-- the template urges the user to manually specify the resampling method
 
 ---
 
