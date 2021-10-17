@@ -1374,7 +1374,7 @@ The same issue persists if you try to implement one and the same model using alt
 A `parsnip` model specification consists of three individual components:
 - **Type:** The model type that is about to be fitted (e.g., linear/logit regression, random forest or SVM).&lt;br&gt;&lt;br&gt;
 - **Mode:** The mode of prediction, i.e. regression or classification.&lt;br&gt;&lt;br&gt;
-- **Engine:** The computational engine implemented in `R` which usually corresponds to a certain modeling function (`lm`, `glm`) package (e.g., `rpart`, `glmnet`, `randomForest`) or computing framework (e.g., `Stan`, `sparklyr`).
+- **Engine:** The computational engine implemented in `R` which usually corresponds to a certain modeling function (`lm`, `glm`), package (e.g., `rpart`, `glmnet`, `randomForest`) or computing framework (e.g., `Stan`, `sparklyr`).
 
 .footnote[
 *Note: Check all models and engines supported by `parsnip` on the [`tidymodels` website](https://www.tidymodels.org/find/parsnip/) or using the RStudio Addin.*
@@ -1676,7 +1676,7 @@ dt_cls_fit %&gt;%
 Thanks to these rules, we can directly combine the predictions with the `test_set`.
 
 ```r
-test_set %&gt;% bind_cols(predict(dt_cls_fit, new_data = ., type = "prob"))
+test_set %&gt;% dplyr::bind_cols(predict(dt_cls_fit, new_data = ., type = "prob"))
 ```
 
 ```
@@ -1856,6 +1856,9 @@ name: example-no-resampling
 ```r
 set.seed(2021)
 climbers_split &lt;- initial_split(climbers_df, prop = 0.8, strata = died)
+
+train_set &lt;- training(climbers_split)
+test_set  &lt;- testing(climbers_split)
 ```
 
 **Step 2:** Define the relevant preprocessing steps using `recipe`.
@@ -1890,7 +1893,7 @@ cls_wf &lt;- workflow() %&gt;%
   add_model(log_cls)
 ```
 
-**Step 5:** Train the model and use it for predictions.
+**Step 5:** Train the workflow (i.e. recipe plus model) and use it for predictions.
 
 ```r
 cls_wf_fit &lt;- cls_wf %&gt;%
@@ -2590,7 +2593,7 @@ Collect Metrics:
 autoplot(cls_wf_fit)
 ```
 
-&lt;img src="index_files/figure-html/unnamed-chunk-103-1.png" width="720" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-104-1.png" width="720" style="display: block; margin: auto;" /&gt;
 
 ???
 - note sens-spec-trade off
@@ -2977,7 +2980,7 @@ collect_predictions(cls_wf_fit) %&gt;%
 ```
 ]
 .pull-right[
-&lt;img src="index_files/figure-html/unnamed-chunk-118-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-119-1.png" style="display: block; margin: auto;" /&gt;
 ]
 ]
 ]

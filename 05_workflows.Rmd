@@ -120,6 +120,9 @@ name: example-no-resampling
 ```{r}
 set.seed(2021)
 climbers_split <- initial_split(climbers_df, prop = 0.8, strata = died)
+
+train_set <- training(climbers_split)
+test_set  <- testing(climbers_split)
 ```
 
 **Step 2:** Define the relevant preprocessing steps using `recipe`.
@@ -151,7 +154,7 @@ cls_wf <- workflow() %>%
   add_model(log_cls)
 ```
 
-**Step 5:** Train the model and use it for predictions.
+**Step 5:** Train the workflow (i.e. recipe plus model) and use it for prediction.
 ```{r}
 cls_wf_fit <- cls_wf %>%
   fit(train_set)

@@ -84,7 +84,7 @@ knitr::include_graphics("https://raw.githubusercontent.com/allisonhorst/stats-il
 A `parsnip` model specification consists of three individual components:
 - **Type:** The model type that is about to be fitted (e.g., linear/logit regression, random forest or SVM).<br><br>
 - **Mode:** The mode of prediction, i.e. regression or classification.<br><br>
-- **Engine:** The computational engine implemented in `R` which usually corresponds to a certain modeling function (`lm`, `glm`) package (e.g., `rpart`, `glmnet`, `randomForest`) or computing framework (e.g., `Stan`, `sparklyr`).
+- **Engine:** The computational engine implemented in `R` which usually corresponds to a certain modeling function (`lm`, `glm`), package (e.g., `rpart`, `glmnet`, `randomForest`) or computing framework (e.g., `Stan`, `sparklyr`).
 
 .footnote[
 *Note: Check all models and engines supported by `parsnip` on the [`tidymodels` website](https://www.tidymodels.org/find/parsnip/) or using the RStudio Addin.*
@@ -283,6 +283,6 @@ dt_cls_fit %>%
 
 Thanks to these rules, we can directly combine the predictions with the `test_set`.
 ```{r}
-test_set %>% bind_cols(predict(dt_cls_fit, new_data = ., type = "prob"))
+test_set %>% dplyr::bind_cols(predict(dt_cls_fit, new_data = ., type = "prob"))
 ```
 
