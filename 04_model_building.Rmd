@@ -157,10 +157,14 @@ dt_cls
 **Tree bagging classifier:**
 ```{r}
 rand_forest() %>% 
-  set_args(trees = 1000) %>% 
+  set_args(trees = 1000, mtry = .cols()) %>% 
   set_mode("classification") %>% 
   set_engine("randomForest")
 ```
+
+.footnote[
+*Note: Use data set characteristics as placeholder arguments which reflect the number of predictors in your data set. `.preds()` and `.cols()` capture the number of predictors in your data prior respectively subsequent to preprocessing (e.g., one-hot encoding).*
+]
 
 ---
 
@@ -169,13 +173,13 @@ rand_forest() %>%
 **Random forest classifier:**
 ```{r}
 rand_forest() %>%
-  set_args(trees = 1000, mtry = .cols()) %>% 
+  set_args(trees = 1000, mtry = floor(sqrt(.cols()))) %>% 
   set_mode("classification") %>% 
   set_engine("randomForest")
 ```
 
 .footnote[
-*Note: Use data set characteristics as placeholder arguments which reflect the number of predictors in your data set. `.preds()` and `.cols()` capture the number of predictors in your data prior respectively subsequent to preprocessing (e.g., one-hot encoding).*
+*Note: Generally, the square root of the number of available predictors is a good starting point for `mtry`. From there on, you could double or half the number of predictors sampled at each split.*
 ]
 
 ---

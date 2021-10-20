@@ -947,7 +947,7 @@ mod_recipe
 &gt; 
 &gt; Median Imputation for age
 &gt; Centering and scaling for all_numeric_predictors()
-&gt; Collapsing factor levels for peak_name, citizenship, expedition_...
+&gt; Collapsing factor levels for peak_name, citizenship, expedition...
 ```
 
 .pull-right[.pull-right[.footnote[
@@ -982,7 +982,7 @@ mod_recipe
 &gt; 
 &gt; Median Imputation for age
 &gt; Centering and scaling for all_numeric_predictors()
-&gt; Collapsing factor levels for peak_name, citizenship, expedition_...
+&gt; Collapsing factor levels for peak_name, citizenship, expedition...
 &gt; Dummy variables from all_predictors(), -all_numeric()
 ```
 
@@ -1021,7 +1021,7 @@ mod_recipe
 &gt; 
 &gt; Median Imputation for age
 &gt; Centering and scaling for all_numeric_predictors()
-&gt; Collapsing factor levels for peak_name, citizenship, expedition_...
+&gt; Collapsing factor levels for peak_name, citizenship, expedition...
 &gt; Dummy variables from all_predictors(), -all_numeric()
 &gt; Up-sampling based on died
 ```
@@ -1080,8 +1080,8 @@ mod_recipe_prepped
 &gt; 
 &gt; Median Imputation for age [trained]
 &gt; Centering and scaling for year, age [trained]
-&gt; Collapsing factor levels for peak_name, citizenship, expedition_... [trained]
-&gt; Dummy variables from peak_name, season, sex, citizenship, expediti... [trained]
+&gt; Collapsing factor levels for peak_name, citizenship, expedition... [trained]
+&gt; Dummy variables from peak_name, season, sex, citizenship, expedit... [trained]
 &gt; Up-sampling based on died [trained]
 ```
 
@@ -1481,28 +1481,6 @@ dt_cls
 
 ```r
 rand_forest() %&gt;% 
-  set_args(trees = 1000) %&gt;% 
-  set_mode("classification") %&gt;% 
-  set_engine("randomForest")
-```
-
-```
-&gt; Random Forest Model Specification (classification)
-&gt; 
-&gt; Main Arguments:
-&gt;   trees = 1000
-&gt; 
-&gt; Computational engine: randomForest
-```
-
----
-
-## 4.3 `parsnip`: A Unified Modeling API
-
-**Random forest classifier:**
-
-```r
-rand_forest() %&gt;%
   set_args(trees = 1000, mtry = .cols()) %&gt;% 
   set_mode("classification") %&gt;% 
   set_engine("randomForest")
@@ -1520,6 +1498,33 @@ rand_forest() %&gt;%
 
 .footnote[
 *Note: Use data set characteristics as placeholder arguments which reflect the number of predictors in your data set. `.preds()` and `.cols()` capture the number of predictors in your data prior respectively subsequent to preprocessing (e.g., one-hot encoding).*
+]
+
+---
+
+## 4.3 `parsnip`: A Unified Modeling API
+
+**Random forest classifier:**
+
+```r
+rand_forest() %&gt;%
+  set_args(trees = 1000, mtry = floor(sqrt(.cols()))) %&gt;% 
+  set_mode("classification") %&gt;% 
+  set_engine("randomForest")
+```
+
+```
+&gt; Random Forest Model Specification (classification)
+&gt; 
+&gt; Main Arguments:
+&gt;   mtry = floor(sqrt(.cols()))
+&gt;   trees = 1000
+&gt; 
+&gt; Computational engine: randomForest
+```
+
+.footnote[
+*Note: Generally, the square root of the number of available predictors is a good starting point for `mtry`. From there on, you could double or half the number of predictors sampled at each split.*
 ]
 
 ---
@@ -1654,8 +1659,8 @@ dt_cls_fit %&gt;%
 ```
 &gt; Rows: 15,295
 &gt; Columns: 2
-&gt; $ .pred_FALSE &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1~
-&gt; $ .pred_TRUE  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0~
+&gt; $ .pred_FALSE &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ~
+&gt; $ .pred_TRUE  &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, ~
 ```
 
 --
@@ -1733,11 +1738,11 @@ cls_wf
 ```
 
 ```
-&gt; == Workflow ========================================================
+&gt; == Workflow =======================================================
 &gt; Preprocessor: Recipe
 &gt; Model: logistic_reg()
 &gt; 
-&gt; -- Preprocessor ----------------------------------------------------
+&gt; -- Preprocessor ---------------------------------------------------
 &gt; 5 Recipe Steps
 &gt; 
 &gt; * step_impute_median()
@@ -1746,7 +1751,7 @@ cls_wf
 &gt; * step_dummy()
 &gt; * step_upsample()
 &gt; 
-&gt; -- Model -----------------------------------------------------------
+&gt; -- Model ----------------------------------------------------------
 &gt; Logistic Regression Model Specification (classification)
 &gt; 
 &gt; Computational engine: glm
@@ -1837,8 +1842,8 @@ cls_wf_fit %&gt;%
 ```
 &gt; Rows: 15,295
 &gt; Columns: 2
-&gt; $ .pred_FALSE &lt;dbl&gt; 0.8887624, 0.8877419, 0.8867132, 0.9784852, 0.~
-&gt; $ .pred_TRUE  &lt;dbl&gt; 0.11123760, 0.11225812, 0.11328682, 0.02151477~
+&gt; $ .pred_FALSE &lt;dbl&gt; 0.8887624, 0.8877419, 0.8867132, 0.9784852, 0~
+&gt; $ .pred_TRUE  &lt;dbl&gt; 0.11123760, 0.11225812, 0.11328682, 0.0215147~
 ```
 
 .footnote[
@@ -1907,8 +1912,8 @@ cls_wf_fit %&gt;%
 ```
 &gt; Rows: 15,295
 &gt; Columns: 2
-&gt; $ .pred_FALSE &lt;dbl&gt; 0.8887624, 0.8877419, 0.8867132, 0.9784852, 0.~
-&gt; $ .pred_TRUE  &lt;dbl&gt; 0.11123760, 0.11225812, 0.11328682, 0.02151477~
+&gt; $ .pred_FALSE &lt;dbl&gt; 0.8887624, 0.8877419, 0.8867132, 0.9784852, 0~
+&gt; $ .pred_TRUE  &lt;dbl&gt; 0.11123760, 0.11225812, 0.11328682, 0.0215147~
 ```
 
 
@@ -2083,7 +2088,8 @@ penalty() %&gt;% value_sample(n = 5)
 ```
 
 ```
-&gt; [1] 2.133703e-02 1.394881e-08 1.609020e-06 1.069317e-09 8.170827e-01
+&gt; [1] 2.133703e-02 1.394881e-08 1.609020e-06 1.069317e-09
+&gt; [5] 8.170827e-01
 ```
 
 
@@ -2164,8 +2170,8 @@ grid_regular(
 ```
 &gt; Rows: 25
 &gt; Columns: 2
-&gt; $ mixture &lt;dbl&gt; 0.00, 0.25, 0.50, 0.75, 1.00, 0.00, 0.25, 0.50, 0.~
-&gt; $ penalty &lt;dbl&gt; 1.000000e-10, 1.000000e-10, 1.000000e-10, 1.000000~
+&gt; $ mixture &lt;dbl&gt; 0.00, 0.25, 0.50, 0.75, 1.00, 0.00, 0.25, 0.50, 0~
+&gt; $ penalty &lt;dbl&gt; 1.000000e-10, 1.000000e-10, 1.000000e-10, 1.00000~
 ```
 *Source: [Bergstra/Bengio (2012)](https://www.jmlr.org/papers/volume13/bergstra12a/bergstra12a)*
 ]
@@ -2183,8 +2189,8 @@ grid_random(
 ```
 &gt; Rows: 25
 &gt; Columns: 2
-&gt; $ mixture &lt;dbl&gt; 0.92267752, 0.69740576, 0.67183790, 0.38385219, 0.~
-&gt; $ penalty &lt;dbl&gt; 9.274587e-08, 5.580510e-05, 2.833908e-09, 5.785956~
+&gt; $ mixture &lt;dbl&gt; 0.92267752, 0.69740576, 0.67183790, 0.38385219, 0~
+&gt; $ penalty &lt;dbl&gt; 9.274587e-08, 5.580510e-05, 2.833908e-09, 5.78595~
 ```
 *Source: [Bergstra/Bengio (2012)](https://www.jmlr.org/papers/volume13/bergstra12a/bergstra12a)*
 
@@ -2321,8 +2327,8 @@ param_grid %&gt;%
 ```
 &gt; Rows: 100
 &gt; Columns: 2
-&gt; $ penalty &lt;dbl&gt; 1.000000e-10, 1.291550e-09, 1.668101e-08, 2.154435~
-&gt; $ mixture &lt;dbl&gt; 0.0000000, 0.0000000, 0.0000000, 0.0000000, 0.0000~
+&gt; $ penalty &lt;dbl&gt; 1.000000e-10, 1.291550e-09, 1.668101e-08, 2.15443~
+&gt; $ mixture &lt;dbl&gt; 0.0000000, 0.0000000, 0.0000000, 0.0000000, 0.000~
 ```
 
 ---
@@ -2505,18 +2511,18 @@ cls_wf_fit %&gt;% collect_metrics(summarize = T)
 
 ```
 &gt; # A tibble: 400 x 8
-&gt;      penalty mixture .metric .estimator  mean     n std_err .config 
-&gt;        &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;   
-&gt;  1  1   e-10       0 accura~ binary     0.847    10 0.00135 Preproc~
-&gt;  2  1   e-10       0 roc_auc binary     0.713    10 0.00811 Preproc~
-&gt;  3  1   e-10       0 sens    binary     0.853    10 0.00146 Preproc~
-&gt;  4  1   e-10       0 spec    binary     0.428    10 0.0160  Preproc~
-&gt;  5  1.29e- 9       0 accura~ binary     0.847    10 0.00135 Preproc~
-&gt;  6  1.29e- 9       0 roc_auc binary     0.713    10 0.00811 Preproc~
-&gt;  7  1.29e- 9       0 sens    binary     0.853    10 0.00146 Preproc~
-&gt;  8  1.29e- 9       0 spec    binary     0.428    10 0.0160  Preproc~
-&gt;  9  1.67e- 8       0 accura~ binary     0.847    10 0.00135 Preproc~
-&gt; 10  1.67e- 8       0 roc_auc binary     0.713    10 0.00811 Preproc~
+&gt;      penalty mixture .metric .estimator  mean     n std_err .config
+&gt;        &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;  
+&gt;  1  1   e-10       0 accura~ binary     0.847    10 0.00135 Prepro~
+&gt;  2  1   e-10       0 roc_auc binary     0.713    10 0.00811 Prepro~
+&gt;  3  1   e-10       0 sens    binary     0.853    10 0.00146 Prepro~
+&gt;  4  1   e-10       0 spec    binary     0.428    10 0.0160  Prepro~
+&gt;  5  1.29e- 9       0 accura~ binary     0.847    10 0.00135 Prepro~
+&gt;  6  1.29e- 9       0 roc_auc binary     0.713    10 0.00811 Prepro~
+&gt;  7  1.29e- 9       0 sens    binary     0.853    10 0.00146 Prepro~
+&gt;  8  1.29e- 9       0 spec    binary     0.428    10 0.0160  Prepro~
+&gt;  9  1.67e- 8       0 accura~ binary     0.847    10 0.00135 Prepro~
+&gt; 10  1.67e- 8       0 roc_auc binary     0.713    10 0.00811 Prepro~
 &gt; # ... with 390 more rows
 ```
 ]
@@ -2529,11 +2535,11 @@ cls_wf_fit %&gt;% show_best(metric = "roc_auc", n = 3)
 
 ```
 &gt; # A tibble: 3 x 8
-&gt;    penalty mixture .metric .estimator  mean     n std_err .config   
-&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;     
-&gt; 1 0.00599    0.111 roc_auc binary     0.714    10 0.00825 Preproces~
-&gt; 2 0.000464   1     roc_auc binary     0.714    10 0.00862 Preproces~
-&gt; 3 0.000464   0.889 roc_auc binary     0.714    10 0.00863 Preproces~
+&gt;    penalty mixture .metric .estimator  mean     n std_err .config  
+&gt;      &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;      &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt;    
+&gt; 1 0.00599    0.111 roc_auc binary     0.714    10 0.00825 Preproce~
+&gt; 2 0.000464   1     roc_auc binary     0.714    10 0.00862 Preproce~
+&gt; 3 0.000464   0.889 roc_auc binary     0.714    10 0.00863 Preproce~
 ```
 ]
 .panel[.panel-name[select_best()]
@@ -2594,7 +2600,7 @@ Collect Metrics:
 autoplot(cls_wf_fit)
 ```
 
-&lt;img src="index_files/figure-html/unnamed-chunk-100-1.png" width="720" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-103-1.png" width="720" style="display: block; margin: auto;" /&gt;
 
 ???
 - note sens-spec-trade off
@@ -2665,7 +2671,7 @@ cls_wf_final %&gt;%
 
 &lt;br&gt;
 
-**Shortcut:** Step 8 and 9 can be abbreviated by using `last_fit()`. It fits the finalized workflow on the training set, predicts the unseen cases in the test set and evaluates the model's test set performance.
+**Shortcut:** The previous step can be abbreviated by using `last_fit()`. Conveniently, it also computes performance metrics along the way.
 
 ```r
 cls_wf_last_fit &lt;- cls_wf_final %&gt;% 
@@ -2761,9 +2767,9 @@ tidy(reg_log_cls_fit) %&gt;% glimpse
 ```
 &gt; Rows: 23
 &gt; Columns: 3
-&gt; $ term     &lt;chr&gt; "(Intercept)", "year", "age", "peak_name_Cho.Oyu"~
-&gt; $ estimate &lt;dbl&gt; -2.71947017, -0.38858862, 0.00000000, -0.12357574~
-&gt; $ penalty  &lt;dbl&gt; 0.005994843, 0.005994843, 0.005994843, 0.00599484~
+&gt; $ term     &lt;chr&gt; "(Intercept)", "year", "age", "peak_name_Cho.Oyu~
+&gt; $ estimate &lt;dbl&gt; -2.71947017, -0.38858862, 0.00000000, -0.1235757~
+&gt; $ penalty  &lt;dbl&gt; 0.005994843, 0.005994843, 0.005994843, 0.0059948~
 ```
 ]
 .panel[.panel-name[glance()]
@@ -2983,7 +2989,7 @@ collect_predictions(cls_wf_fit) %&gt;%
 ```
 ]
 .pull-right[
-&lt;img src="index_files/figure-html/unnamed-chunk-115-1.png" style="display: block; margin: auto;" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-118-1.png" style="display: block; margin: auto;" /&gt;
 ]
 ]
 ]

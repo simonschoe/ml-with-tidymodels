@@ -573,7 +573,7 @@ cls_wf_final %>%
 
 <br>
 
-**Shortcut:** Step 8 and 9 can be abbreviated by using `last_fit()`. It fits the finalized workflow on the training set, predicts the unseen cases in the test set and evaluates the model's test set performance.
+**Shortcut:** The previous step can be abbreviated by using `last_fit()`. Conveniently, it also computes performance metrics along the way.
 ```{r, warning=F, message=F}
 cls_wf_last_fit <- cls_wf_final %>% 
   last_fit(split = climbers_split, metrics = metric_set(roc_auc, accuracy, sens, spec))
