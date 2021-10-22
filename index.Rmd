@@ -78,7 +78,8 @@ ___
 
 **`r rmarkdown::metadata$author`**
 
-`r rmarkdown::metadata$date`
+`r rmarkdown::metadata$date`  
+.small[(updated: `r Sys.Date()`)]
 
 <br><br>
 

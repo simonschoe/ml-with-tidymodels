@@ -68,8 +68,8 @@ Unfortunately, `augment()` is not supported for `glmnet` models (check [availabl
 ]
 
 ???
-- `tidy`: useful for creating visualizations or preparing model tables for a paper
-- `glance`:
+`tidy`: useful for creating visualizations or preparing model tables for a paper
+`glance`:
   - useful for investigating overall model performance
   - identify mis-specifications
   - compare models in general
